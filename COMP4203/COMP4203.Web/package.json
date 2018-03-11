@@ -1,0 +1,19 @@
+{
+  "name": "comp4203.web",
+  "version": "1.0.0",
+  "description": "Carleton University COMP4203 2018 Group Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TingAli/COMP4203.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TingAli/COMP4203/issues"
+  },
+  "homepage": "https://github.com/TingAli/COMP4203#readme"
+}
