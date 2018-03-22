@@ -10,9 +10,14 @@
     <title>@ViewBag.Title</title>
 </head>
 <body>
+    <!-- TEST START -->
     <input type="text" ng-model="test" placeholder="Type here..." />
-<h1>The following will change as you change the input above as a test: {{test}}</h1>
-<h3 ng-bind="anotherTest"></h3>
+    <h1>The following will change as you change the input above as a test: {{test}}</h1>
+    <div>
+        <p class="test-class" ng-repeat="testObject in testList">{{testObject.Name}}</p>
+    </div>
+    <h3 ng-bind="anotherTest"></h3>
+    <!-- TEST END -->
     <div ng-view class="view-wrapper">
 
     </div>

@@ -9,3 +9,13 @@ app.config(function ($routeProvider) {
             redirectTo: 'Home/Index'
         });
 });
+
+app.factory("dataService", function ($http) {
+    return {
+        getTests: function (params) {
+            return $http.get("api/test/gettestlist", {
+                params: params
+            });
+        }
+    }
+});

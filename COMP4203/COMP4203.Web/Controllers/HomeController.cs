@@ -7,6 +7,6 @@ namespace COMP4203.Web.Controllers
         public ActionResult Index()
         {
             return View();
-        }
+        }		
     }
 }
