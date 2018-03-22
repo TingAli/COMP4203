@@ -16,7 +16,8 @@ namespace COMP4203.Web
 				.IncludeDirectory(ANGULAR_APP_ROOT + "Controllers", "*.js", searchSubdirectories: false);
 
 			bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-						"~/Scripts/jquery-{version}.js"));
+					"~/Scripts/jquery-{version}.js",
+					"~/Scripts/jquery.signalR-{version}.js"));
 
 			bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
 						"~/Scripts/jquery.validate*"));
@@ -38,4 +39,3 @@ namespace COMP4203.Web
 		}
 	}
 }
- 
