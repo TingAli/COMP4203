@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/TingAli/COMP4203/issues"
   },
-  "homepage": "https://github.com/TingAli/COMP4203#readme"
+  "homepage": "https://github.com/TingAli/COMP4203#readme",
+  "dependencies": {
+    "angular-ui-bootstrap": "^2.5.6",
+    "highcharts-ng": "^1.2.0"
+  }
 }
