@@ -8,7 +8,7 @@ namespace COMP4203.Web.Controllers
     public class TestController : ApiController
     {
 	    [HttpGet, Route("api/test/gettestlist")]
-	    public List<Test> GetTestList([FromBody] int aNumber)
+	    public List<Test> GetTestList([FromUri] int aNumber)
 	    {
 			return new List<Test>
 			{

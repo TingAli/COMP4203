@@ -17,6 +17,7 @@
         <p class="test-class" ng-repeat="testObject in testList">{{testObject.Name}}</p>
     </div>
     <h3 ng-bind="anotherTest"></h3>
+    <h2>Test</h2>
     <div>
         Name: <input type="text" ng-model="name" /><br />
         Message: <input type="text" ng-model="message" /><br />
@@ -26,6 +27,20 @@
         <ul>
             <li ng-repeat="chat in messages">
                 <span ng-bind="chat"></span>
+            </li>
+        </ul>
+    </div>
+    <h2>TestTwo</h2>
+    <div>
+        <input type="button" value="Test API Controller With Hub" ng-click="broadcastTestBtn()" />
+    </div>
+    <div>
+        <p class="test-class" ng-repeat="testObject in testObjectsTwoList">{{testObject.Name}}</p>
+    </div>
+    <div>
+        <ul>
+            <li ng-repeat="testObject in testTwoList">
+                <span ng-bind="testObject.Name"></span>
             </li>
         </ul>
     </div>

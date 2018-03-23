@@ -13,7 +13,17 @@ app.config(function ($routeProvider) {
 app.factory("dataService", function ($http) {
     return {
         getTests: function (params) {
-            return $http.get("api/test/gettestlist", {
+            return $http.get("/api/test/gettestlist", {
+                params: params
+            });
+        },
+        getTestsTwo: function (params) {
+            return $http.get("/api/testtwo/gettestlist", {
+                params: params
+            });
+        },
+        getTestsTwoList: function (params) {
+            return $http.get("/api/testtwo/gettesttwolist", {
                 params: params
             });
         }
