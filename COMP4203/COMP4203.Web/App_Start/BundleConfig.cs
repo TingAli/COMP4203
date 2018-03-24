@@ -31,8 +31,18 @@ namespace COMP4203.Web
 
 			bundles.Add(angularScriptBundle);
 
+			bundles.Add(new ScriptBundle("~/bundles/ui-bootstrap").Include(
+				"~/Scripts/ui-bootstrap-tpls.js"));
+
+			bundles.Add(new ScriptBundle("~/bundles/highcharts").Include(
+				"~/Scripts/highcharts.src.js"));
+
+			bundles.Add(new ScriptBundle("~/bundles/highcharts-ng").Include(
+				"~/Scripts/highcharts-ng.js"));
+
 			bundles.Add(new StyleBundle("~/Content/css").Include(
 					  "~/Content/bootstrap.css",
+					  "~/Content/highcharts.css",
 					  "~/Content/site.css"));
 
 			BundleTable.EnableOptimizations = false;

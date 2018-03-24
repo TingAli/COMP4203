@@ -1,12 +1,12 @@
-﻿var app = angular.module('app', ['ngRoute']);
+﻿var app = angular.module("app", ["ngRoute", "ui.bootstrap", "highcharts-ng"]);
 
 app.config(function ($routeProvider) {
     $routeProvider.
-        when('/home', {
-            templateUrl: 'Home/Index'
+        when("/home", {
+            templateUrl: "Home/Index"
         }).
         otherwise({
-            redirectTo: 'Home/Index'
+            redirectTo: "Home/Index"
         });
 });
 

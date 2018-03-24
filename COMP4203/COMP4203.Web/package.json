@@ -18,6 +18,7 @@
   "homepage": "https://github.com/TingAli/COMP4203#readme",
   "dependencies": {
     "angular-ui-bootstrap": "^2.5.6",
+    "highcharts": "^6.0.7",
     "highcharts-ng": "^1.2.0"
   }
 }

@@ -44,6 +44,47 @@
             </li>
         </ul>
     </div>
+    <div>
+        <p>
+            <button type="button" class="btn btn-default btn-sm" ng-click="active = 1">Select second tab</button>
+            <button type="button" class="btn btn-default btn-sm" ng-click="active = 2">Select third tab</button>
+        </p>
+        <p>
+            <button type="button" class="btn btn-default btn-sm" ng-click="tabs[1].disabled = ! tabs[1].disabled">Enable / Disable third tab</button>
+        </p>
+        <hr />
+
+        <uib-tabset active="active">
+            <uib-tab index="0">
+                <uib-tab-heading>
+                    <i class="glyphicon glyphicon-align-center"></i> Chart Example
+                </uib-tab-heading>
+                <div class="container">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <input ng-model="chartConfig.title.text">
+                        <button ng-click="addSeries()">Add Series</button>
+                        <button ng-click="addPoints()">Add Points to Random Series</button>
+                        <button ng-click="removeRandomSeries()">Remove Random Series</button>
+                        <button ng-click="swapChartType()">Line/Bar</button>
+                    </div>
+                    <div class="row">
+                        <highchart id="chart1" config="chartConfig" class="span10"></highchart>
+                    </div>
+                </div>
+            </uib-tab>
+            <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" disable="tab.disabled">
+                {{tab.content}}
+            </uib-tab>
+            <uib-tab index="3" select="alertMe()">
+                <uib-tab-heading>
+                    <i class="glyphicon glyphicon-bell"></i> Alert!
+                </uib-tab-heading>
+                <div class="container">
+                    ALEEEEEEEEEEEEEEEEEEEEEEEERT
+                </div>
+            </uib-tab>
+        </uib-tabset>
+    </div>
     <!-- TEST END -->
     <div ng-view class="view-wrapper">
 
@@ -56,6 +97,9 @@
 @Scripts.Render("~/bundles/modernizr")
 <script src="~/signalr/hubs"></script>
 @Scripts.Render("~/Scripts/angularjs")
+@Scripts.Render("~/bundles/ui-bootstrap")
+@Scripts.Render("~/bundles/highcharts")
+@Scripts.Render("~/bundles/highcharts-ng")
 
 @Styles.Render("~/Content/css")
 </html>
