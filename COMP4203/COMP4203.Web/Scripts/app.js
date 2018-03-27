@@ -3,15 +3,22 @@
 app.config(function ($routeProvider) {
     $routeProvider.
         when("/home", {
-            templateUrl: "Home/Index"
+            templateUrl: "Home/Index",
+            controller: "indexController"
         }).
         otherwise({
-            redirectTo: "Home/Index"
+            redirectTo: "Home/Index",
+            controller: "indexController"
         });
 });
 
 app.factory("dataService", function ($http) {
     return {
+        testOutputMessage: function (params) {
+            return $http.get("/api/main/testdebug", {
+                params: params
+            });
+        },
         getTests: function (params) {
             return $http.get("/api/test/gettestlist", {
                 params: params

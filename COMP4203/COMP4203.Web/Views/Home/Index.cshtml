@@ -9,8 +9,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
 </head>
-<body>
-    <!-- TEST START -->
+<body class="view-wrapper">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#!/home">COMP4203 Group Project</a>
+                <p class="navbar-text navbar-right">Demonstrated in 2018 by James, Imdad and Bradley</p>
+            </div>
+        </div>
+    </nav>
+</body>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/modernizr")
+<script src="~/signalr/hubs"></script>
+@Scripts.Render("~/Scripts/angularjs")
+@Scripts.Render("~/bundles/ui-bootstrap")
+@Scripts.Render("~/bundles/highcharts")
+@Scripts.Render("~/bundles/highcharts-ng")
+
+@Styles.Render("~/Content/css")
+</html>
+
+@*<!-- TEST START -->
     <input type="text" ng-model="test" placeholder="Type here..." />
     <h1>The following will change as you change the input above as a test: {{test}}</h1>
     <div>
@@ -85,21 +108,4 @@
             </uib-tab>
         </uib-tabset>
     </div>
-    <!-- TEST END -->
-    <div ng-view class="view-wrapper">
-
-    </div>
-</body>
-
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/bundles/modernizr")
-<script src="~/signalr/hubs"></script>
-@Scripts.Render("~/Scripts/angularjs")
-@Scripts.Render("~/bundles/ui-bootstrap")
-@Scripts.Render("~/bundles/highcharts")
-@Scripts.Render("~/bundles/highcharts-ng")
-
-@Styles.Render("~/Content/css")
-</html>
+    <!-- TEST END -->*@
