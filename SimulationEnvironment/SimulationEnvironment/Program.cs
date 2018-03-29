@@ -35,6 +35,7 @@ namespace SimulationProtocols
             sTest.GetMessages()[0].Print();
 
             List<RoutingPacket> packets = sTest.GetNodes()[0].DSRRouteDiscovery(sTest.GetNodes()[3], sTest);
+            RoutingPacket optRoute = sTest.GetNodes()[0].SADSRRouteDiscovery(sTest.GetNodes()[3], sTest);
             Console.WriteLine("{0} Routes Found.", packets.Count);
 
             foreach (RoutingPacket route in packets)
@@ -48,6 +49,14 @@ namespace SimulationProtocols
                 Console.WriteLine();
                 Console.WriteLine("==============================");
             }
+            // Testing SA-DSR
+            Console.Write("Optimal Route: ");
+            foreach (MobileNode node in optRoute.GetNodeRoute())
+            {
+                Console.Write("{0} ", node.GetNodeID());
+            }
+            Console.WriteLine();
+            Console.WriteLine("==============================");
             sTest.GetNodes()[0].DSRSendMessage(sTest.GetMessages()[0], packets[0]);
 
             Console.ReadKey();
@@ -86,6 +95,10 @@ namespace SimulationProtocols
             foreach (Message message in sim.GetMessages())
             {
                 message.Print();
+            }
+            foreach (MobileNode node in sTest.GetNodes())
+            {
+                node.printKnownRoutes();
             }
             // Export data here
             DataExporter d = new DataExporter();

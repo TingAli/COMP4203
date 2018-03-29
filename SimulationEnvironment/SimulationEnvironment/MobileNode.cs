@@ -12,7 +12,9 @@ namespace SimulationProtocols
         private int xPosition, yPosition;
         private double sent, received;
         private double numRPackets;
+        private int ac;
         private Dictionary<int, List<RoutingPacket>> knownRoutes;
+        private Dictionary<int, RoutingPacket> optimalRoute;
 
         public MobileNode()
         {
@@ -21,7 +23,9 @@ namespace SimulationProtocols
             xPosition = yPosition = 0;
             sent = received = 0;
             numRPackets = 0;
+            ac = 50;
             knownRoutes = new Dictionary<int, List<RoutingPacket>>();
+            optimalRoute = new Dictionary<int, RoutingPacket>();
         }
 
         public MobileNode(int x, int y, int bLevel)
@@ -31,7 +35,9 @@ namespace SimulationProtocols
             yPosition = y;
             sent = received = 0;
             numRPackets = 0;
+            ac = 50;
             batteryLevel = bLevel; knownRoutes = new Dictionary<int, List<RoutingPacket>>();
+            optimalRoute = new Dictionary<int, RoutingPacket>();
         }
 
         public double GetNumRPackets()
@@ -41,6 +47,28 @@ namespace SimulationProtocols
                 numRPackets += knownRoutes[k].Count;
             }
             return numRPackets;
+        }
+
+        public void printKnownRoutes()
+        {
+            foreach (var k in knownRoutes.Keys)
+            {
+                foreach (RoutingPacket route in knownRoutes[k])
+                {
+                    Console.Write("Route SDP: {0} ", route.getSDP());
+                    foreach (MobileNode node in route.GetNodeRoute())
+                    {
+                        Console.Write("{0}", node.GetNodeID());
+                    }
+                    Console.WriteLine();
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public int GetAC()
+        {
+            return ac;
         }
 
         public int GetNodeID()
@@ -102,7 +130,60 @@ namespace SimulationProtocols
             }
             return nodes;
         }
-        // Get all the known routes
+        public RoutingPacket SADSRRouteDiscovery(MobileNode destNode, SimulationEnvironment env)
+        {
+            // In this protocol, we want to get the route that has the best SDP
+            // NOTE: We still need to find out how to calculate SDP will AC 
+            RoutingPacket rPacket = new RoutingPacket();
+            RoutingPacket optRoute = new RoutingPacket();
+            List<RoutingPacket> routes = DSRDicovery(destNode, env, rPacket);
+            double sdp = 0;
+            // Calculate the altruism coefficient from source to destination node
+            foreach (RoutingPacket r in routes)
+            {
+                foreach (MobileNode node in r.GetNodeRoute())
+                {
+                    if (node.PacketDrop() == true)
+                    {
+                        r.GetNodeRoute()[0].ac -= 10;
+                    } 
+                    else
+                    {
+                        r.GetNodeRoute()[0].ac += 10;
+                    }
+                }
+            }
+            // Calculate the SDP of all routes to destination
+            foreach (RoutingPacket r in routes)
+            {
+                r.CalcSDP();
+            }
+            // Get the optimal route 
+            foreach (RoutingPacket r in routes)
+            {
+                if (sdp < r.getSDP())
+                {
+                    sdp = r.getSDP();
+                    optRoute = r;
+                }
+            }
+            // Print SDP of optimal route
+            foreach (RoutingPacket r in routes)
+            {
+                Console.WriteLine("SDP of route: {0}", r.getSDP());
+            }
+            if (optimalRoute.ContainsKey(destNode.GetNodeID()))
+            {
+                optimalRoute[destNode.GetNodeID()] = optRoute;
+            } 
+            else
+            {
+                optimalRoute.Add(destNode.GetNodeID(), optRoute);
+            }
+            return optRoute;
+        }
+
+        // Assigning a route to each destination node 
         public List<RoutingPacket> DSRRouteDiscovery(MobileNode destNode, SimulationEnvironment env)
         {
             RoutingPacket rPacket = new RoutingPacket();
@@ -132,6 +213,7 @@ namespace SimulationProtocols
             }
             return routes;
         }
+        // Adding nodes to routes
         private List<RoutingPacket> DSRDicovery(MobileNode destNode, SimulationEnvironment env, RoutingPacket route)
         {
             List<RoutingPacket> routes = new List<RoutingPacket>();
@@ -191,14 +273,52 @@ namespace SimulationProtocols
             else
             {
                 // Here randomly get a node to drop the message
-                Random random = new Random();
-                int r = random.Next(0, 2);
-                if (r == 0) {
+                if (this.PacketDrop() == true) {
                     Console.WriteLine("Message {0} dropped by Node {1}.", message.GetMessageID(), nodeID);
                     return false;
                 } 
                 Console.WriteLine("Relaying Message {0} through Node {1}.", message.GetMessageID(), nodeID);
                 return route.GetNodeRoute()[++step].DSRSMessage(message, route, ++step);
+            }
+        }
+
+        // Calculates the probability of a node dropping a packet based on their battery levels
+        private bool PacketDrop()
+        {
+            Random random = new Random();
+            // 50% chance of dropping packet if battery level is between 20 to 50 percent
+            if (20 <= this.batteryLevel && this.batteryLevel < 50)
+            {
+                int r = random.Next(0, 1);
+                if (r == 0)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            }
+            // 10% chance of dropping packet if battery level is between 50 and 80 percent
+            else if (50 <= this.batteryLevel && this.batteryLevel < 80)
+            {
+                int r = random.Next(0, 11);
+                if (r == 0)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            }
+            // 0% chance of dropping packet if battery level is between 80 to 100 percent
+            else if (80 <= this.batteryLevel && this.batteryLevel <= 100)
+            {
+                return false;
+            }
+            else
+            {
+                // 100% chance of dropping packet if battery level is less than 20 percent 
+                return true;
             }
         }
     }
