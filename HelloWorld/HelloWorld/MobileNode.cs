@@ -6,6 +6,9 @@ namespace SimulationProtocols
 {
     class MobileNode
     {
+        static int TRANSMIT_COST = 2;
+        static int RECEIVE_PROCESS_COST = 1;
+
         static int nodeCount = 0;
         static int range = 200;
         private int nodeID;
@@ -56,9 +59,37 @@ namespace SimulationProtocols
             Console.WriteLine("Location: " + xPosition + ", " + yPosition);
         }
 
+        public void PrintNodesWithinRange(SimulationEnvironment env)
+        {
+            foreach (MobileNode n in env.GetNodes())
+            {
+                if (!this.Equals(n))
+                {
+                    if (IsWithinRangeOf(n))
+                    {
+                        Console.WriteLine("Node {0} is within range. Distance: {1}", n.GetNodeID(), GetDistance(n));
+                    }
+                    else
+                    {
+                        Console.WriteLine("Node {0} is not within range. Distance: {1}", n.GetNodeID(), GetDistance(n));
+                    }
+                }
+            }
+        }
+
         public double GetDistance(MobileNode node)
         {
             return Math.Sqrt((Math.Pow((xPosition - node.xPosition), 2)) + (Math.Pow((yPosition - node.yPosition), 2)));
+        }
+
+        public void TransmitPacket()
+        {
+            batteryLevel -= TRANSMIT_COST;
+        }
+
+        public void ReceiveProcessPacket()
+        {
+            batteryLevel -= RECEIVE_PROCESS_COST;
         }
 
         public bool IsWithinRangeOf(MobileNode node)
@@ -79,8 +110,9 @@ namespace SimulationProtocols
             return nodes;
         }
 
-        public List<RoutingPacket> DSRRouteDiscovery(MobileNode destNode, SimulationEnvironment env)
+        public List<RoutingPacket> RouteDiscoveryDSR(MobileNode destNode, SimulationEnvironment env)
         {
+            Console.WriteLine("Performing Route Discovery from Node {0} to Node {1}.", nodeID, destNode.GetNodeID());
             RoutingPacket rPacket = new RoutingPacket();
             List<RoutingPacket> routes = DSRDicovery(destNode, env, rPacket);
             if (knownRoutes.ContainsKey(destNode.GetNodeID()))
@@ -129,42 +161,93 @@ namespace SimulationProtocols
 
             foreach (MobileNode node in nodesWithinRange)
             {
+                // If node isn't in route yet...
                 if (!route.IsInRouteAlready(node))
                 {
+                    // If node is the destination node...
                     if (node.Equals(destNode))
                     {
+                        //Obtaining all possible routes
                         RoutingPacket rPacket = route.Copy();
-                        rPacket.AddNodeToRoute(this);
+                        rPacket.AddNodeToRoute(this); // Adding nodes to route
                         rPacket.AddNodeToRoute(node);
-                        routes.Add(rPacket);
+                        routes.Add(rPacket); // Adding all possible routes
+                        Console.WriteLine("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID());
+                        TransmitPacket();
+                        node.ReceiveProcessPacket();
+                        Console.WriteLine("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID);
+                        node.TransmitPacket();
+                        ReceiveProcessPacket();
                     }
                     else
                     {
                         RoutingPacket rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this);
-                        routes.AddRange(node.DSRDicovery(destNode, env, rPacket));
+                        Console.WriteLine("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID());
+                        TransmitPacket();
+                        node.ReceiveProcessPacket();
+                        routes.AddRange(node.DSRDicovery(destNode, env, rPacket)); // Recursive call
                     }
+                }
+            }
+            foreach (RoutingPacket r in routes)
+            {
+                if (r.GetNodeRoute().Contains(destNode))
+                {
+                    List<MobileNode> rList = r.GetNodeRoute();
+                    for (int i = 0; i < rList.Count; i++)
+                    {
+                        if (rList[i] == this && i != 0)
+                        {
+                            Console.WriteLine("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i-1].GetNodeID());
+                            TransmitPacket();
+                            rList[i - 1].GetNodeID();
+                        }
+                    }
+                    
                 }
             }
             return routes;
         }
 
-        public bool DSRSendMessage(Message message, RoutingPacket route)
+        public bool dSendMessage(Message message, RoutingPacket route)
         {
-            return DSRSMessage(message, route, 0);
+
+            Console.WriteLine("Routing Packet Selected: {0}", route.GetRouteAsString());
+            List<MobileNode> nodes = route.GetNodeRoute();
+            Console.WriteLine("Beginning Message Transmission from Source Node " + nodes[0].GetNodeID());
+            for (int i = 1; i < nodes.Count; i++)
+            {
+                Console.WriteLine("Sending Message from {0} to {1}.", nodes[i - 1].GetNodeID(), nodes[i].GetNodeID());
+            }
+            Console.WriteLine("Received Message at Destination Node " + nodes[nodes.Count - 1].GetNodeID());
+            return true;
         }
 
-        public bool DSRSMessage(Message message, RoutingPacket route, int step)
+        public List<RoutingPacket> GetRoutesToNode(MobileNode node)
         {
-            if (message.GetDestinstationNode().Equals(this))
+            // If there are no known routes for this destination, return null.
+            if (!knownRoutes.ContainsKey(node.GetNodeID())) { return null; }
+            // Otherwise, return the list of known routes.
+            return knownRoutes[node.GetNodeID()];
+        }
+
+        public RoutingPacket GetBestRouteDSR(MobileNode node)
+        {
+            List<RoutingPacket> routes = GetRoutesToNode(node);
+            if (routes == null) { return null; }
+            int lowestValue = 999999;
+            int lowestIndex = -1;
+            for (int i = 0; i < routes.Count; i++)
             {
-                Console.WriteLine("Message {0} received at Node {1}.", message.GetMessageID(), nodeID);
-                return true;
-            } else
-            {
-                Console.WriteLine("Relaying Message {0} through Node {1}.", message.GetMessageID(), nodeID);
-                return route.GetNodeRoute()[++step].DSRSMessage(message, route, ++step);
+                int rLength = routes[i].GetRouteLength();
+                if (rLength < lowestValue)
+                {
+                    lowestValue = rLength;
+                    lowestIndex = i;
+                }
             }
+            return routes[lowestIndex];
         }
     }
 }
