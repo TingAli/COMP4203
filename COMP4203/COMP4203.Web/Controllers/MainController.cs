@@ -10,6 +10,11 @@ namespace COMP4203.Web.Controllers
 {
     public class MainController : ApiControllerWithHub<MainHub>
     {
+	    public MainController()
+	    {
+
+	    }
+
 	    [HttpGet, Route("api/testtwo/gettesttwolist")]
 	    public void GetTestTwoList([FromUri] int aNumber)
 	    {
