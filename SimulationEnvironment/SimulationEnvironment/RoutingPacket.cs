@@ -40,12 +40,15 @@ namespace SimulationProtocols
             // For each route, calculate the average battery level
             // Convert the average battery level of a route into a percentage and multiply it by the route's ac 
             double avgBatteryLevel = 0;
+            double avgAc = 0;
             foreach (MobileNode node in this.nodeRoute)
             {
                 avgBatteryLevel += node.GetBatteryLevel();
+                avgAc += node.GetAC();
             }
+            avgAc = (avgAc / this.nodeRoute.Count) / 100;
             avgBatteryLevel = (avgBatteryLevel / this.nodeRoute.Count) / 100;
-            sdp = avgBatteryLevel;
+            sdp = avgAc * avgBatteryLevel;
         }
 
         public void AddNodesToRoute(List<MobileNode> nodes)

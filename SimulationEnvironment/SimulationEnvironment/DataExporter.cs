@@ -22,13 +22,11 @@ namespace SimulationProtocols
             // Get the speed of each message in the simulate environment and calculate average speed
             // Return calculated result
             double total = 0;
-            int numMsg = 0;
             foreach (Message msg in sim.GetMessages())
             {
                 total += msg.GetMsgSpeed();
-                numMsg++;
             }
-            return total / numMsg;
+            return total / sim.GetMessages().Count;
         }
         private double PDR(SimulationEnvironment sim)
         {

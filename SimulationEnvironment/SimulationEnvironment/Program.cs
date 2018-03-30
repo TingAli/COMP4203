@@ -35,6 +35,7 @@ namespace SimulationProtocols
             sTest.GetMessages()[0].Print();
 
             List<RoutingPacket> packets = sTest.GetNodes()[0].DSRRouteDiscovery(sTest.GetNodes()[3], sTest);
+            // Calling SA-DSR 
             RoutingPacket optRoute = sTest.GetNodes()[0].SADSRRouteDiscovery(sTest.GetNodes()[3], sTest);
             Console.WriteLine("{0} Routes Found.", packets.Count);
 

@@ -133,7 +133,6 @@ namespace SimulationProtocols
         public RoutingPacket SADSRRouteDiscovery(MobileNode destNode, SimulationEnvironment env)
         {
             // In this protocol, we want to get the route that has the best SDP
-            // NOTE: We still need to find out how to calculate SDP will AC 
             RoutingPacket rPacket = new RoutingPacket();
             RoutingPacket optRoute = new RoutingPacket();
             List<RoutingPacket> routes = DSRDicovery(destNode, env, rPacket);
@@ -145,11 +144,17 @@ namespace SimulationProtocols
                 {
                     if (node.PacketDrop() == true)
                     {
-                        r.GetNodeRoute()[0].ac -= 10;
+                        if (r.GetNodeRoute()[0].ac >= 0)
+                        {
+                            r.GetNodeRoute()[0].ac -= 10;
+                        }
                     } 
                     else
                     {
-                        r.GetNodeRoute()[0].ac += 10;
+                        if (r.GetNodeRoute()[0].ac <= 100)
+                        {
+                            r.GetNodeRoute()[0].ac += 10;
+                        }
                     }
                 }
             }
