@@ -13,7 +13,7 @@ namespace SimulationProtocols
         public SimulationEnvironment()
         {
             height = 500;
-            width = 1000;
+            width = 500;
             mobileNodes = new List<MobileNode>();
             messages = new List<Message>();
         }
@@ -50,5 +50,40 @@ namespace SimulationProtocols
             }
         }
 
+        public bool SendMessageDSR(Message message)
+        {
+            MobileNode sourceNode = message.GetSourceNode();
+            MobileNode destinationNode = message.GetDestinstationNode();
+            RoutingPacket route = sourceNode.GetBestRouteDSR(destinationNode);
+
+            // If no known route found
+            if (route == null)
+            {
+                Console.WriteLine("No Known Route to Destination.");
+                sourceNode.RouteDiscoveryDSR(destinationNode, this); // Perform Route Discovery
+                route = sourceNode.GetBestRouteDSR(destinationNode); // Attempt to assign newly found best route
+                if (route == null)
+                {
+                    Console.WriteLine("No Route to Destination.");
+                    return false;
+                }
+            }
+
+            Console.WriteLine("Sending Message:");
+            Console.WriteLine("Source Node: " + sourceNode.GetNodeID());
+            Console.WriteLine("Destination Node: " + destinationNode.GetNodeID());
+            Console.WriteLine("Route Chosen: " + route.GetRouteAsString());
+
+            List<MobileNode> nodes = route.GetNodeRoute();
+            Console.WriteLine("Beginning Message Transmission from Source Node " + sourceNode.GetNodeID());
+            for (int i = 1; i < nodes.Count; i++)
+            {
+                Console.WriteLine("Sending Message from {0} to {1}.", nodes[i - 1].GetNodeID(), nodes[i].GetNodeID());
+                nodes[i - 1].TransmitPacket();
+                nodes[i].ReceiveProcessPacket();
+            }
+            Console.WriteLine("Received Message at Destination Node " + destinationNode.GetNodeID());
+            return true;
+        }
     }
 }

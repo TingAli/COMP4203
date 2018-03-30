@@ -34,21 +34,23 @@ namespace SimulationProtocols
             }
             sTest.GetMessages()[0].Print();
 
-            List<RoutingPacket> packets = sTest.GetNodes()[0].DSRRouteDiscovery(sTest.GetNodes()[3], sTest);
-            Console.WriteLine("{0} Routes Found.", packets.Count);
+            //List<RoutingPacket> packets = sTest.GetNodes()[0].DSRRouteDiscovery(sTest.GetNodes()[3], sTest);
+            //Console.WriteLine("{0} Routes Found.", packets.Count);
 
-            foreach (RoutingPacket route in packets)
-            {
-                Console.WriteLine("Route:");
-                Console.WriteLine("==============================");
-                foreach (MobileNode node in route.GetNodeRoute())
-                {
-                    Console.Write("{0} ", node.GetNodeID());
-                }
-                Console.WriteLine();
-                Console.WriteLine("==============================");
-            }
-            sTest.GetNodes()[0].DSRSendMessage(sTest.GetMessages()[0], packets[0]);
+            // List all found routes
+            //foreach (RoutingPacket route in packets)
+            //{
+            //    Console.WriteLine("Routes:");
+            //    Console.WriteLine("==============================");
+            //    Console.WriteLine(route.GetRouteAsString());
+            //    Console.WriteLine("==============================");
+            //}
+
+            // Send 1st message
+            sTest.SendMessageDSR(sTest.GetMessages()[0]);
+
+            // Print Nodes After Message
+            foreach (MobileNode node in sTest.GetNodes()) { node.Print(); }
 
             Console.ReadKey();
 

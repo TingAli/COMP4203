@@ -54,5 +54,20 @@ namespace SimulationProtocols
                 return true;
             }
         }
+
+        public int GetRouteLength()
+        {
+            return nodeRoute.Count;
+        }
+        
+        public string GetRouteAsString()
+        {
+            string output = "";
+            foreach (MobileNode node in nodeRoute)
+            {
+                output += node.GetNodeID() + " ";
+            }
+            return output;
+        }
     }
 }
