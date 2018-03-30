@@ -16,6 +16,7 @@ namespace SimulationProtocols
             // Add Test Message
             sTest.AddMessage(new Message(sTest.GetNodes()[0], sTest.GetNodes()[3]));
 
+            // Print Simulation Nodes
             foreach (MobileNode node in sTest.GetNodes())
             {
                 node.Print();
@@ -30,43 +31,6 @@ namespace SimulationProtocols
             foreach (MobileNode node in sTest.GetNodes()) { node.Print(); }
 
             Console.ReadKey();
-
-            //SimulationEnvironment sim = new SimulationEnvironment();
-            //sim.GenerateRandomNodes(15);
-            //sim.GenerateRandomMessages(50);
-
-            //Console.WriteLine("==============================================");
-            //Console.WriteLine("Simulation Nodes");
-            //Console.WriteLine("==============================================");
-
-            //foreach (MobileNode node in sim.GetNodes())
-            //{
-            //    node.Print();
-            //    foreach (MobileNode n in sim.GetNodes())
-            //    {
-            //        if (!node.Equals(n))
-            //        {
-            //            if (node.IsWithinRangeOf(n))
-            //            {
-            //                Console.WriteLine("Node {0} is within range. Distance: {1}", n.GetNodeID(), node.GetDistance(n));
-            //            } else
-            //            {
-            //                Console.WriteLine("Node {0} is not within range. Distance: {1}", n.GetNodeID(), node.GetDistance(n));
-            //            }
-            //        }
-            //    }
-            //    Console.WriteLine();
-            //}
-            //Console.WriteLine();
-            //Console.WriteLine("==============================================");
-            //Console.WriteLine("Simulation Messages");
-            //Console.WriteLine("==============================================");
-            //foreach (Message message in sim.GetMessages())
-            //{
-            //    message.Print();
-            //}
-
-            //Console.ReadKey();
         }
     }
 }
