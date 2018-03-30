@@ -59,6 +59,24 @@ namespace SimulationProtocols
             Console.WriteLine("Location: " + xPosition + ", " + yPosition);
         }
 
+        public void PrintNodesWithinRange(SimulationEnvironment env)
+        {
+            foreach (MobileNode n in env.GetNodes())
+            {
+                if (!this.Equals(n))
+                {
+                    if (IsWithinRangeOf(n))
+                    {
+                        Console.WriteLine("Node {0} is within range. Distance: {1}", n.GetNodeID(), GetDistance(n));
+                    }
+                    else
+                    {
+                        Console.WriteLine("Node {0} is not within range. Distance: {1}", n.GetNodeID(), GetDistance(n));
+                    }
+                }
+            }
+        }
+
         public double GetDistance(MobileNode node)
         {
             return Math.Sqrt((Math.Pow((xPosition - node.xPosition), 2)) + (Math.Pow((yPosition - node.yPosition), 2)));
@@ -149,10 +167,11 @@ namespace SimulationProtocols
                     // If node is the destination node...
                     if (node.Equals(destNode))
                     {
+                        //Obtaining all possible routes
                         RoutingPacket rPacket = route.Copy();
-                        rPacket.AddNodeToRoute(this);
+                        rPacket.AddNodeToRoute(this); // Adding nodes to route
                         rPacket.AddNodeToRoute(node);
-                        routes.Add(rPacket);
+                        routes.Add(rPacket); // Adding all possible routes
                         Console.WriteLine("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID());
                         TransmitPacket();
                         node.ReceiveProcessPacket();
@@ -167,7 +186,7 @@ namespace SimulationProtocols
                         Console.WriteLine("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID());
                         TransmitPacket();
                         node.ReceiveProcessPacket();
-                        routes.AddRange(node.DSRDicovery(destNode, env, rPacket));
+                        routes.AddRange(node.DSRDicovery(destNode, env, rPacket)); // Recursive call
                     }
                 }
             }

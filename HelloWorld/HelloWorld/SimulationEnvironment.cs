@@ -9,6 +9,7 @@ namespace SimulationProtocols
         private int height, width;
         private List<MobileNode> mobileNodes;
         private List<Message> messages;
+        private List<SessionData> sessions;
 
         public SimulationEnvironment()
         {
@@ -16,12 +17,35 @@ namespace SimulationProtocols
             width = 500;
             mobileNodes = new List<MobileNode>();
             messages = new List<Message>();
+            sessions = new List<SessionData>();
         }
 
         public int GetHeight() { return height; }
         public int GetWidth() { return width; }
         public List<MobileNode> GetNodes() { return mobileNodes; }
         public List<Message> GetMessages() { return messages; }
+
+        public void RunSimulation()
+        {
+            SessionData sessionData = new SessionData();
+
+            foreach (Message message in messages)
+            {
+                SendMessageDSR(message);
+            }
+
+            sessions.Add(sessionData);
+        }
+
+        public void AddNode(MobileNode node)
+        {
+            mobileNodes.Add(node);
+        }
+
+        public void AddMessage(Message message)
+        {
+            messages.Add(message);
+        }
 
         public void GenerateRandomNodes(int numNodes)
         {
