@@ -23,21 +23,6 @@ app.factory("dataService", function ($http) {
             return $http.get("/api/main/testdebug", {
                 params: params
             });
-        },
-        getTests: function (params) {
-            return $http.get("/api/test/gettestlist", {
-                params: params
-            });
-        },
-        getTestsTwo: function (params) {
-            return $http.get("/api/testtwo/gettestlist", {
-                params: params
-            });
-        },
-        getTestsTwoList: function (params) {
-            return $http.get("/api/testtwo/gettesttwolist", {
-                params: params
-            });
         }
     }
 });

@@ -59,6 +59,7 @@
 										</div>
 										<div class="btn-group" role="group">
 											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
+											<button type="button" class="btn btn-warning" ng-click="runTest(@tabIndex);">TEST</button>
 											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
 										</div>
 									</div>
@@ -107,6 +108,7 @@
 										</div>
 										<div class="btn-group" role="group">
 											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
+											<button type="button" class="btn btn-warning" ng-click="runTest(@tabIndex);">TEST</button>
 											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
 										</div>
 									</div>
@@ -155,6 +157,7 @@
 										</div>
 										<div class="btn-group" role="group">
 											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
+											<button type="button" class="btn btn-warning" ng-click="runTest(@tabIndex);">TEST</button>
 											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
 										</div>
 									</div>
@@ -214,80 +217,3 @@
 
 @Styles.Render("~/Content/css")
 </html>
-
-@*<!-- TEST START -->
-	<input type="text" ng-model="test" placeholder="Type here..." />
-	<h1>The following will change as you change the input above as a test: {{test}}</h1>
-	<div>
-		<p class="test-class" ng-repeat="testObject in testList">{{testObject.Name}}</p>
-	</div>
-	<h3 ng-bind="anotherTest"></h3>
-	<h2>Test</h2>
-	<div>
-		Name: <input type="text" ng-model="name" /><br />
-		Message: <input type="text" ng-model="message" /><br />
-		<input type="button" value="Send" ng-click="newMessage()" />
-	</div>
-	<div>
-		<ul>
-			<li ng-repeat="chat in messages">
-				<span ng-bind="chat"></span>
-			</li>
-		</ul>
-	</div>
-	<h2>TestTwo</h2>
-	<div>
-		<input type="button" value="Test API Controller With Hub" ng-click="broadcastTestBtn()" />
-	</div>
-	<div>
-		<p class="test-class" ng-repeat="testObject in testObjectsTwoList">{{testObject.Name}}</p>
-	</div>
-	<div>
-		<ul>
-			<li ng-repeat="testObject in testTwoList">
-				<span ng-bind="testObject.Name"></span>
-			</li>
-		</ul>
-	</div>
-	<div>
-		<p>
-			<button type="button" class="btn btn-default btn-sm" ng-click="active = 1">Select second tab</button>
-			<button type="button" class="btn btn-default btn-sm" ng-click="active = 2">Select third tab</button>
-		</p>
-		<p>
-			<button type="button" class="btn btn-default btn-sm" ng-click="tabs[1].disabled = ! tabs[1].disabled">Enable / Disable third tab</button>
-		</p>
-		<hr />
-
-		<uib-tabset active="active">
-			<uib-tab index="0">
-				<uib-tab-heading>
-					<i class="glyphicon glyphicon-align-center"></i> Chart Example
-				</uib-tab-heading>
-				<div class="container">
-					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-						<input ng-model="chartConfig.title.text">
-						<button ng-click="addSeries()">Add Series</button>
-						<button ng-click="addPoints()">Add Points to Random Series</button>
-						<button ng-click="removeRandomSeries()">Remove Random Series</button>
-						<button ng-click="swapChartType()">Line/Bar</button>
-					</div>
-					<div class="row">
-						<highchart id="chart1" config="chartConfig" class="span10"></highchart>
-					</div>
-				</div>
-			</uib-tab>
-			<uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" disable="tab.disabled">
-				{{tab.content}}
-			</uib-tab>
-			<uib-tab index="3" select="alertMe()">
-				<uib-tab-heading>
-					<i class="glyphicon glyphicon-bell"></i> Alert!
-				</uib-tab-heading>
-				<div class="container">
-					ALEEEEEEEEEEEEEEEEEEEEEEEERT
-				</div>
-			</uib-tab>
-		</uib-tabset>
-	</div>
-	<!-- TEST END -->*@

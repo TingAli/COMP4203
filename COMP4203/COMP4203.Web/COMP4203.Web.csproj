@@ -171,12 +171,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Extend\ApiControllerWithHub.cs" />
-    <Compile Include="Controllers\Hubs\TestHub.cs" />
     <Compile Include="Controllers\Hubs\MainHub.cs" />
-    <Compile Include="Controllers\Hubs\TestTwoHub.cs" />
     <Compile Include="Controllers\MainController.cs" />
-    <Compile Include="Controllers\TestTwoController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
