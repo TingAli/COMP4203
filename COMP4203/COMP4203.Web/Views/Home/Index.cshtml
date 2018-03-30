@@ -1,23 +1,205 @@
 ﻿@{
-    ViewBag.Title = "COMP4203 Group Project";
+	ViewBag.Title = "COMP4203 Group Project";
 }
 
 <!DOCTYPE html>
 <html ng-app="app" ng-controller="indexController">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@ViewBag.Title</title>
 </head>
 <body class="view-wrapper">
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#!/home">COMP4203 Group Project</a>
-                <p class="navbar-text navbar-right">Demonstrated in 2018 by James, Imdad and Bradley</p>
-            </div>
-        </div>
-    </nav>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#!/home">COMP4203 Group Project</a>
+				<p class="navbar-text navbar-right">Demonstrated & Developed in 2018 by James Tyler, Imdad Ali and Bradley Koon</p>
+			</div>
+		</div>
+	</nav>
+	<div class="main">
+		<uib-tabset active="active">
+			@{
+				var tabIndex = 0;
+			}
+			<uib-tab index="@tabIndex">
+				<uib-tab-heading>
+					<i class="glyphicon glyphicon-play-circle"></i> Session @tabIndex
+				</uib-tab-heading>
+				<div>
+					<div class="panel panel-info">
+						<div class="panel-heading text-center">Session</div>
+						<div class="session-container">
+							<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+								<div class="panel panel-primary">
+									<div class="panel-heading text-center">Graphical Representation</div>
+									<div class="session-graphics-container">
+										<canvas id="canvas_@tabIndex" width="500" height="500">
+											Your browser does not support the canvas element.
+										</canvas>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+								<div class="panel panel-success">
+									<div class="panel-heading text-center">Modifications</div>
+									<div class="session-modifications-container">
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon_@tabIndex">Node #</span>
+											<input ng-model="nodeNumber" type="number" class="form-control" placeholder="Node No." aria-describedby="basic-addon_@tabIndex">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon_@tabIndex">Message #</span>
+											<input ng-model="messageNumber" type="number" class="form-control" placeholder="Message No." aria-describedby="basic-addon_@tabIndex">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon_@tabIndex">Sim Speed Between Each Event (ms)</span>
+											<input ng-model="simSpeedNumber" type="number" class="form-control" placeholder="Sim Speed No." aria-describedby="basic-addon_@tabIndex">
+										</div>
+										<div class="btn-group" role="group">
+											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
+											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</uib-tab>
+			@{
+				tabIndex = 1;
+			}
+			<uib-tab index="@tabIndex">
+				<uib-tab-heading>
+					<i class="glyphicon glyphicon-play-circle"></i> Session @tabIndex
+				</uib-tab-heading>
+				<div>
+					<div class="panel panel-info">
+						<div class="panel-heading text-center">Session</div>
+						<div class="session-container">
+							<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+								<div class="panel panel-primary">
+									<div class="panel-heading text-center">Graphical Representation</div>
+									<div class="session-graphics-container">
+										<canvas id="canvas_@tabIndex" width="500" height="500">
+											Your browser does not support the canvas element.
+										</canvas>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+								<div class="panel panel-success">
+									<div class="panel-heading text-center">Modifications</div>
+									<div class="session-modifications-container">
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon_@tabIndex">Node #</span>
+											<input ng-model="nodeNumber" type="number" class="form-control" placeholder="Node No." aria-describedby="basic-addon_@tabIndex">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon_@tabIndex">Message #</span>
+											<input ng-model="messageNumber" type="number" class="form-control" placeholder="Message No." aria-describedby="basic-addon_@tabIndex">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon_@tabIndex">Sim Speed Between Each Event (ms)</span>
+											<input ng-model="simSpeedNumber" type="number" class="form-control" placeholder="Sim Speed No." aria-describedby="basic-addon_@tabIndex">
+										</div>
+										<div class="btn-group" role="group">
+											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
+											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</uib-tab>
+			@{
+				tabIndex = 2;
+			}
+			<uib-tab index="@tabIndex">
+				<uib-tab-heading>
+					<i class="glyphicon glyphicon-play-circle"></i> Session @tabIndex
+				</uib-tab-heading>
+				<div>
+					<div class="panel panel-info">
+						<div class="panel-heading text-center">Session</div>
+						<div class="session-container">
+							<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+								<div class="panel panel-primary">
+									<div class="panel-heading text-center">Graphical Representation</div>
+									<div class="session-graphics-container">
+										<canvas id="canvas_@tabIndex" width="500" height="500">
+											Your browser does not support the canvas element.
+										</canvas>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+								<div class="panel panel-success">
+									<div class="panel-heading text-center">Modifications</div>
+									<div class="session-modifications-container">
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon_@tabIndex">Node #</span>
+											<input ng-model="nodeNumber" type="number" class="form-control" placeholder="Node No." aria-describedby="basic-addon_@tabIndex">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon_@tabIndex">Message #</span>
+											<input ng-model="messageNumber" type="number" class="form-control" placeholder="Message No." aria-describedby="basic-addon_@tabIndex">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon" id="basic-addon_@tabIndex">Sim Speed Between Each Event (ms)</span>
+											<input ng-model="simSpeedNumber" type="number" class="form-control" placeholder="Sim Speed No." aria-describedby="basic-addon_@tabIndex">
+										</div>
+										<div class="btn-group" role="group">
+											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
+											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</uib-tab>
+			@{
+				tabIndex = 3;
+			}
+			<uib-tab index="@tabIndex">
+				<uib-tab-heading>
+					<i class="glyphicon glyphicon-link"></i> Graphs
+				</uib-tab-heading>
+				<div>
+					<div class="panel panel-info">
+						<div class="panel-heading text-center">Graphs</div>
+						<div>
+
+						</div>
+					</div>
+				</div>
+			</uib-tab>
+			@{
+				tabIndex = 4;
+			}
+			<uib-tab index="@tabIndex">
+				<uib-tab-heading>
+					<i class="glyphicon glyphicon-screenshot"></i> Output
+				</uib-tab-heading>
+				<div>
+					<div class="panel panel-danger">
+						<div class="panel-heading text-center">Output Messages</div>
+						<ul class="list-group">
+							<li class="list-group-item" ng-show="outputMessages.length == 0">No output messages...</li>
+							<li class="list-group-item" ng-show="outputMessages.length == 0">You can open this tab in a new browser window/tab.</li>
+							<li class="list-group-item" ng-repeat="outputMessage in outputMessages"><b>{{ outputMessage.Tag }}</b> : {{ outputMessage.Message }}</li>
+						</ul>
+					</div>
+				</div>
+			</uib-tab>
+		</uib-tabset>
+	</div>
 </body>
 
 @Scripts.Render("~/bundles/jquery")
@@ -34,78 +216,78 @@
 </html>
 
 @*<!-- TEST START -->
-    <input type="text" ng-model="test" placeholder="Type here..." />
-    <h1>The following will change as you change the input above as a test: {{test}}</h1>
-    <div>
-        <p class="test-class" ng-repeat="testObject in testList">{{testObject.Name}}</p>
-    </div>
-    <h3 ng-bind="anotherTest"></h3>
-    <h2>Test</h2>
-    <div>
-        Name: <input type="text" ng-model="name" /><br />
-        Message: <input type="text" ng-model="message" /><br />
-        <input type="button" value="Send" ng-click="newMessage()" />
-    </div>
-    <div>
-        <ul>
-            <li ng-repeat="chat in messages">
-                <span ng-bind="chat"></span>
-            </li>
-        </ul>
-    </div>
-    <h2>TestTwo</h2>
-    <div>
-        <input type="button" value="Test API Controller With Hub" ng-click="broadcastTestBtn()" />
-    </div>
-    <div>
-        <p class="test-class" ng-repeat="testObject in testObjectsTwoList">{{testObject.Name}}</p>
-    </div>
-    <div>
-        <ul>
-            <li ng-repeat="testObject in testTwoList">
-                <span ng-bind="testObject.Name"></span>
-            </li>
-        </ul>
-    </div>
-    <div>
-        <p>
-            <button type="button" class="btn btn-default btn-sm" ng-click="active = 1">Select second tab</button>
-            <button type="button" class="btn btn-default btn-sm" ng-click="active = 2">Select third tab</button>
-        </p>
-        <p>
-            <button type="button" class="btn btn-default btn-sm" ng-click="tabs[1].disabled = ! tabs[1].disabled">Enable / Disable third tab</button>
-        </p>
-        <hr />
+	<input type="text" ng-model="test" placeholder="Type here..." />
+	<h1>The following will change as you change the input above as a test: {{test}}</h1>
+	<div>
+		<p class="test-class" ng-repeat="testObject in testList">{{testObject.Name}}</p>
+	</div>
+	<h3 ng-bind="anotherTest"></h3>
+	<h2>Test</h2>
+	<div>
+		Name: <input type="text" ng-model="name" /><br />
+		Message: <input type="text" ng-model="message" /><br />
+		<input type="button" value="Send" ng-click="newMessage()" />
+	</div>
+	<div>
+		<ul>
+			<li ng-repeat="chat in messages">
+				<span ng-bind="chat"></span>
+			</li>
+		</ul>
+	</div>
+	<h2>TestTwo</h2>
+	<div>
+		<input type="button" value="Test API Controller With Hub" ng-click="broadcastTestBtn()" />
+	</div>
+	<div>
+		<p class="test-class" ng-repeat="testObject in testObjectsTwoList">{{testObject.Name}}</p>
+	</div>
+	<div>
+		<ul>
+			<li ng-repeat="testObject in testTwoList">
+				<span ng-bind="testObject.Name"></span>
+			</li>
+		</ul>
+	</div>
+	<div>
+		<p>
+			<button type="button" class="btn btn-default btn-sm" ng-click="active = 1">Select second tab</button>
+			<button type="button" class="btn btn-default btn-sm" ng-click="active = 2">Select third tab</button>
+		</p>
+		<p>
+			<button type="button" class="btn btn-default btn-sm" ng-click="tabs[1].disabled = ! tabs[1].disabled">Enable / Disable third tab</button>
+		</p>
+		<hr />
 
-        <uib-tabset active="active">
-            <uib-tab index="0">
-                <uib-tab-heading>
-                    <i class="glyphicon glyphicon-align-center"></i> Chart Example
-                </uib-tab-heading>
-                <div class="container">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <input ng-model="chartConfig.title.text">
-                        <button ng-click="addSeries()">Add Series</button>
-                        <button ng-click="addPoints()">Add Points to Random Series</button>
-                        <button ng-click="removeRandomSeries()">Remove Random Series</button>
-                        <button ng-click="swapChartType()">Line/Bar</button>
-                    </div>
-                    <div class="row">
-                        <highchart id="chart1" config="chartConfig" class="span10"></highchart>
-                    </div>
-                </div>
-            </uib-tab>
-            <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" disable="tab.disabled">
-                {{tab.content}}
-            </uib-tab>
-            <uib-tab index="3" select="alertMe()">
-                <uib-tab-heading>
-                    <i class="glyphicon glyphicon-bell"></i> Alert!
-                </uib-tab-heading>
-                <div class="container">
-                    ALEEEEEEEEEEEEEEEEEEEEEEEERT
-                </div>
-            </uib-tab>
-        </uib-tabset>
-    </div>
-    <!-- TEST END -->*@
+		<uib-tabset active="active">
+			<uib-tab index="0">
+				<uib-tab-heading>
+					<i class="glyphicon glyphicon-align-center"></i> Chart Example
+				</uib-tab-heading>
+				<div class="container">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<input ng-model="chartConfig.title.text">
+						<button ng-click="addSeries()">Add Series</button>
+						<button ng-click="addPoints()">Add Points to Random Series</button>
+						<button ng-click="removeRandomSeries()">Remove Random Series</button>
+						<button ng-click="swapChartType()">Line/Bar</button>
+					</div>
+					<div class="row">
+						<highchart id="chart1" config="chartConfig" class="span10"></highchart>
+					</div>
+				</div>
+			</uib-tab>
+			<uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" disable="tab.disabled">
+				{{tab.content}}
+			</uib-tab>
+			<uib-tab index="3" select="alertMe()">
+				<uib-tab-heading>
+					<i class="glyphicon glyphicon-bell"></i> Alert!
+				</uib-tab-heading>
+				<div class="container">
+					ALEEEEEEEEEEEEEEEEEEEEEEEERT
+				</div>
+			</uib-tab>
+		</uib-tabset>
+	</div>
+	<!-- TEST END -->*@

@@ -13,7 +13,12 @@ app.config(function ($routeProvider) {
 });
 
 app.factory("dataService", function ($http) {
-    return {
+	return {
+		initiateRun: function (params) {
+			return $http.get("/api/main/run", {
+				params: params
+			});
+		},
         testOutputMessage: function (params) {
             return $http.get("/api/main/testdebug", {
                 params: params
