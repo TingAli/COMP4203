@@ -119,9 +119,7 @@ namespace COMP4203.Web.Models
             srcNode.TransmitPacket();
             dstNode.ReceiveProcessPacket();
             new OutputPaneController().UpdateBatteryLevel(srcNode);
-            new OutputPaneController().PrintToOutputPane("Battery_Debug", "srclevel:" + srcNode.GetBatteryLevel());
             new OutputPaneController().UpdateBatteryLevel(dstNode);
-            new OutputPaneController().PrintToOutputPane("Battery_Debug", "dstlevel:" + dstNode.GetBatteryLevel());
         }
     }
 }
