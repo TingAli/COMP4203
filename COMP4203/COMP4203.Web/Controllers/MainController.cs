@@ -13,13 +13,13 @@ namespace COMP4203.Web.Controllers
 	    public MainController()
 	    {
 
-	    }
+        }
 
         [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{tabIndex}")]
         public void RunTest(
 	        int nodeNumber,
-	        int messageNumber, 
-	        int simSpeedNumber, 
+	        int messageNumber,
+	        int simSpeedNumber,
 	        int tabIndex)
         {
             bool demo = true;

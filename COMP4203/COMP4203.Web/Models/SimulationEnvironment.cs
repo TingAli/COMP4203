@@ -2,6 +2,7 @@
 using COMP4203.Web.Controllers.Hubs;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace COMP4203.Web.Models
 {
@@ -105,11 +106,20 @@ namespace COMP4203.Web.Models
             for (int i = 1; i < nodes.Count; i++)
             {
                 new OutputPaneController().PrintToOutputPane("DSR", "Sending Message from " + nodes[i - 1].GetNodeID() + " to " + nodes[i].GetNodeID() + ".");
-                nodes[i - 1].TransmitPacket();
-                nodes[i].ReceiveProcessPacket();
+                TransmitData(nodes[i - 1], nodes[i], 2000);
             }
             new OutputPaneController().PrintToOutputPane("DSR", "Received Message at Destination Node " + destinationNode.GetNodeID());
             return true;
+        }
+
+        public void TransmitData(MobileNode srcNode, MobileNode dstNode, int wait)
+        {
+            new OutputPaneController().PrintArrow(srcNode, dstNode);
+            Thread.Sleep(wait);
+            srcNode.TransmitPacket();
+            dstNode.ReceiveProcessPacket();
+            new OutputPaneController().UpdateBatteryLevel(srcNode);
+            new OutputPaneController().UpdateBatteryLevel(dstNode);
         }
     }
 }
