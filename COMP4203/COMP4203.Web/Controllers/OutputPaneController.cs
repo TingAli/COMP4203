@@ -26,6 +26,11 @@ namespace COMP4203.Web.Controllers
             Hub.Clients.All.sendMessageBetweenTwoNodes(JsonConvert.SerializeObject(sourceNode), JsonConvert.SerializeObject(destNode));
         }
 
+        public void UpdateBatteryLevel(MobileNode node)
+        {
+            Hub.Clients.All.updateBatteryLevel(JsonConvert.SerializeObject(node));
+        }
+
         public void PopulateNodesDSR(List<MobileNode> nodes, int canvasIndex)
         {
             foreach (MobileNode node in nodes) {

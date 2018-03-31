@@ -5,7 +5,7 @@
     $scope.messageNumber = 0;
     $scope.simSpeedNumber = 0;
 
-    $scope.initiateRun = function (nodeNumber, messageNumber, simSpeedNumber, tabIndex) {
+    $scope.initiateRun = function (tabIndex/*, messageNumber, simSpeedNumber, tabIndex*/) {
         $scope.pushOutputMessage("User", "Run Initiated for Session " + tabIndex + ".");
 		context.run({
 			nodeNumber: $scope.nodeNumber,
@@ -71,7 +71,8 @@
 		var canvasCtx=$scope.canvasList[node.CanvasIndex];
 		var batteryLevelX=node.CenterX+(node.Radius*1.15);
 		var batteryLevelY=node.CenterY-(node.Radius*1.15);
-		var batteryLevelTextHistoryObject={
+        var batteryLevelTextHistoryObject = {
+            Id: node.Id,
 			X: batteryLevelX,
 			Y: batteryLevelY,
 			IsVisible: true
@@ -85,9 +86,11 @@
 	}
 
 	$scope.updateBatteryLevel=function(node) {
-		var found=$filter("filter")($scope.canvasList[node.CanvasIndex].BatteryLevelTextHistory,{ Id: node.Id },true);
-		if(found.length) {
-			found[0].IsVisible=false;
+		var foundHistory=$filter("filter")($scope.canvasList[node.CanvasIndex].BatteryLevelTextHistory,{ Id: node.Id },true);
+        var found = $filter("filter")($scope.canvasList[node.CanvasIndex].Nodes, { Id: node.Id }, true);
+        if (found.length && foundHistory.length) {
+            foundHistory[0].IsVisible = false;
+            found[0].BatteryLevel = node.BatteryLevel;
 		}
 
 		$scope.reDrawCurrentState(node.CanvasIndex);
