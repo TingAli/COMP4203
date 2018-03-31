@@ -15,6 +15,28 @@ namespace COMP4203.Web.Controllers
 
         }
 
+        [HttpGet, Route("api/main/demo/{tabIndex}")]
+        public void RunDemo(int tabIndex)
+        {
+            SimulationEnvironment sim = new SimulationEnvironment();
+            // Add Test Nodes
+            sim.AddNode(new MobileNode(100, 100, 100));
+            sim.AddNode(new MobileNode(200, 210, 100));
+            sim.AddNode(new MobileNode(210, 200, 100));
+            sim.AddNode(new MobileNode(298, 298, 100));
+            // Add Test Message
+            sim.AddMessage(new Message(sim.GetNodes()[0], sim.GetNodes()[3]));
+            // Print Simulation Nodes
+            new OutputPaneController().PrintToOutputPane("Note", "Simulation Nodes:");
+            foreach (MobileNode node in sim.GetNodes())
+            {
+                node.Print();
+                node.PrintNodesWithinRange(sim);
+            }
+            new OutputPaneController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
+            sim.SendMessageDSR(sim.GetMessages()[0]);
+        }
+
         [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{tabIndex}")]
         public void RunTest(
 	        int nodeNumber,
@@ -22,33 +44,12 @@ namespace COMP4203.Web.Controllers
 	        int simSpeedNumber,
 	        int tabIndex)
         {
-            bool demo = true;
-            if (demo)
-            {
-                SimulationEnvironment sim = new SimulationEnvironment();
-                // Add Test Nodes
-                sim.AddNode(new MobileNode(100, 100, 100));
-                sim.AddNode(new MobileNode(200, 210, 100));
-                sim.AddNode(new MobileNode(210, 200, 100));
-                sim.AddNode(new MobileNode(298, 298, 100));
-                // Add Test Message
-                sim.AddMessage(new Message(sim.GetNodes()[0], sim.GetNodes()[3]));
-                // Print Simulation Nodes
-                new OutputPaneController().PrintToOutputPane("Note", "Simulation Nodes:");
-                foreach (MobileNode node in sim.GetNodes())
-                {
-                    node.Print();
-                    node.PrintNodesWithinRange(sim);
-                }
-                new OutputPaneController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
-                sim.SendMessageDSR(sim.GetMessages()[0]);
-            } else
-            {
-                SimulationEnvironment sim = new SimulationEnvironment();
-                sim.GenerateRandomNodes(10);
-                sim.GenerateRandomMessages(5);
-                sim.RunSimulation();
-            }
+            SimulationEnvironment sim = new SimulationEnvironment();
+            sim.GenerateRandomNodes(nodeNumber);
+            sim.GenerateRandomMessages(messageNumber);
+            new OutputPaneController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
+            sim.RunSimulation();
+            
         }
 
 	    [HttpGet, Route("api/testtwo/gettesttwolist")]
