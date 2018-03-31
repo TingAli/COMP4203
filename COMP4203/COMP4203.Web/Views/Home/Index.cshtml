@@ -39,6 +39,15 @@
 											Your browser does not support the canvas element.
 										</canvas>
 									</div>
+									<div class="panel-footer">
+										<ul class="legend">
+											<li>Packet Legend: </li>
+											<li><span class="rreq_colour"></span> RREQ</li>
+											<li><span class="rrep_colour"></span> RREP</li>
+											<li><span class="data_colour"></span> DATA</li>
+											<li><span class="ack_colour"></span> ACK</li>
+										</ul>
+									</div>
 								</div>
 							</div>
 							<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
@@ -56,6 +65,10 @@
 										<div class="input-group">
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
 											<input ng-model="runData.simSpeedNumber" type="number" class="form-control" placeholder="Event Sim Speed #">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon">Node Range # (px)</span>
+											<input ng-model="runData.nodeRange" type="number" class="form-control" placeholder="Node Range #">
 										</div>
 										<div class="btn-group" role="group">
 											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
@@ -107,6 +120,10 @@
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
 											<input ng-model="runData.simSpeedNumber" type="number" class="form-control" placeholder="Event Sim Speed #">
 										</div>
+										<div class="input-group">
+											<span class="input-group-addon">Node Range # (px)</span>
+											<input ng-model="runData.nodeRange" type="number" class="form-control" placeholder="Node Range #">
+										</div>
 										<div class="btn-group" role="group">
 											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
 											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
@@ -156,6 +173,10 @@
 										<div class="input-group">
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
 											<input ng-model="runData.simSpeedNumber" type="number" class="form-control" placeholder="Event Sim Speed #">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon">Node Range # (px)</span>
+											<input ng-model="runData.nodeRange" type="number" class="form-control" placeholder="Node Range #">
 										</div>
 										<div class="btn-group" role="group">
 											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>

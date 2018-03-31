@@ -1,13 +1,16 @@
 ﻿app.controller("indexController",["$scope","dataService","$window","$timeout","$filter",function($scope,context,$window,$timeout,$filter) {
 	$scope.outputMessages=[];
-    $scope.canvasList = [];
-    $scope.runData = {};
+	$scope.canvasList=[];
+	$scope.runData={};
+	$scope.runData.nodeRange=200;
 
-    $scope.initiateRun = function (tabIndex) {
-        context.run($scope.runData.nodeNumber, $scope.runData.messageNumber, $scope.runData.simSpeedNumber, tabIndex)
-            .then(function () {
-            });
-    }
+	$scope.initiateRun=function(tabIndex) {
+		$scope.reset(tabIndex);
+
+		context.run($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,tabIndex)
+			.then(function() {
+			});
+	}
 
 	$scope.drawNode=function(node) {
 		var canvasCtx=$scope.canvasList[node.CanvasIndex];
@@ -17,10 +20,30 @@
 		canvasCtx.fillStyle=node.FillColour;
 		canvasCtx.fill();
 		canvasCtx.lineWidth=node.BorderWidth;
+		canvasCtx.setLineDash([0]);
 		canvasCtx.strokeStyle=node.StrokeColour;
 		canvasCtx.stroke();
 
+		$scope.drawNodeRange(node);
 		$scope.drawBatteryLevel(node);
+	}
+
+	$scope.drawNodeRange=function(node) {
+		var canvasCtx=$scope.canvasList[node.CanvasIndex];
+		var nodeRangeHistoryObject={
+			Id: node.Id,
+			X: node.CenterX,
+			Y: node.CenterY,
+			IsVisible: true
+		};
+
+		canvasCtx.beginPath();
+		canvasCtx.setLineDash([5]);
+		canvasCtx.arc(node.CenterX,node.CenterY,$scope.runData.nodeRange,0,2*Math.PI,false);
+		canvasCtx.strokeStyle="#D3D3D3";
+		canvasCtx.stroke();
+
+		canvasCtx.NodeRangeHistory.push(nodeRangeHistoryObject);
 	}
 
 	$scope.drawMessageLine=function(nodeStart,nodeEnd,strokeColour,isRedraw) {
@@ -36,12 +59,14 @@
 
 		$scope.setMessageLinesToFalse(nodeStart.CanvasIndex);
 
+		canvasCtx.beginPath();
 		canvasCtx.moveTo(nodeStart.CenterX,nodeStart.CenterY);
 		canvasCtx.lineTo(nodeEnd.CenterX,nodeEnd.CenterY);
 		canvasCtx.lineTo(nodeEnd.CenterX-headlen*Math.cos(angle-Math.PI/6),nodeEnd.CenterY-headlen*Math.sin(angle-Math.PI/6));
 		canvasCtx.moveTo(nodeEnd.CenterX,nodeEnd.CenterY);
 		canvasCtx.lineTo(nodeEnd.CenterX-headlen*Math.cos(angle+Math.PI/6),nodeEnd.CenterY-headlen*Math.sin(angle+Math.PI/6));
 		canvasCtx.lineWidth=2;
+		canvasCtx.setLineDash([0]);
 		canvasCtx.strokeStyle=strokeColour;
 		canvasCtx.stroke();
 
@@ -64,26 +89,29 @@
 		var canvasCtx=$scope.canvasList[node.CanvasIndex];
 		var batteryLevelX=node.CenterX+(node.Radius*1.15);
 		var batteryLevelY=node.CenterY-(node.Radius*1.15);
-        var batteryLevelTextHistoryObject = {
-            Id: node.Id,
+		var batteryLevelTextHistoryObject={
+			Id: node.Id,
 			X: batteryLevelX,
 			Y: batteryLevelY,
 			IsVisible: true
 		};
 
+		canvasCtx.beginPath();
 		canvasCtx.font="12px Arial";
 		canvasCtx.fillStyle="red";
 		canvasCtx.fillText(node.BatteryLevel,batteryLevelX,batteryLevelY);
+		canvasCtx.setLineDash([0]);
+		canvasCtx.stroke();
 
 		canvasCtx.BatteryLevelTextHistory.push(batteryLevelTextHistoryObject);
 	}
 
 	$scope.updateBatteryLevel=function(node) {
 		var foundHistory=$filter("filter")($scope.canvasList[node.CanvasIndex].BatteryLevelTextHistory,{ Id: node.Id },true);
-        var found = $filter("filter")($scope.canvasList[node.CanvasIndex].Nodes, { Id: node.Id }, true);
-        if (found.length && foundHistory.length) {
-            foundHistory[0].IsVisible = false;
-            found[0].BatteryLevel = node.BatteryLevel;
+		var found=$filter("filter")($scope.canvasList[node.CanvasIndex].Nodes,{ Id: node.Id },true);
+		if(found.length&&foundHistory.length) {
+			foundHistory[0].IsVisible=false;
+			found[0].BatteryLevel=node.BatteryLevel;
 		}
 
 		$scope.reDrawCurrentState(node.CanvasIndex);
@@ -119,6 +147,7 @@
 		ctx.Nodes=[];
 		ctx.LineHistory=[];
 		ctx.BatteryLevelTextHistory=[];
+		ctx.NodeRangeHistory=[];
 
 		$scope.canvasList.push(ctx);
 	}
@@ -135,11 +164,11 @@
 		$scope.canvasList[tabIndex].Nodes=[];
 		$scope.canvasList[tabIndex].LineHistory=[];
 		$scope.canvasList[tabIndex].BatteryLevelTextHistory=[];
+		$scope.canvasList[tabIndex].NodeRangeHistory=[];
 		$scope.runData.nodeNumber=0;
 		$scope.runData.messageNumber=0;
 		$scope.runData.simSpeedNumber=0;
-
-		$scope.pushOutputMessage("User","Reset applied to Session "+tabIndex+".");
+		$scope.runData.nodeRange=200;
 	}
 
 	$scope.pushOutputMessage=function(tag,message) {
@@ -152,12 +181,15 @@
 	}
 
 	$scope.runDemo=function(tabIndex) {
+		$scope.reset(tabIndex);
+
 		$scope.runData.nodeNumber=4;
 		$scope.runData.messageNumber=1;
 		$scope.runData.simSpeedNumber=2000;
+		$scope.runData.nodeRange=200;
 
 		context.demo(tabIndex)
-			.then(function () {
+			.then(function() {
 			});
 	}
 
@@ -172,50 +204,55 @@
 				CenterX: 30,
 				CenterY: 50,
 				CanvasIndex: tabIndex,
-				BatteryLevel: 99,
-				IsFinal: false
+				BatteryLevel: 1000,
+				IsFinal: false,
+				range: 200
 			},
 			{
 				Id: $scope.newGuid(),
 				FillColour: "#000000",
-				BorderWidth: 4,
+				BorderWidth: 2,
 				StrokeColour: "#FF0000",
 				Radius: 10,
 				CenterX: 30,
 				CenterY: 125,
 				CanvasIndex: tabIndex,
-				BatteryLevel: 99,
-				IsFinal: false
+				BatteryLevel: 1000,
+				IsFinal: false,
+				range: 200
 			},
 			{
 				Id: $scope.newGuid(),
 				FillColour: "#000000",
-				BorderWidth: 4,
+				BorderWidth: 2,
 				StrokeColour: "#FF0000",
 				Radius: 10,
 				CenterX: 150,
 				CenterY: 280,
 				CanvasIndex: tabIndex,
-				BatteryLevel: 99,
-				IsFinal: false
+				BatteryLevel: 1000,
+				IsFinal: false,
+				range: 200
 			},
 			{
 				Id: $scope.newGuid(),
 				FillColour: "#000000",
-				BorderWidth: 4,
+				BorderWidth: 2,
 				StrokeColour: "#00FF00",
 				Radius: 10,
 				CenterX: 220,
 				CenterY: 370,
 				CanvasIndex: tabIndex,
-				BatteryLevel: 99,
-				IsFinal: true
+				BatteryLevel: 1000,
+				IsFinal: true,
+				range: 200
 			}
 		];
 
 		$scope.runData.nodeNumber=testNodeList.length;
 		$scope.runData.messageNumber=1;
 		$scope.runData.simSpeedNumber=200;
+		$scope.runData.nodeRange=200;
 		$scope.populateCanvas(testNodeList);
 
 		$scope.drawMessageLine(testNodeList[0],testNodeList[1],"#FF0000");
@@ -235,11 +272,14 @@
 	}
 
 	angular.element(document).ready(function() {
+		$scope.runData.nodeRange=200;
+		$scope.mainHub=$.connection.mainHub;
+		$.connection.hub.start();
+
 		for(var index=0;index<3;index++) {
 			$scope.initAndAddCanvas(index);
 		}
-		$scope.mainHub=$.connection.mainHub;
-		$.connection.hub.start();
+
 		$scope.mainHub.client.broadcastOutputMessage=function(outputMessageJson) {
 			var outputMessage=angular.fromJson(outputMessageJson);
 
