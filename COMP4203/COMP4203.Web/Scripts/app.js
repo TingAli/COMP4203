@@ -18,9 +18,8 @@ app.factory("dataService",function($http) {
 			return $http.get("/api/main/run/" + nodeNumber + "/" + messageNumber + "/" + simSpeedNumber + "/" + tabIndex,{
 			});
 		},
-		testOutputMessage: function(params) {
-			return $http.get("/api/main/testdebug",{
-				params: params
+		demo: function(tabIndex) {
+			return $http.get("/api/main/demo/" + tabIndex,{
 			});
 		}
 	}

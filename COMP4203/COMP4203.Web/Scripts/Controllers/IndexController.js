@@ -135,9 +135,9 @@
 		$scope.canvasList[tabIndex].Nodes=[];
 		$scope.canvasList[tabIndex].LineHistory=[];
 		$scope.canvasList[tabIndex].BatteryLevelTextHistory=[];
-		$scope.nodeNumber=0;
-		$scope.messageNumber=0;
-		$scope.simSpeedNumber=0;
+		$scope.runData.nodeNumber=0;
+		$scope.runData.messageNumber=0;
+		$scope.runData.simSpeedNumber=0;
 
 		$scope.pushOutputMessage("User","Reset applied to Session "+tabIndex+".");
 	}
@@ -151,9 +151,17 @@
 		$scope.outputMessages.push(outputMessage);
 	}
 
-	$scope.runTest=function(tabIndex) {
-		$scope.pushOutputMessage("User","Test Initiated for Session "+tabIndex+".");
+	$scope.runDemo=function(tabIndex) {
+		$scope.runData.nodeNumber=4;
+		$scope.runData.messageNumber=1;
+		$scope.runData.simSpeedNumber=2000;
 
+		context.demo(tabIndex)
+			.then(function () {
+			});
+	}
+
+	$scope.runTest=function(tabIndex) {
 		var testNodeList=[
 			{
 				Id: $scope.newGuid(),
@@ -205,25 +213,25 @@
 			}
 		];
 
-		$scope.nodeNumber=testNodeList.length;
-		$scope.messageNumber=1;
-		$scope.simSpeedNumber=200;
+		$scope.runData.nodeNumber=testNodeList.length;
+		$scope.runData.messageNumber=1;
+		$scope.runData.simSpeedNumber=200;
 		$scope.populateCanvas(testNodeList);
 
 		$scope.drawMessageLine(testNodeList[0],testNodeList[1],"#FF0000");
 
 		$timeout(function() {
 			$scope.drawMessageLine(testNodeList[1],testNodeList[2],"#FF0000");
-		},$scope.simSpeedNumber);
+		},$scope.runData.simSpeedNumber);
 
 		$timeout(function() {
 			$scope.drawMessageLine(testNodeList[2],testNodeList[3],"#FF0000");
-		},$scope.simSpeedNumber*2);
+		},$scope.runData.simSpeedNumber*2);
 
 		$timeout(function() {
 			testNodeList[2].BatteryLevel=84;
 			$scope.updateBatteryLevel(testNodeList[2]);
-		},$scope.simSpeedNumber*3);
+		},$scope.runData.simSpeedNumber*3);
 	}
 
 	angular.element(document).ready(function() {
@@ -239,11 +247,11 @@
 			$scope.$apply();
 		};
 
-		$scope.mainHub.client.sendMessageBetweenTwoNodes=function(nodeStartJson,nodeEndJson) {
+		$scope.mainHub.client.sendMessageBetweenTwoNodes=function(nodeStartJson,nodeEndJson,lineColour) {
 			var nodeStart=angular.fromJson(nodeStartJson);
 			var nodeEnd=angular.fromJson(nodeEndJson);
 
-			$scope.drawMessageLine(nodeStart,nodeEnd,"#FF00FF");
+			$scope.drawMessageLine(nodeStart,nodeEnd,lineColour);
 			$scope.$apply();
 		};
 
