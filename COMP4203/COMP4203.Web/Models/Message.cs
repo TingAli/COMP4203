@@ -1,4 +1,5 @@
-﻿using System;
+﻿using COMP4203.Web.Controllers;
+using System;
 
 namespace COMP4203.Web.Models
 {
@@ -19,6 +20,10 @@ namespace COMP4203.Web.Models
         public MobileNode GetDestinstationNode() { return destinationNode; }
         public int GetMessageID() { return messageID; }
 
-        public void Print() => Console.WriteLine("Message from Node {0} to Node {1}.", sourceNode.GetNodeID(), destinationNode.GetNodeID());
+        public void Print()
+        {
+            OutputPaneController outputPaneController = new OutputPaneController();
+            outputPaneController.PrintToOutputPane("Message", "Message from Node " + sourceNode.GetNodeID() + " to Node " + destinationNode.GetNodeID() + ".");
+        }
     }
 }

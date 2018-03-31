@@ -1,4 +1,6 @@
-﻿using System;
+﻿using COMP4203.Web.Controllers;
+using COMP4203.Web.Controllers.Hubs;
+using System;
 using System.Collections.Generic;
 
 namespace COMP4203.Web.Models
@@ -32,7 +34,8 @@ namespace COMP4203.Web.Models
             {
                 SendMessageDSR(message);
             }
-
+            new OutputPaneController().PrintToOutputPane("DSR", "Finished Transmitting Messages.");
+            new OutputPaneController().PrintToOutputPane("DSR", messages.Count + " messages transmitted.");
             sessions.Add(sessionData);
         }
 
@@ -82,30 +85,30 @@ namespace COMP4203.Web.Models
             // If no known route found
             if (route == null)
             {
-                Console.WriteLine("No Known Route to Destination.");
+                new OutputPaneController().PrintToOutputPane("DSR", "No Known Route to Destination.");
                 sourceNode.RouteDiscoveryDSR(destinationNode, this); // Perform Route Discovery
                 route = sourceNode.GetBestRouteDSR(destinationNode); // Attempt to assign newly found best route
                 if (route == null)
                 {
-                    Console.WriteLine("No Route to Destination.");
+                    new OutputPaneController().PrintToOutputPane("DSR", "No Route to Destination.");
                     return false;
                 }
             }
 
-            Console.WriteLine("Sending Message:");
-            Console.WriteLine("Source Node: " + sourceNode.GetNodeID());
-            Console.WriteLine("Destination Node: " + destinationNode.GetNodeID());
-            Console.WriteLine("Route Chosen: " + route.GetRouteAsString());
+            new OutputPaneController().PrintToOutputPane("DSR", "Sending Message:");
+            new OutputPaneController().PrintToOutputPane("DSR", "Source Node: " + sourceNode.GetNodeID());
+            new OutputPaneController().PrintToOutputPane("DSR", "Destination Node: " + destinationNode.GetNodeID());
+            new OutputPaneController().PrintToOutputPane("DSR", "Route Chosen: " + route.GetRouteAsString());
 
             List<MobileNode> nodes = route.GetNodeRoute();
-            Console.WriteLine("Beginning Message Transmission from Source Node " + sourceNode.GetNodeID());
+            new OutputPaneController().PrintToOutputPane("DSR", "Beginning Message Transmission from Source Node " + sourceNode.GetNodeID());
             for (int i = 1; i < nodes.Count; i++)
             {
-                Console.WriteLine("Sending Message from {0} to {1}.", nodes[i - 1].GetNodeID(), nodes[i].GetNodeID());
+                new OutputPaneController().PrintToOutputPane("DSR", "Sending Message from " + nodes[i - 1].GetNodeID() + " to " + nodes[i].GetNodeID() + ".");
                 nodes[i - 1].TransmitPacket();
                 nodes[i].ReceiveProcessPacket();
             }
-            Console.WriteLine("Received Message at Destination Node " + destinationNode.GetNodeID());
+            new OutputPaneController().PrintToOutputPane("DSR", "Received Message at Destination Node " + destinationNode.GetNodeID());
             return true;
         }
     }
