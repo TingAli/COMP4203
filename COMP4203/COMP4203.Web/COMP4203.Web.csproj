@@ -170,6 +170,8 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\Hubs\OutputHub.cs" />
+    <Compile Include="Controllers\OutputPaneController.cs" />
     <Compile Include="Controllers\Extend\ApiControllerWithHub.cs" />
     <Compile Include="Controllers\Hubs\MainHub.cs" />
     <Compile Include="Controllers\MainController.cs" />
@@ -177,6 +179,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\OutputPane.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\MobileNode.cs" />
     <Compile Include="Models\oldMobileNode.cs" />

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using COMP4203.Web.Controllers;
+using COMP4203.Web.Controllers.Hubs;
+using System;
 using System.Collections.Generic;
 
 namespace COMP4203.Web.Models
@@ -8,27 +10,45 @@ namespace COMP4203.Web.Models
         static int TRANSMIT_COST = 2;
         static int RECEIVE_PROCESS_COST = 1;
 
+        public string FillColour { get; set; }
+        public int BorderWidth { get; set; }
+        public string StrokeColour { get; set; }
+        public int Radius { get; set; }
+
         static int nodeCount = 0;
         static int range = 200;
         private int nodeID;
-        private int batteryLevel;
-        private int xPosition, yPosition;
+        public int BatteryLevel;
+        public int CenterX, CenterY;
         private Dictionary<int, List<RoutingPacket>> knownRoutes;
+        public Guid Id;
+        public int CanvasIndex;
 
         public MobileNode()
         {
             nodeID = nodeCount++;
-            batteryLevel = 100;
-            xPosition = yPosition = 0;
+            BatteryLevel = 100;
+            CenterX = CenterY = 0;
             knownRoutes = new Dictionary<int, List<RoutingPacket>>();
+            Id = Guid.NewGuid();
+            CanvasIndex = -1;
+            BorderWidth = 2;
+            StrokeColour = "#FFFFFF";
+            Radius = 10;
         }
 
         public MobileNode(int x, int y, int bLevel)
         {
             nodeID = ++nodeCount;
-            xPosition = x;
-            yPosition = y;
-            batteryLevel = bLevel; knownRoutes = new Dictionary<int, List<RoutingPacket>>();
+            BatteryLevel = 100;
+            CenterX = x;
+            CenterY = y;
+            BatteryLevel = bLevel; knownRoutes = new Dictionary<int, List<RoutingPacket>>();
+            Id = Guid.NewGuid();
+            CanvasIndex = -1;
+            BorderWidth = 2;
+            StrokeColour = "#FFFFFF";
+            Radius = 10;
         }
 
         public int GetNodeID()
@@ -38,24 +58,23 @@ namespace COMP4203.Web.Models
 
         public int GetBatteryLevel()
         {
-            return batteryLevel;
+            return BatteryLevel;
         }
 
         public int GetXPosition()
         {
-            return xPosition;
+            return CenterX;
         }
 
         public int GetYPosition()
         {
-            return yPosition;
+            return CenterY;
         }
-
+        
         public void Print()
         {
-            Console.WriteLine("Node " + nodeID + ":");
-            Console.WriteLine("Battery: " + batteryLevel + "%");
-            Console.WriteLine("Location: " + xPosition + ", " + yPosition);
+            new OutputPaneController().PrintToOutputPane("Note", "Node #" + nodeID + " - Battery Level: " + BatteryLevel +
+                " - Location: " + CenterX + "," + CenterY);
         }
 
         public void PrintNodesWithinRange(SimulationEnvironment env)
@@ -66,11 +85,11 @@ namespace COMP4203.Web.Models
                 {
                     if (IsWithinRangeOf(n))
                     {
-                        Console.WriteLine("Node {0} is within range. Distance: {1}", n.GetNodeID(), GetDistance(n));
+                        new OutputPaneController().PrintToOutputPane("Node_Range", "Node " + n.GetNodeID() + " is within range. Distance: " + GetDistance(n));
                     }
                     else
                     {
-                        Console.WriteLine("Node {0} is not within range. Distance: {1}", n.GetNodeID(), GetDistance(n));
+                        new OutputPaneController().PrintToOutputPane("Node_Range", "Node " + n.GetNodeID() + " is not within range. Distance: " + GetDistance(n));
                     }
                 }
             }
@@ -78,17 +97,17 @@ namespace COMP4203.Web.Models
 
         public double GetDistance(MobileNode node)
         {
-            return Math.Sqrt((Math.Pow((xPosition - node.xPosition), 2)) + (Math.Pow((yPosition - node.yPosition), 2)));
+            return Math.Sqrt((Math.Pow((CenterX - node.CenterX), 2)) + (Math.Pow((CenterY - node.CenterY), 2)));
         }
 
         public void TransmitPacket()
         {
-            batteryLevel -= TRANSMIT_COST;
+            BatteryLevel -= TRANSMIT_COST;
         }
 
         public void ReceiveProcessPacket()
         {
-            batteryLevel -= RECEIVE_PROCESS_COST;
+            BatteryLevel -= RECEIVE_PROCESS_COST;
         }
 
         public bool IsWithinRangeOf(MobileNode node)
@@ -111,7 +130,7 @@ namespace COMP4203.Web.Models
 
         public List<RoutingPacket> RouteDiscoveryDSR(MobileNode destNode, SimulationEnvironment env)
         {
-            Console.WriteLine("Performing Route Discovery from Node {0} to Node {1}.", nodeID, destNode.GetNodeID());
+            new OutputPaneController().PrintToOutputPane("DSR", "Performing Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
             RoutingPacket rPacket = new RoutingPacket();
             List<RoutingPacket> routes = DSRDicovery(destNode, env, rPacket);
             if (knownRoutes.ContainsKey(destNode.GetNodeID()))
@@ -171,10 +190,11 @@ namespace COMP4203.Web.Models
                         rPacket.AddNodeToRoute(this); // Adding nodes to route
                         rPacket.AddNodeToRoute(node);
                         routes.Add(rPacket); // Adding all possible routes
-                        Console.WriteLine("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID());
+                        new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
+                        
                         TransmitPacket();
                         node.ReceiveProcessPacket();
-                        Console.WriteLine("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID);
+                        new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
                         node.TransmitPacket();
                         ReceiveProcessPacket();
                     }
@@ -182,7 +202,7 @@ namespace COMP4203.Web.Models
                     {
                         RoutingPacket rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this);
-                        Console.WriteLine("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID());
+                        new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
                         TransmitPacket();
                         node.ReceiveProcessPacket();
                         routes.AddRange(node.DSRDicovery(destNode, env, rPacket)); // Recursive call
@@ -198,7 +218,7 @@ namespace COMP4203.Web.Models
                     {
                         if (rList[i] == this && i != 0)
                         {
-                            Console.WriteLine("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i-1].GetNodeID());
+                            new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i-1].GetNodeID()));
                             TransmitPacket();
                             rList[i - 1].GetNodeID();
                         }
@@ -207,20 +227,6 @@ namespace COMP4203.Web.Models
                 }
             }
             return routes;
-        }
-
-        public bool dSendMessage(Message message, RoutingPacket route)
-        {
-
-            Console.WriteLine("Routing Packet Selected: {0}", route.GetRouteAsString());
-            List<MobileNode> nodes = route.GetNodeRoute();
-            Console.WriteLine("Beginning Message Transmission from Source Node " + nodes[0].GetNodeID());
-            for (int i = 1; i < nodes.Count; i++)
-            {
-                Console.WriteLine("Sending Message from {0} to {1}.", nodes[i - 1].GetNodeID(), nodes[i].GetNodeID());
-            }
-            Console.WriteLine("Received Message at Destination Node " + nodes[nodes.Count - 1].GetNodeID());
-            return true;
         }
 
         public List<RoutingPacket> GetRoutesToNode(MobileNode node)
@@ -235,7 +241,8 @@ namespace COMP4203.Web.Models
         {
             List<RoutingPacket> routes = GetRoutesToNode(node);
             if (routes == null) { return null; }
-            int lowestValue = 999999;
+            if (routes.Count == 0) { return null; }
+            int lowestValue = 99999999;
             int lowestIndex = -1;
             for (int i = 0; i < routes.Count; i++)
             {
@@ -246,6 +253,7 @@ namespace COMP4203.Web.Models
                     lowestIndex = i;
                 }
             }
+            new OutputPaneController().PrintToOutputPane("DEBUG", "Index: " + lowestIndex);
             return routes[lowestIndex];
         }
     }

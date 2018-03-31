@@ -14,7 +14,7 @@ app.config(function ($routeProvider) {
 
 app.factory("dataService", function ($http) {
 	return {
-		initiateRun: function (params) {
+		run: function (params) {
 			return $http.get("/api/main/run", {
 				params: params
 			});
