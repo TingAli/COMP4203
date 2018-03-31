@@ -15,9 +15,12 @@ namespace COMP4203.Web.Controllers
 
 	    }
 
-        [HttpGet, Route("api/main/run")]
-        public void RunTest([FromUri] int nodeNumber, [FromUri] int messageNumber,
-            [FromUri] int simSpeedNumber, [FromUri] int tabIndex)
+        [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{tabIndex}")]
+        public void RunTest(
+	        int nodeNumber,
+	        int messageNumber, 
+	        int simSpeedNumber, 
+	        int tabIndex)
         {
             bool demo = true;
             if (demo)

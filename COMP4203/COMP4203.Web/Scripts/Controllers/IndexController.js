@@ -1,19 +1,14 @@
 ﻿app.controller("indexController",["$scope","dataService","$window","$timeout","$filter",function($scope,context,$window,$timeout,$filter) {
 	$scope.outputMessages=[];
-    $scope.canvasList = [];
-    $scope.nodeNumber = 0;
-    $scope.messageNumber = 0;
-    $scope.simSpeedNumber = 0;
+	$scope.canvasList=[];
+	$scope.runData = {};
 
-    $scope.initiateRun = function (nodeNumber, messageNumber, simSpeedNumber, tabIndex) {
-        $scope.pushOutputMessage("User", "Run Initiated for Session " + tabIndex + ".");
-		context.run({
-			nodeNumber: $scope.nodeNumber,
-			messageNumber: $scope.messageNumber,
-			simSpeedNumber: $scope.simSpeedNumber,
-			tabIndex: tabIndex
-		}).then(function() {
-		});
+	$scope.initiateRun=function(tabIndex) {
+		$scope.pushOutputMessage("User","Run Initiated for Session "+tabIndex+".");
+
+		context.run($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,tabIndex)
+			.then(function() {
+			});
 	}
 
 	$scope.drawNode=function(node) {
@@ -139,9 +134,9 @@
 		$scope.canvasList[tabIndex].Nodes=[];
 		$scope.canvasList[tabIndex].LineHistory=[];
 		$scope.canvasList[tabIndex].BatteryLevelTextHistory=[];
-		$scope.nodeNumber="";
-		$scope.messageNumber="";
-		$scope.simSpeedNumber="";
+		$scope.nodeNumber=0;
+		$scope.messageNumber=0;
+		$scope.simSpeedNumber=0;
 
 		$scope.pushOutputMessage("User","Reset applied to Session "+tabIndex+".");
 	}
@@ -256,13 +251,13 @@
 
 			$scope.updateBatteryLevel(node);
 			$scope.$apply();
-        };
+		};
 
-        $scope.mainHub.client.populateNodes = function (nodeListJson) {
-            var nodeList = angular.fromJson(nodeListJson);
+		$scope.mainHub.client.populateNodes=function(nodeListJson) {
+			var nodeList=angular.fromJson(nodeListJson);
 
-            $scope.populateCanvas(nodeList);
-            $scope.$apply();
-        };
+			$scope.populateCanvas(nodeList);
+			$scope.$apply();
+		};
 	});
 }]);

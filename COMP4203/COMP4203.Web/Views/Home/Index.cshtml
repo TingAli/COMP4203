@@ -46,20 +46,20 @@
 									<div class="panel-heading text-center">Modifications</div>
 									<div class="session-modifications-container">
 										<div class="input-group">
-											<span class="input-group-addon" id="basic-addon_@tabIndex">Node #</span>
-											<input ng-model="nodeNumber" type="number" class="form-control" placeholder="Node No." aria-describedby="basic-addon_@tabIndex">
+											<span class="input-group-addon">Node #</span>
+											<input ng-model="runData.nodeNumber" type="number" class="form-control" placeholder="Node No.">
 										</div>
 										<div class="input-group">
-											<span class="input-group-addon" id="basic-addon_@tabIndex">Message #</span>
-											<input ng-model="messageNumber" type="number" class="form-control" placeholder="Message No." aria-describedby="basic-addon_@tabIndex">
+											<span class="input-group-addon">Message #</span>
+											<input ng-model="runData.messageNumber" type="number" class="form-control" placeholder="Message No.">
 										</div>
 										<div class="input-group">
-											<span class="input-group-addon" id="basic-addon_@tabIndex">Sim Speed Between Each Event (ms)</span>
-											<input ng-model="simSpeedNumber" type="number" class="form-control" placeholder="Sim Speed No." aria-describedby="basic-addon_@tabIndex">
+											<span class="input-group-addon">Event Sim Speed (ms)</span>
+											<input ng-model="runData.simSpeedNumber" type="number" class="form-control" placeholder="Sim Speed No.">
 										</div>
 										<div class="btn-group" role="group">
 											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
-											<button type="button" class="btn btn-warning" ng-click="runTest(nodeNumber, messageNumber, simSpeedNumber, @tabIndex);">TEST</button>
+											<button type="button" class="btn btn-warning" ng-click="runTest(@tabIndex);">TEST</button>
 											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
 										</div>
 									</div>
@@ -95,16 +95,16 @@
 									<div class="panel-heading text-center">Modifications</div>
 									<div class="session-modifications-container">
 										<div class="input-group">
-											<span class="input-group-addon" id="basic-addon_@tabIndex">Node #</span>
-											<input ng-model="nodeNumber" type="number" class="form-control" placeholder="Node No." aria-describedby="basic-addon_@tabIndex">
+											<span class="input-group-addon">Node #</span>
+											<input ng-model="runData.nodeNumber" type="number" class="form-control" placeholder="Node No.">
 										</div>
 										<div class="input-group">
-											<span class="input-group-addon" id="basic-addon_@tabIndex">Message #</span>
-											<input ng-model="messageNumber" type="number" class="form-control" placeholder="Message No." aria-describedby="basic-addon_@tabIndex">
+											<span class="input-group-addon">Message #</span>
+											<input ng-model="runData.messageNumber" type="number" class="form-control" placeholder="Message No.">
 										</div>
 										<div class="input-group">
-											<span class="input-group-addon" id="basic-addon_@tabIndex">Sim Speed Between Each Event (ms)</span>
-											<input ng-model="simSpeedNumber" type="number" class="form-control" placeholder="Sim Speed No." aria-describedby="basic-addon_@tabIndex">
+											<span class="input-group-addon">Event Sim Speed (ms)</span>
+											<input ng-model="runData.simSpeedNumber" type="number" class="form-control" placeholder="Sim Speed No.">
 										</div>
 										<div class="btn-group" role="group">
 											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
@@ -144,16 +144,16 @@
 									<div class="panel-heading text-center">Modifications</div>
 									<div class="session-modifications-container">
 										<div class="input-group">
-											<span class="input-group-addon" id="basic-addon_@tabIndex">Node #</span>
-											<input ng-model="nodeNumber" type="number" class="form-control" placeholder="Node No." aria-describedby="basic-addon_@tabIndex">
+											<span class="input-group-addon">Node #</span>
+											<input ng-model="runData.nodeNumber" type="number" class="form-control" placeholder="Node No.">
 										</div>
 										<div class="input-group">
-											<span class="input-group-addon" id="basic-addon_@tabIndex">Message #</span>
-											<input ng-model="messageNumber" type="number" class="form-control" placeholder="Message No." aria-describedby="basic-addon_@tabIndex">
+											<span class="input-group-addon">Message #</span>
+											<input ng-model="runData.messageNumber" type="number" class="form-control" placeholder="Message No.">
 										</div>
 										<div class="input-group">
-											<span class="input-group-addon" id="basic-addon_@tabIndex">Sim Speed Between Each Event (ms)</span>
-											<input ng-model="simSpeedNumber" type="number" class="form-control" placeholder="Sim Speed No." aria-describedby="basic-addon_@tabIndex">
+											<span class="input-group-addon">Event Sim Speed (ms)</span>
+											<input ng-model="runData.simSpeedNumber" type="number" class="form-control" placeholder="Sim Speed No.">
 										</div>
 										<div class="btn-group" role="group">
 											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
