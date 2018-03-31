@@ -1,32 +1,15 @@
 ﻿app.controller("indexController",["$scope","dataService","$window","$timeout","$filter",function($scope,context,$window,$timeout,$filter) {
 	$scope.outputMessages=[];
-<<<<<<< HEAD
     $scope.canvasList = [];
-    $scope.nodeNumber = 0;
-    $scope.messageNumber = 0;
-    $scope.simSpeedNumber = 0;
+    $scope.runData = {};
 
-    $scope.initiateRun = function (tabIndex/*, messageNumber, simSpeedNumber, tabIndex*/) {
+    $scope.initiateRun = function (tabIndex) {
         $scope.pushOutputMessage("User", "Run Initiated for Session " + tabIndex + ".");
-		context.run({
-			nodeNumber: $scope.nodeNumber,
-			messageNumber: $scope.messageNumber,
-			simSpeedNumber: $scope.simSpeedNumber,
-			tabIndex: tabIndex
-		}).then(function() {
-		});
-=======
-	$scope.canvasList=[];
-	$scope.runData = {};
 
-	$scope.initiateRun=function(tabIndex) {
-		$scope.pushOutputMessage("User","Run Initiated for Session "+tabIndex+".");
-
-		context.run($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,tabIndex)
-			.then(function() {
-			});
->>>>>>> master
-	}
+        context.run($scope.runData.nodeNumber, $scope.runData.messageNumber, $scope.runData.simSpeedNumber, tabIndex)
+            .then(function () {
+            });
+    }
 
 	$scope.drawNode=function(node) {
 		var canvasCtx=$scope.canvasList[node.CanvasIndex];
