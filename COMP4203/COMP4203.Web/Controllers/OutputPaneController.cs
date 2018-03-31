@@ -21,9 +21,9 @@ namespace COMP4203.Web.Controllers
             }));
         }
 
-        public void PrintArrow(MobileNode sourceNode, MobileNode destNode)
+        public void PrintArrow(MobileNode sourceNode, MobileNode destNode, string colour)
         {
-            Hub.Clients.All.sendMessageBetweenTwoNodes(JsonConvert.SerializeObject(sourceNode), JsonConvert.SerializeObject(destNode));
+            Hub.Clients.All.sendMessageBetweenTwoNodes(JsonConvert.SerializeObject(sourceNode), JsonConvert.SerializeObject(destNode), colour);
         }
 
         public void UpdateBatteryLevel(MobileNode node)

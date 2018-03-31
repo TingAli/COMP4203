@@ -241,11 +241,11 @@
 			$scope.$apply();
 		};
 
-		$scope.mainHub.client.sendMessageBetweenTwoNodes=function(nodeStartJson,nodeEndJson) {
+		$scope.mainHub.client.sendMessageBetweenTwoNodes=function(nodeStartJson,nodeEndJson,lineColour) {
 			var nodeStart=angular.fromJson(nodeStartJson);
 			var nodeEnd=angular.fromJson(nodeEndJson);
 
-			$scope.drawMessageLine(nodeStart,nodeEnd,"#FF00FF");
+			$scope.drawMessageLine(nodeStart,nodeEnd,lineColour);
 			$scope.$apply();
 		};
 
