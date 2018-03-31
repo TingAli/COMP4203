@@ -1,28 +1,27 @@
-﻿var app = angular.module("app", ["ngRoute", "ui.bootstrap", "highcharts-ng"]);
+﻿var app=angular.module("app",["ngRoute","ui.bootstrap","highcharts-ng"]);
 
-app.config(function ($routeProvider) {
-    $routeProvider.
-        when("/home", {
-            templateUrl: "Home/Index",
-            controller: "indexController"
-        }).
-        otherwise({
-            redirectTo: "Home/Index",
-            controller: "indexController"
-        });
+app.config(function($routeProvider) {
+	$routeProvider.
+		when("/home",{
+			templateUrl: "Home/Index",
+			controller: "indexController"
+		}).
+		otherwise({
+			redirectTo: "Home/Index",
+			controller: "indexController"
+		});
 });
 
-app.factory("dataService", function ($http) {
+app.factory("dataService",function($http) {
 	return {
-		run: function (params) {
-			return $http.get("/api/main/run", {
-				params: params
+		run: function(nodeNumber,messageNumber,simSpeedNumber,tabIndex) {
+			return $http.get("/api/main/run/" + nodeNumber + "/" + messageNumber + "/" + simSpeedNumber + "/" + tabIndex,{
 			});
 		},
-        testOutputMessage: function (params) {
-            return $http.get("/api/main/testdebug", {
-                params: params
-            });
-        }
-    }
+		testOutputMessage: function(params) {
+			return $http.get("/api/main/testdebug",{
+				params: params
+			});
+		}
+	}
 });
