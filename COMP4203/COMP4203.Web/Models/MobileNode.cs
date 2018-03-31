@@ -191,16 +191,16 @@ namespace COMP4203.Web.Models
                         rPacket.AddNodeToRoute(node);
                         routes.Add(rPacket); // Adding all possible routes
                         new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
-                        env.TransmitData(this, node, 500);
+                        env.TransmitData(this, node, 500, env.RREQ_COLOUR);
                         new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
-                        env.TransmitData(node, this, 500);
+                        env.TransmitData(node, this, 500, env.RREP_COLOUR);
                     }
                     else
                     {
                         RoutingPacket rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this);
                         new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
-                        env.TransmitData(this, node, 500);
+                        env.TransmitData(this, node, 500, env.RREQ_COLOUR);
                         routes.AddRange(node.DSRDicovery(destNode, env, rPacket)); // Recursive call
                     }
                 }
@@ -215,7 +215,7 @@ namespace COMP4203.Web.Models
                         if (rList[i] == this && i != 0)
                         {
                             new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i-1].GetNodeID()));
-                            env.TransmitData(this, rList[i - 1], 500);
+                            env.TransmitData(this, rList[i - 1], 500, env.RREP_COLOUR);
                         }
                     }
                     

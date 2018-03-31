@@ -13,6 +13,11 @@ namespace COMP4203.Web.Models
         private List<Message> messages;
         private List<SessionData> sessions;
 
+        public string RREQ_COLOUR = "#9bc146";
+        public string RREP_COLOUR = "#ffe338";
+        public string DATA_COLOUR = "#52a0d0";
+        public string ACK_COLOUR = "#df1313";
+
         public SimulationEnvironment()
         {
             height = 500;
@@ -106,15 +111,23 @@ namespace COMP4203.Web.Models
             for (int i = 1; i < nodes.Count; i++)
             {
                 new OutputPaneController().PrintToOutputPane("DSR", "Sending Message from " + nodes[i - 1].GetNodeID() + " to " + nodes[i].GetNodeID() + ".");
-                TransmitData(nodes[i - 1], nodes[i], 2000);
+                TransmitData(nodes[i - 1], nodes[i], 2000, DATA_COLOUR);
             }
             new OutputPaneController().PrintToOutputPane("DSR", "Received Message at Destination Node " + destinationNode.GetNodeID());
+
+            new OutputPaneController().PrintToOutputPane("DSR", "Beginning ACK Transmission from Destination Node " + destinationNode.GetNodeID());
+            for (int i = nodes.Count-2; i >=0; i--)
+            {
+                new OutputPaneController().PrintToOutputPane("DSR", "Sending ACK from " + nodes[i + 1].GetNodeID() + " to " + nodes[i].GetNodeID());
+                TransmitData(nodes[i + 1], nodes[i], 500, ACK_COLOUR);
+            }
+            new OutputPaneController().PrintToOutputPane("DSR", "Received ACK at Source Node " + sourceNode.GetNodeID());
             return true;
         }
 
-        public void TransmitData(MobileNode srcNode, MobileNode dstNode, int wait)
+        public void TransmitData(MobileNode srcNode, MobileNode dstNode, int wait, string colour)
         {
-            new OutputPaneController().PrintArrow(srcNode, dstNode);
+            new OutputPaneController().PrintArrow(srcNode, dstNode, colour);
             Thread.Sleep(wait);
             srcNode.TransmitPacket();
             dstNode.ReceiveProcessPacket();
