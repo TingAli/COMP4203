@@ -4,8 +4,6 @@
     $scope.runData = {};
 
     $scope.initiateRun = function (tabIndex) {
-        $scope.pushOutputMessage("User", "Run Initiated for Session " + tabIndex + ".");
-
         context.run($scope.runData.nodeNumber, $scope.runData.messageNumber, $scope.runData.simSpeedNumber, tabIndex)
             .then(function () {
             });
