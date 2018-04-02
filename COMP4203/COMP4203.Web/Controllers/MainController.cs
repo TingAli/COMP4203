@@ -34,7 +34,7 @@ namespace COMP4203.Web.Controllers
                 node.PrintNodesWithinRange(sim);
             }
             new OutputPaneController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
-            sim.SendMessageDSR(sim.GetMessages()[0]);
+            sim.SendMessageDSR(sim.GetMessages()[0], new SessionData());
         }
 
         [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{tabIndex}")]
