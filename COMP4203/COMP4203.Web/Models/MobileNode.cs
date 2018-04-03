@@ -16,13 +16,15 @@ namespace COMP4203.Web.Models
         public int Radius { get; set; }
 
         static int nodeCount = 0;
-        static int range = 200;
+        public int range = 200;
         private int nodeID;
         public double BatteryLevel;
         public int CenterX, CenterY;
         private Dictionary<int, List<RoutingPacket>> knownRoutes;
         public Guid Id;
         public int CanvasIndex;
+
+        private ComponentController controller;
 
         public MobileNode()
         {
@@ -35,9 +37,10 @@ namespace COMP4203.Web.Models
             BorderWidth = 2;
             StrokeColour = "#FFFFFF";
             Radius = 10;
+            controller = new ComponentController();
         }
 
-        public MobileNode(int x, int y, int bLevel)
+        public MobileNode(int x, int y, int bLevel, int range)
         {
             nodeID = ++nodeCount;
             BatteryLevel = 100;
@@ -49,6 +52,8 @@ namespace COMP4203.Web.Models
             BorderWidth = 2;
             StrokeColour = "#FFFFFF";
             Radius = 10;
+            this.range = range;
+            controller = new ComponentController();
         }
 
         public int GetNodeID()
@@ -73,7 +78,7 @@ namespace COMP4203.Web.Models
         
         public void Print()
         {
-            new OutputPaneController().PrintToOutputPane("Note", "Node #" + nodeID + " - Battery Level: " + BatteryLevel +
+            controller.PrintToOutputPane("Note", "Node #" + nodeID + " - Battery Level: " + BatteryLevel +
                 " - Location: " + CenterX + "," + CenterY);
         }
 
@@ -85,11 +90,11 @@ namespace COMP4203.Web.Models
                 {
                     if (IsWithinRangeOf(n))
                     {
-                        new OutputPaneController().PrintToOutputPane("Node_Range", "Node " + n.GetNodeID() + " is within range. Distance: " + GetDistance(n));
+                        controller.PrintToOutputPane("Node_Range", "Node " + n.GetNodeID() + " is within range. Distance: " + GetDistance(n));
                     }
                     else
                     {
-                        new OutputPaneController().PrintToOutputPane("Node_Range", "Node " + n.GetNodeID() + " is not within range. Distance: " + GetDistance(n));
+                        controller.PrintToOutputPane("Node_Range", "Node " + n.GetNodeID() + " is not within range. Distance: " + GetDistance(n));
                     }
                 }
             }
@@ -130,11 +135,11 @@ namespace COMP4203.Web.Models
             return nodes;
         }
 
-        public List<RoutingPacket> RouteDiscoveryDSR(MobileNode destNode, SimulationEnvironment env, SessionData sData)
+        public List<RoutingPacket> RouteDiscoveryDSR(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)
         {
-            new OutputPaneController().PrintToOutputPane("DSR", "Performing Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
+            controller.PrintToOutputPane("DSR", "Performing Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
             RoutingPacket rPacket = new RoutingPacket();
-            List<RoutingPacket> routes = DSRDicovery(destNode, env, rPacket, sData);
+            List<RoutingPacket> routes = DSRDicovery(destNode, env, rPacket, sData, delay);
             if (knownRoutes.ContainsKey(destNode.GetNodeID()))
             {
                 foreach (RoutingPacket r in routes)
@@ -161,7 +166,7 @@ namespace COMP4203.Web.Models
             return routes;
         }
 
-        private List<RoutingPacket> DSRDicovery(MobileNode destNode, SimulationEnvironment env, RoutingPacket route, SessionData sData)
+        private List<RoutingPacket> DSRDicovery(MobileNode destNode, SimulationEnvironment env, RoutingPacket route, SessionData sData, int delay)
         {
             List<RoutingPacket> routes = new List<RoutingPacket>();
 
@@ -192,21 +197,21 @@ namespace COMP4203.Web.Models
                         rPacket.AddNodeToRoute(this); // Adding nodes to route
                         rPacket.AddNodeToRoute(node);
                         routes.Add(rPacket); // Adding all possible routes
-                        new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
-                        env.TransmitData(this, node, 15, env.RREQ_COLOUR);
+                        controller.PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
+                        env.TransmitData(this, node, delay, env.RREQ_COLOUR);
                         sData.numControlPackets++;
-                        new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
-                        env.TransmitData(node, this, 15, env.RREP_COLOUR);
+                        controller.PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
+                        env.TransmitData(node, this, delay, env.RREP_COLOUR);
                         sData.numControlPackets++;
                     }
                     else
                     {
                         RoutingPacket rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this);
-                        new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
-                        env.TransmitData(this, node, 15, env.RREQ_COLOUR);
+                        controller.PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
+                        env.TransmitData(this, node, delay, env.RREQ_COLOUR);
                         sData.numControlPackets++;
-                        routes.AddRange(node.DSRDicovery(destNode, env, rPacket, sData)); // Recursive call
+                        routes.AddRange(node.DSRDicovery(destNode, env, rPacket, sData, delay)); // Recursive call
                     }
                 }
             }
@@ -219,8 +224,8 @@ namespace COMP4203.Web.Models
                     {
                         if (rList[i] == this && i != 0)
                         {
-                            new OutputPaneController().PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i-1].GetNodeID()));
-                            env.TransmitData(this, rList[i - 1], 15, env.RREP_COLOUR);
+                            controller.PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i-1].GetNodeID()));
+                            env.TransmitData(this, rList[i - 1], delay, env.RREP_COLOUR);
                             sData.numControlPackets++;
                         }
                     }

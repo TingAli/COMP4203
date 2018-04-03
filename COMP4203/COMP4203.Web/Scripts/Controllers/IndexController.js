@@ -5,7 +5,7 @@
 	$scope.runData.nodeRange=200;
 
 	$scope.initiateRun=function(tabIndex) {
-		context.run($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,tabIndex)
+        context.run($scope.runData.nodeNumber, $scope.runData.messageNumber, $scope.runData.simSpeedNumber,$scope.runData.nodeRange,tabIndex)
 			.then(function() {
 			});
 	}
