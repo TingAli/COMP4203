@@ -31,31 +31,33 @@ namespace COMP4203.Web.Controllers
             // Add Test Message
             sim.AddMessage(new Message(sim.GetNodes()[0], sim.GetNodes()[3]));
             // Print Simulation Nodes
-            new ComponentController().PrintToOutputPane("Note", "Simulation Nodes:");
+            new ComponentController().PrintToOutputPane(OutputTag.TAG_NOTE, "Simulation Nodes:");
             foreach (MobileNode node in sim.GetNodes())
             {
                 node.Print();
                 node.PrintNodesWithinRange(sim);
             }
-            /*new ComponentController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
-            sim.SendMessageDSR(sim.GetMessages()[0], new SessionData(), 2000);*/
-            new ComponentController().PopulateNodesSADSR(sim.GetNodes(), tabIndex);
-            sim.SendMessageSADSR(sim.GetMessages()[0], new SessionData(), 500);
+            new ComponentController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
+            sim.SendMessageDSR(sim.GetMessages()[0], new SessionData(), 2000);
+            /*new ComponentController().PopulateNodesSADSR(sim.GetNodes(), tabIndex);
+            sim.SendMessageSADSR(sim.GetMessages()[0], new SessionData(), 500);*/
         }
 
-        [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{tabIndex}")]
+        [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{pureSelfishNodeNumber}/{partialSelfishNodeNumber}/{tabIndex}")]
         public void RunTest(
 	        int nodeNumber,
 	        int messageNumber,
 	        int simSpeedNumber,
 	        int tabIndex,
-            int nodeRange)
+            int nodeRange,
+            int pureSelfishNodeNumber,
+            int partialSelfishNodeNumber)
         {
             SimulationEnvironment sim = new SimulationEnvironment();
             sim.GenerateRandomNodes(nodeNumber, nodeRange);
             sim.GenerateRandomMessages(messageNumber);
             controller.PopulateNodesDSR(sim.GetNodes(), tabIndex);
-            sim.RunSimulation(simSpeedNumber);
+            sim.RunSimulation(simSpeedNumber, tabIndex);
         }
     }
 }

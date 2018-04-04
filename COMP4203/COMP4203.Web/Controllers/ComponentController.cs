@@ -49,5 +49,10 @@ namespace COMP4203.Web.Controllers
             }
             Hub.Clients.All.populateNodes(JsonConvert.SerializeObject(nodes));
         }
+
+        public void MarkTransferAsComplete(int tabIndex)
+        {
+            Hub.Clients.All.completeRun(tabIndex);
+        }
     }
 }

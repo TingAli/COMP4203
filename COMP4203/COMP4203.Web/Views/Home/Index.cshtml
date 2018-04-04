@@ -14,7 +14,8 @@
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="#!/home">COMP4203 Group Project</a>
-				<p class="navbar-text navbar-right">Demonstrated & Developed in 2018 by James Tyler, Imdad Ali and Bradley Koon</p>
+				<p class="navbar-text navbar-left">Demonstrated & Developed in 2018 by James Tyler, Imdad Ali and Bradley Koon</p>
+				<p id="latest-output" class="navbar-text navbar-right">Latest Output: <b>{{ outputMessages[outputMessages.length - 1].Tag }}</b> {{ outputMessages[outputMessages.length - 1].Message }}</p>
 			</div>
 		</div>
 	</nav>
@@ -23,7 +24,7 @@
 			@{
 				var tabIndex = 0;
 			}
-			<uib-tab index="@tabIndex">
+			<uib-tab index="@tabIndex" disable="runData.isRunning">
 				<uib-tab-heading>
 					<i class="glyphicon glyphicon-play-circle"></i> DSR Session
 				</uib-tab-heading>
@@ -56,25 +57,33 @@
 									<div class="session-modifications-container">
 										<div class="input-group">
 											<span class="input-group-addon"># of Nodes</span>
-											<input ng-model="runData.nodeNumber" type="number" class="form-control" placeholder="# of Nodes">
+											<input ng-model="runData.nodeNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Nodes">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon"># of Pure Selfish Nodes</span>
+											<input ng-model="runData.pureSelfishNodeNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Pure Selfish Nodes">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon"># of Partial Selfish Nodes</span>
+											<input ng-model="runData.partialSelfishNodeNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Partial Selfish Nodes">
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Messages</span>
-											<input ng-model="runData.messageNumber" type="number" class="form-control" placeholder="# of Messages">
+											<input ng-model="runData.messageNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Messages">
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
-											<input ng-model="runData.simSpeedNumber" type="number" class="form-control" placeholder="Event Sim Speed #">
+											<input ng-model="runData.simSpeedNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Event Sim Speed #">
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon">Node Range # (px)</span>
-											<input ng-model="runData.nodeRange" type="number" class="form-control" placeholder="Node Range #">
+											<input ng-model="runData.nodeRange" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Node Range #">
 										</div>
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
+											<button type="button" class="btn btn-primary" ng-disabled="runData.isRunning" ng-click="initiateRun(@tabIndex);">RUN</button>
 											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
-											<button type="button" class="btn btn-info" ng-click="runDemo(@tabIndex);">DEMO</button>
-											<button type="button" class="btn btn-warning" ng-click="runTest(@tabIndex);">TEST</button>
+											<button type="button" class="btn btn-info" ng-disabled="runData.isRunning" ng-click="runDemo(@tabIndex);">DEMO</button>
+											<button type="button" class="btn btn-warning" ng-disabled="runData.isRunning" ng-click="runTest(@tabIndex);">TEST</button>
 										</div>
 									</div>
 								</div>
@@ -86,7 +95,7 @@
 			@{
 				tabIndex = 1;
 			}
-			<uib-tab index="@tabIndex">
+			<uib-tab index="@tabIndex" disable="runData.isRunning">
 				<uib-tab-heading>
 					<i class="glyphicon glyphicon-play-circle"></i> SA-DSR Session
 				</uib-tab-heading>
@@ -102,6 +111,15 @@
 											Your browser does not support the canvas element.
 										</canvas>
 									</div>
+									<div class="panel-footer">
+										<ul class="legend">
+											<li>Packet Legend: </li>
+											<li><span class="rreq_colour"></span> RREQ</li>
+											<li><span class="rrep_colour"></span> RREP</li>
+											<li><span class="data_colour"></span> DATA</li>
+											<li><span class="ack_colour"></span> ACK</li>
+										</ul>
+									</div>
 								</div>
 							</div>
 							<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
@@ -110,25 +128,33 @@
 									<div class="session-modifications-container">
 										<div class="input-group">
 											<span class="input-group-addon"># of Nodes</span>
-											<input ng-model="runData.nodeNumber" type="number" class="form-control" placeholder="# of Nodes">
+											<input ng-model="runData.nodeNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Nodes">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon"># of Pure Selfish Nodes</span>
+											<input ng-model="runData.pureSelfishNodeNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Pure Selfish Nodes">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon"># of Partial Selfish Nodes</span>
+											<input ng-model="runData.partialSelfishNodeNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Partial Selfish Nodes">
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Messages</span>
-											<input ng-model="runData.messageNumber" type="number" class="form-control" placeholder="# of Messages">
+											<input ng-model="runData.messageNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Messages">
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
-											<input ng-model="runData.simSpeedNumber" type="number" class="form-control" placeholder="Event Sim Speed #">
+											<input ng-model="runData.simSpeedNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Event Sim Speed #">
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon">Node Range # (px)</span>
-											<input ng-model="runData.nodeRange" type="number" class="form-control" placeholder="Node Range #">
+											<input ng-model="runData.nodeRange" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Node Range #">
 										</div>
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
+											<button type="button" class="btn btn-primary" ng-disabled="runData.isRunning" ng-click="initiateRun(@tabIndex);">RUN</button>
 											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
-											<button type="button" class="btn btn-info" ng-click="runDemo(@tabIndex);">DEMO</button>
-											<button type="button" class="btn btn-warning" ng-click="runTest(@tabIndex);">TEST</button>
+											<button type="button" class="btn btn-info" ng-disabled="runData.isRunning" ng-click="runDemo(@tabIndex);">DEMO</button>
+											<button type="button" class="btn btn-warning" ng-disabled="runData.isRunning" ng-click="runTest(@tabIndex);">TEST</button>
 										</div>
 									</div>
 								</div>
@@ -140,7 +166,7 @@
 			@{
 				tabIndex = 2;
 			}
-			<uib-tab index="@tabIndex">
+			<uib-tab index="@tabIndex" disable="runData.isRunning">
 				<uib-tab-heading>
 					<i class="glyphicon glyphicon-play-circle"></i> SA-DSR [Modified] Session
 				</uib-tab-heading>
@@ -156,6 +182,15 @@
 											Your browser does not support the canvas element.
 										</canvas>
 									</div>
+									<div class="panel-footer">
+										<ul class="legend">
+											<li>Packet Legend: </li>
+											<li><span class="rreq_colour"></span> RREQ</li>
+											<li><span class="rrep_colour"></span> RREP</li>
+											<li><span class="data_colour"></span> DATA</li>
+											<li><span class="ack_colour"></span> ACK</li>
+										</ul>
+									</div>
 								</div>
 							</div>
 							<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
@@ -164,25 +199,33 @@
 									<div class="session-modifications-container">
 										<div class="input-group">
 											<span class="input-group-addon"># of Nodes</span>
-											<input ng-model="runData.nodeNumber" type="number" class="form-control" placeholder="# of Nodes">
+											<input ng-model="runData.nodeNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Nodes">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon"># of Pure Selfish Nodes</span>
+											<input ng-model="runData.pureSelfishNodeNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Pure Selfish Nodes">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon"># of Partial Selfish Nodes</span>
+											<input ng-model="runData.partialSelfishNodeNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Partial Selfish Nodes">
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Messages</span>
-											<input ng-model="runData.messageNumber" type="number" class="form-control" placeholder="# of Messages">
+											<input ng-model="runData.messageNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="# of Messages">
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
-											<input ng-model="runData.simSpeedNumber" type="number" class="form-control" placeholder="Event Sim Speed #">
+											<input ng-model="runData.simSpeedNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Event Sim Speed #">
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon">Node Range # (px)</span>
-											<input ng-model="runData.nodeRange" type="number" class="form-control" placeholder="Node Range #">
+											<input ng-model="runData.nodeRange" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Node Range #">
 										</div>
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-primary" ng-click="initiateRun(@tabIndex);">RUN</button>
+											<button type="button" class="btn btn-primary" ng-disabled="runData.isRunning" ng-click="initiateRun(@tabIndex);">RUN</button>
 											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
-											<button type="button" class="btn btn-info" ng-click="runDemo(@tabIndex);">DEMO</button>
-											<button type="button" class="btn btn-warning" ng-click="runTest(@tabIndex);">TEST</button>
+											<button type="button" class="btn btn-info" ng-disabled="runData.isRunning" ng-click="runDemo(@tabIndex);">DEMO</button>
+											<button type="button" class="btn btn-warning" ng-disabled="runData.isRunning" ng-click="runTest(@tabIndex);">TEST</button>
 										</div>
 									</div>
 								</div>
@@ -194,7 +237,7 @@
 			@{
 				tabIndex = 3;
 			}
-			<uib-tab index="@tabIndex">
+			<uib-tab index="@tabIndex" disable="runData.isRunning">
 				<uib-tab-heading>
 					<i class="glyphicon glyphicon-link"></i> Graphs
 				</uib-tab-heading>
@@ -210,23 +253,24 @@
 			@{
 				tabIndex = 4;
 			}
-			<uib-tab index="@tabIndex">
+			<uib-tab index="@tabIndex" disable="runData.isRunning">
 				<uib-tab-heading>
 					<i class="glyphicon glyphicon-screenshot"></i> Output
 				</uib-tab-heading>
 				<div>
-					<div class="panel panel-danger">
+					<div id="output-panel" class="panel panel-danger">
 						<div class="panel-heading text-center">Output Messages</div>
 						<ul class="list-group">
 							<li class="list-group-item" ng-show="outputMessages.length == 0">No output messages...</li>
 							<li class="list-group-item" ng-show="outputMessages.length == 0">You can open this tab in a new browser window/tab.</li>
-							<li class="list-group-item" ng-repeat="outputMessage in outputMessages"><b>{{ outputMessage.Tag }}</b> : {{ outputMessage.Message }}</li>
+							<li class="list-group-item" ng-repeat="outputMessage in outputMessages | reverse"><b>{{ outputMessage.Tag }}</b> : {{ outputMessage.Message }}</li>
 						</ul>
 					</div>
 				</div>
 			</uib-tab>
 		</uib-tabset>
 	</div>
+	<div class="alert-box warning"><span>Warning: </span>{{ notification.Warning }}</div>
 </body>
 
 @Scripts.Render("~/bundles/jquery")

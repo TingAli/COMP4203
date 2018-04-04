@@ -93,3 +93,51 @@ html, body {
 .legend .ack_colour {
 	background-color: #df1313;
 }
+
+#output-panel {
+	height: calc(100vh - 200px);
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+#latest-output {
+	border: 1.5px solid #000000;
+	color: #FFFFFF;
+	background-color: #000000;
+	min-width: 500px;
+	-ms-border-radius: 4px;
+	border-radius: 4px;
+	box-shadow: 3px 4px 6px #888888;
+}
+
+.navbar-header p {
+	padding: 5px;
+}
+
+.navbar-header a {
+	padding: 20px 20px;
+}
+
+.alert-box {
+	color:#555555;
+	font-family:Tahoma,Geneva,Arial,sans-serif;font-size:11px;
+	padding:10px 10px 10px 36px;
+	margin:10px;
+}
+
+.alert-box span {
+	font-weight:bold;
+	text-transform:uppercase;
+}
+
+.warning {
+	background:#fff8c4 url('images/warning.png') no-repeat 10px 50%;
+	display: none;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	left: 0;
+	margin: 0;
+	-ms-border-radius: 0;
+	border-radius: 0;
+}

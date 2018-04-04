@@ -35,26 +35,25 @@ namespace COMP4203.Web.Models
         public List<MobileNode> GetNodes() { return mobileNodes; }
         public List<Message> GetMessages() { return messages; }
 
-        public void RunSimulation(int delay)
+        public void RunSimulation(int delay, int tabIndex)
         {
             SessionData sessionData = new SessionData();
-            sessionData.SetStartingBatteryLevels(mobileNodes);
-            sessionData.numDataPacketsSent = messages.Count;
+            sessionData.SetStartingBatteryLevels(mobileNodes);              // Save starting battery levels
+            sessionData.SetNumberOfAttemptedTransmissions(messages.Count);  // Save number of attempted transmissions
+
+            /* Send all messages */
             foreach (Message message in messages)
             {
                 SendMessageDSR(message, sessionData, delay);
             }
-            sessionData.SetEndingBatteryLevels(mobileNodes);
-            controller.PrintToOutputPane("DSR", "Finished Transmitting Messages.");
-            controller.PrintToOutputPane("DSR", messages.Count + " messages transmitted.");
-            controller.PrintToOutputPane("DSR_Results", "# of control packets: " + sessionData.numControlPackets);
-            controller.PrintToOutputPane("DSR_Results", "# of data packets sent: " + sessionData.numDataPacketsSent);
-            controller.PrintToOutputPane("DSR_Results", "# of data packets received: " + sessionData.numDataPacketsReceived);
-            controller.PrintToOutputPane("DSR_Results", "PDR: " + sessionData.CalculatePacketDeliveryRatio());
-            controller.PrintToOutputPane("DSR_Results", "AEED: " + sessionData.CalculateAverageEndToEndDelay());
-            controller.PrintToOutputPane("DSR_Results", "NRO: " + sessionData.CalculateNormalizedRoutingOverhead());
-            controller.PrintToOutputPane("DSR_Results", "BDD: " + sessionData.CalculateBatteryDepletionDeviation());
-            sessions.Add(sessionData);
+
+            sessionData.SetEndingBatteryLevels(mobileNodes);    // Save ending battery levels
+            sessionData.PrintResults();     // Print collected metrics
+            sessions.Add(sessionData);      // Add collected data to recorded sessions
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, sessionData.GetNumberOfAttemptedTransmissions() + " attempted transmissions.");
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, sessionData.GetNumberOfSuccessfulTranmissions() + " successful transmissions.");
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Finished Transmitting Messages.");
+            controller.MarkTransferAsComplete(tabIndex);
         }
 
         public void AddNode(MobileNode node)
@@ -127,7 +126,7 @@ namespace COMP4203.Web.Models
                 TransmitData(nodes[i - 1], nodes[i], delay * 4, DATA_COLOUR);
             }
             controller.PrintToOutputPane("SADSR", "Received Message at Destination Node " + destinationNode.GetNodeID());
-            sData.numDataPacketsReceived += 1;
+            sData.IncrementNumberOfSuccessfulTransmissions();
 
             /* Send ACK Packet */
             controller.PrintToOutputPane("SADSR", "Beginning ACK Transmission from Destination Node " + destinationNode.GetNodeID());
@@ -135,7 +134,7 @@ namespace COMP4203.Web.Models
             {
                 controller.PrintToOutputPane("SADSR", "Sending ACK from " + nodes[i + 1].GetNodeID() + " to " + nodes[i].GetNodeID());
                 TransmitData(nodes[i + 1], nodes[i], delay * 4, ACK_COLOUR);
-                sData.numControlPackets += 1;
+                sData.IncrementNumberOfControlPackets();
             }
             controller.PrintToOutputPane("SADSR", "Received ACK at Source Node " + sourceNode.GetNodeID());
 
@@ -153,7 +152,7 @@ namespace COMP4203.Web.Models
             /* If no known route, attempt to find one */
             if (route == null)
             {
-                controller.PrintToOutputPane("DSR", "No Known Route to Destination.");
+                controller.PrintToOutputPane(OutputTag.TAG_DSR, "No Known Route to Destination.");
                 /* Perform Route Discovery */
                 sourceNode.RouteDiscoveryDSR(destinationNode, this, sData, delay);
                 route = sourceNode.GetBestRouteDSR(destinationNode);
@@ -165,35 +164,25 @@ namespace COMP4203.Web.Models
                 }
             }
 
-            controller.PrintToOutputPane("DSR", string.Format("Sending Message #{0}:", message.GetMessageID()));
-            controller.PrintToOutputPane("DSR", "Source Node: " + sourceNode.GetNodeID());
-            controller.PrintToOutputPane("DSR", "Destination Node: " + destinationNode.GetNodeID());
-            controller.PrintToOutputPane("DSR", "Route Chosen: " + route.GetRouteAsString());
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending Message #{0}.", message.GetMessageID()));
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Source Node: " + sourceNode.GetNodeID());
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Destination Node: " + destinationNode.GetNodeID());
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Route Chosen: " + route.GetRouteAsString());
 
             List<MobileNode> nodes = route.GetNodeRoute();
 
             /* Send DATA Packet */
-            controller.PrintToOutputPane("DSR", "Beginning Message Transmission from Source Node " + sourceNode.GetNodeID());
-            for (int i = 1; i < nodes.Count; i++)
-            {
-                controller.PrintToOutputPane("DSR", "Sending Message from " + nodes[i - 1].GetNodeID() + " to " + nodes[i].GetNodeID() + ".");
-                TransmitData(nodes[i - 1], nodes[i], delay*4, DATA_COLOUR);
-            
-            }
-            controller.PrintToOutputPane("DSR", "Received Message at Destination Node " + destinationNode.GetNodeID());
-            sData.numDataPacketsReceived += 1;
+            for (int i = 1; i < nodes.Count; i++) { nodes[i - 1].SendDataPacket(nodes[i], delay); }
 
             /* Send ACK Packet */
-            controller.PrintToOutputPane("DSR", "Beginning ACK Transmission from Destination Node " + destinationNode.GetNodeID());
             for (int i = nodes.Count-2; i >=0; i--)
             {
-                controller.PrintToOutputPane("DSR", "Sending ACK from " + nodes[i + 1].GetNodeID() + " to " + nodes[i].GetNodeID());
-                TransmitData(nodes[i + 1], nodes[i], delay*4, ACK_COLOUR);
-                sData.numControlPackets += 1;
+                nodes[i + 1].SendAckPacket(nodes[i], delay);
+                sData.IncrementNumberOfControlPackets();
             }
-            controller.PrintToOutputPane("DSR", "Received ACK at Source Node " + sourceNode.GetNodeID());
 
             /* Calculate End-To-End Delay */
+            sData.IncrementNumberOfSuccessfulTransmissions();
             sData.endToEndDelays.Add((route.GetTransmissionTime())*4);
             return true;
         }
