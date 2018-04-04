@@ -119,8 +119,15 @@ namespace COMP4203.Web.Models
 
         public void SendDataPacket(MobileNode node, int wait)
         {
-            controller.PrintToOutputPane("DSR", "Sending Message from " + nodeID + " to " + node.GetNodeID() + ".");
+            controller.PrintToOutputPane("DSR", "Sending DATA from " + nodeID + " to " + node.GetNodeID() + ".");
             TransmitData(this, node, wait, DATA_COLOUR);
+        }
+
+        public void SendAckPacket(MobileNode node, int wait)
+        {
+            controller.PrintToOutputPane("DSR", "Sending ACK from " + nodeID + " to " + node.GetNodeID());
+            TransmitData(this, node, wait, ACK_COLOUR);
+
         }
 
         public void TransmitData(MobileNode srcNode, MobileNode dstNode, int wait, string colour)
@@ -221,10 +228,10 @@ namespace COMP4203.Web.Models
                         routes.Add(rPacket); // Adding all possible routes
                         controller.PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
                         env.TransmitData(this, node, delay, env.RREQ_COLOUR);
-                        sData.numControlPackets++;
+                        sData.IncrementNumberOfControlPackets();
                         controller.PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
                         env.TransmitData(node, this, delay, env.RREP_COLOUR);
-                        sData.numControlPackets++;
+                        sData.IncrementNumberOfControlPackets();
                     }
                     else
                     {
@@ -232,7 +239,7 @@ namespace COMP4203.Web.Models
                         rPacket.AddNodeToRoute(this);
                         controller.PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
                         env.TransmitData(this, node, delay, env.RREQ_COLOUR);
-                        sData.numControlPackets++;
+                        sData.IncrementNumberOfControlPackets();
                         routes.AddRange(node.DSRDicovery(destNode, env, rPacket, sData, delay)); // Recursive call
                     }
                 }
@@ -248,7 +255,7 @@ namespace COMP4203.Web.Models
                         {
                             controller.PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i-1].GetNodeID()));
                             env.TransmitData(this, rList[i - 1], delay, env.RREP_COLOUR);
-                            sData.numControlPackets++;
+                            sData.IncrementNumberOfControlPackets();
                         }
                     }
                     

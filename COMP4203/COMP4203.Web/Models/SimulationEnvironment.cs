@@ -124,14 +124,11 @@ namespace COMP4203.Web.Models
             for (int i = 1; i < nodes.Count; i++) { nodes[i - 1].SendDataPacket(nodes[i], delay); }
 
             /* Send ACK Packet */
-            controller.PrintToOutputPane("DSR", "Beginning ACK Transmission from Destination Node " + destinationNode.GetNodeID());
             for (int i = nodes.Count-2; i >=0; i--)
             {
-                controller.PrintToOutputPane("DSR", "Sending ACK from " + nodes[i + 1].GetNodeID() + " to " + nodes[i].GetNodeID());
-                TransmitData(nodes[i + 1], nodes[i], delay*4, ACK_COLOUR);
-                sData.numControlPackets += 1;
+                nodes[i + 1].SendAckPacket(nodes[i], delay);
+                sData.IncrementNumberOfControlPackets();
             }
-            controller.PrintToOutputPane("DSR", "Received ACK at Source Node " + sourceNode.GetNodeID());
 
             /* Calculate End-To-End Delay */
             sData.IncrementNumberOfSuccessfulTransmissions();

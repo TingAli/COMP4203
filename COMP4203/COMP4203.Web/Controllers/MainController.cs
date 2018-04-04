@@ -39,13 +39,15 @@ namespace COMP4203.Web.Controllers
             sim.SendMessageDSR(sim.GetMessages()[0], new SessionData(), 2000);
         }
 
-        [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{tabIndex}")]
+        [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{pureSelfishNodeNumber}/{partialSelfishNodeNumber}/{tabIndex}")]
         public void RunTest(
 	        int nodeNumber,
 	        int messageNumber,
 	        int simSpeedNumber,
 	        int tabIndex,
-            int nodeRange)
+            int nodeRange,
+            int pureSelfishNodeNumber,
+            int partialSelfishNodeNumber)
         {
             SimulationEnvironment sim = new SimulationEnvironment();
             sim.GenerateRandomNodes(nodeNumber, nodeRange);

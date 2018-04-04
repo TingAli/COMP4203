@@ -7,7 +7,7 @@ namespace COMP4203.Web.Models
 {
     public class SessionData
     {
-        public double numControlPackets = 0;
+        private double numberOfControlPackets = 0;
         private double numberOfAttemptedTransmissions = 0;
         private double numberOfSuccessfulTransmissions = 0;
         public List<double> endToEndDelays;
@@ -28,8 +28,11 @@ namespace COMP4203.Web.Models
         public void SetNumberOfAttemptedTransmissions(double n) { numberOfAttemptedTransmissions = n; }
         public double GetNumberOfSuccessfulTranmissions() { return numberOfSuccessfulTransmissions; }
         public void SetNumberOfSuccessfulTransmissions(double n) { numberOfSuccessfulTransmissions = n; }
+        public double GetNumberOfControlPackets() { return numberOfControlPackets; }
+        public void SetNumberOfControlPackets(double n) { numberOfControlPackets = n; }
 
         public void IncrementNumberOfSuccessfulTransmissions() { numberOfSuccessfulTransmissions++; }
+        public void IncrementNumberOfControlPackets() { numberOfControlPackets++; }
 
         public double CalculatePacketDeliveryRatio()
         {
@@ -50,7 +53,7 @@ namespace COMP4203.Web.Models
 
         public double CalculateNormalizedRoutingOverhead()
         {
-            return numControlPackets / numberOfSuccessfulTransmissions;
+            return numberOfControlPackets / numberOfSuccessfulTransmissions;
         }
 
         public double CalculateBatteryDepletionDeviation()
