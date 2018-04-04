@@ -53,7 +53,7 @@ namespace COMP4203.Web.Controllers
             sim.GenerateRandomNodes(nodeNumber, nodeRange);
             sim.GenerateRandomMessages(messageNumber);
             controller.PopulateNodesDSR(sim.GetNodes(), tabIndex);
-            sim.RunSimulation(simSpeedNumber);
+            sim.RunSimulation(simSpeedNumber, tabIndex);
         }
     }
 }
