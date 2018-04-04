@@ -10,13 +10,13 @@ namespace COMP4203.Web.Models
         public double numControlPackets = 0;
         public double numDataPacketsSent = 0;
         public double numDataPacketsReceived = 0;
-        public List<int> endToEndDelays;
+        public List<double> endToEndDelays;
         public List<double> startingBatteryLevels;
         public List<double> endingBatteryLevels;
 
         public SessionData()
         {
-            endToEndDelays = new List<int>();
+            endToEndDelays = new List<double>();
             startingBatteryLevels = new List<double>();
             endingBatteryLevels = new List<double>();
         }
@@ -30,12 +30,12 @@ namespace COMP4203.Web.Models
         public double CalculateAverageEndToEndDelay()
         {
             if (endToEndDelays.Count == 0) { return -1; }
-            int sum = 0;
-            foreach (int x in endToEndDelays)
+            double sum = 0;
+            foreach (double x in endToEndDelays)
             {
                 sum += x;
             }
-            return sum / endToEndDelays.Count;
+            return sum / (double)endToEndDelays.Count;
         }
 
         public double CalculateNormalizedRoutingOverhead()

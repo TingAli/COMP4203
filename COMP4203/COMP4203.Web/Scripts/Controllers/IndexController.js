@@ -109,7 +109,7 @@
 		var found=$filter("filter")($scope.canvasList[node.CanvasIndex].Nodes,{ Id: node.Id },true);
 		if(found.length&&foundHistory.length) {
 			foundHistory[0].IsVisible=false;
-			found[0].BatteryLevel=node.BatteryLevel;
+			found[0].BatteryLevel=parseFloat(Math.round(node.BatteryLevel * 100) / 100).toFixed(2);
 		}
 
 		$scope.reDrawCurrentState(node.CanvasIndex);

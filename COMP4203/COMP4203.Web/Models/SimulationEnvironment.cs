@@ -98,7 +98,7 @@ namespace COMP4203.Web.Models
         {
             MobileNode sourceNode = message.GetSourceNode();
             MobileNode destinationNode = message.GetDestinstationNode();
-            RoutingPacket route = sourceNode.GetOptimalRouteSADSR(destinationNode);
+            Route route = sourceNode.GetOptimalRouteSADSR(destinationNode);
             bool drop = false;
 
             /* If no known route, attempt to find one */
@@ -165,7 +165,7 @@ namespace COMP4203.Web.Models
         {
             MobileNode sourceNode = message.GetSourceNode();
             MobileNode destinationNode = message.GetDestinstationNode();
-            RoutingPacket route = sourceNode.GetBestRouteDSR(destinationNode);
+            Route route = sourceNode.GetBestRouteDSR(destinationNode);
 
             /* If no known route, attempt to find one */
             if (route == null)
@@ -211,7 +211,7 @@ namespace COMP4203.Web.Models
             controller.PrintToOutputPane("DSR", "Received ACK at Source Node " + sourceNode.GetNodeID());
 
             /* Calculate End-To-End Delay */
-            sData.endToEndDelays.Add((route.GetNodeRoute().Count-1)*4);
+            sData.endToEndDelays.Add((route.GetTransmissionTime())*4);
             return true;
         }
 
