@@ -2,6 +2,7 @@
 using COMP4203.Web.Controllers.Hubs;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace COMP4203.Web.Models
 {
@@ -9,6 +10,11 @@ namespace COMP4203.Web.Models
     {
         static double TRANSMIT_COST = 0.02;
         static double RECEIVE_PROCESS_COST = 0.01;
+
+        public string RREQ_COLOUR = "#9bc146"; // Green
+        public string RREP_COLOUR = "#ffe338"; // Yellow
+        public string DATA_COLOUR = "#52a0d0"; // Blue
+        public string ACK_COLOUR = "#df1313"; // Red
 
         public string FillColour { get; set; }
         public int BorderWidth { get; set; }
@@ -109,6 +115,22 @@ namespace COMP4203.Web.Models
         {
             BatteryLevel -= TRANSMIT_COST;
             if (BatteryLevel < 0) { BatteryLevel = 0; }
+        }
+
+        public void SendDataPacket(MobileNode node, int wait)
+        {
+            controller.PrintToOutputPane("DSR", "Sending Message from " + nodeID + " to " + node.GetNodeID() + ".");
+            TransmitData(this, node, wait, DATA_COLOUR);
+        }
+
+        public void TransmitData(MobileNode srcNode, MobileNode dstNode, int wait, string colour)
+        {
+            controller.PrintArrow(srcNode, dstNode, colour);
+            Thread.Sleep(wait);
+            srcNode.TransmitPacket();
+            dstNode.ReceiveProcessPacket();
+            controller.UpdateBatteryLevel(srcNode);
+            controller.UpdateBatteryLevel(dstNode);
         }
 
         public void ReceiveProcessPacket()
