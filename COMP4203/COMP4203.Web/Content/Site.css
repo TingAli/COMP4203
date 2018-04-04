@@ -8,6 +8,21 @@
 	}
 }
 
+@media screen and (max-width: 1340px) {
+	.navbar-header {
+		display: flex;
+		-ms-align-items: center;
+		-o-align-items: center;
+		-webkit-align-items: center;
+		align-items: center;
+		-moz-align-content: center;
+		-o-align-content: center;
+		-webkit-align-content: center;
+		align-content: center;
+		flex-direction: column;
+	}
+}
+
 .test-class {
 	font-weight: 800;
 	color: #FF0000;
@@ -128,12 +143,18 @@ html, body {
 .alert-box span {
 	font-weight:bold;
 	text-transform:uppercase;
+	position: relative;
+	top: 10px;
+}
+
+.alert-box button {
+	float: right;
 }
 
 .warning {
 	background:#fff8c4 url('images/warning.png') no-repeat 10px 50%;
-	display: none;
-	position: absolute;
+	display: block;
+	position: fixed;
 	bottom: 0;
 	width: 100%;
 	left: 0;
