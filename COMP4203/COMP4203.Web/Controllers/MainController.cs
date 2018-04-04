@@ -10,9 +10,11 @@ namespace COMP4203.Web.Controllers
 {
     public class MainController : ApiControllerWithHub<MainHub>
     {
+        ComponentController controller;
+
 	    public MainController()
 	    {
-
+            controller = new ComponentController();
         }
 
         [HttpGet, Route("api/main/demo/{tabIndex}")]
@@ -20,36 +22,36 @@ namespace COMP4203.Web.Controllers
         {
             SimulationEnvironment sim = new SimulationEnvironment();
             // Add Test Nodes
-            sim.AddNode(new MobileNode(100, 100, 100));
-            sim.AddNode(new MobileNode(200, 210, 100));
-            sim.AddNode(new MobileNode(210, 200, 100));
-            sim.AddNode(new MobileNode(298, 298, 100));
+            sim.AddNode(new MobileNode(100, 100, 100, 200));
+            sim.AddNode(new MobileNode(200, 210, 100, 200));
+            sim.AddNode(new MobileNode(210, 200, 100, 200));
+            sim.AddNode(new MobileNode(298, 298, 100, 200));
             // Add Test Message
             sim.AddMessage(new Message(sim.GetNodes()[0], sim.GetNodes()[3]));
             // Print Simulation Nodes
-            new OutputPaneController().PrintToOutputPane("Note", "Simulation Nodes:");
+            new ComponentController().PrintToOutputPane("Note", "Simulation Nodes:");
             foreach (MobileNode node in sim.GetNodes())
             {
                 node.Print();
                 node.PrintNodesWithinRange(sim);
             }
-            new OutputPaneController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
-            sim.SendMessageDSR(sim.GetMessages()[0], new SessionData());
+            new ComponentController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
+            sim.SendMessageDSR(sim.GetMessages()[0], new SessionData(), 2000);
         }
 
-        [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{tabIndex}")]
+        [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{tabIndex}")]
         public void RunTest(
 	        int nodeNumber,
 	        int messageNumber,
 	        int simSpeedNumber,
-	        int tabIndex)
+	        int tabIndex,
+            int nodeRange)
         {
             SimulationEnvironment sim = new SimulationEnvironment();
-            sim.GenerateRandomNodes(nodeNumber);
+            sim.GenerateRandomNodes(nodeNumber, nodeRange);
             sim.GenerateRandomMessages(messageNumber);
-            new OutputPaneController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
-            sim.RunSimulation();
-            
+            controller.PopulateNodesDSR(sim.GetNodes(), tabIndex);
+            sim.RunSimulation(simSpeedNumber);
         }
     }
 }

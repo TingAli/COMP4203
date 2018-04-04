@@ -9,7 +9,7 @@ using System.Web;
 
 namespace COMP4203.Web.Controllers
 {
-    public class OutputPaneController : ApiControllerWithHub<MainHub>
+    public class ComponentController : ApiControllerWithHub<MainHub>
     {
         public void PrintToOutputPane(String tag, String message)
         {

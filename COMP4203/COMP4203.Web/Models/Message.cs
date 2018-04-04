@@ -22,7 +22,7 @@ namespace COMP4203.Web.Models
 
         public void Print()
         {
-            OutputPaneController outputPaneController = new OutputPaneController();
+            ComponentController outputPaneController = new ComponentController();
             outputPaneController.PrintToOutputPane("Message", "Message from Node " + sourceNode.GetNodeID() + " to Node " + destinationNode.GetNodeID() + ".");
         }
     }

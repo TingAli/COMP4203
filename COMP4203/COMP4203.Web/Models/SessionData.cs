@@ -7,13 +7,12 @@ namespace COMP4203.Web.Models
 {
     public class SessionData
     {
-        public double numControlPackets = 0;//
-        public double numDataPacketsSent = 0;//
-        public double numDataPacketsReceived = 0;//
-        public double totalRequiredPacket = 0; //
-        List<int> endToEndDelays;
-        List<double> startingBatteryLevels;
-        List<double> endingBatteryLevels;
+        public double numControlPackets = 0;
+        public double numDataPacketsSent = 0;
+        public double numDataPacketsReceived = 0;
+        public List<int> endToEndDelays;
+        public List<double> startingBatteryLevels;
+        public List<double> endingBatteryLevels;
 
         public SessionData()
         {
@@ -30,6 +29,7 @@ namespace COMP4203.Web.Models
 
         public double CalculateAverageEndToEndDelay()
         {
+            if (endToEndDelays.Count == 0) { return -1; }
             int sum = 0;
             foreach (int x in endToEndDelays)
             {
@@ -59,8 +59,6 @@ namespace COMP4203.Web.Models
         public List<double> GetDeviationValues()
         {
             List<double> values = new List<double>();
-            new OutputPaneController().PrintToOutputPane("Debug", "sLevels: " + startingBatteryLevels.Count);
-            new OutputPaneController().PrintToOutputPane("Debug", "eLevels: " + endingBatteryLevels.Count);
             for (int i = 0; i < startingBatteryLevels.Count; i++)
             {
                 values.Add(startingBatteryLevels[i] - endingBatteryLevels[i]);
