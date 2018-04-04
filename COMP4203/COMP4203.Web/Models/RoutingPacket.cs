@@ -6,12 +6,39 @@ namespace COMP4203.Web.Models
     {
         private List<MobileNode> nodeRoute;
 
-		public RoutingPacket()
+        private double sdp;
+
+        public RoutingPacket()
 		{
 			nodeRoute = new List<MobileNode>();
 		}
 
-		public List<MobileNode> GetNodeRoute() => nodeRoute;
+        // Use to retrieve route's SDP
+        public double getSDP()
+        {
+            return sdp;
+        }
+
+        // Used to calculate route's SDP
+        public double CalcSDP()
+        {
+            // Calculated as selfishness level times ac 
+            // For each route, calculate the average battery level
+            // Convert the average battery level of a route into a percentage and multiply it by the route's ac 
+            double avgBatteryLevel = 0;
+            double avgAc = 0;
+            foreach (MobileNode node in this.nodeRoute)
+            {
+                avgBatteryLevel += node.GetBatteryLevel();
+                avgAc += node.GetAC();
+            }
+            avgAc = (avgAc / this.nodeRoute.Count) / 100;
+            avgBatteryLevel = (avgBatteryLevel / this.nodeRoute.Count) / 100;
+            sdp = avgAc * avgBatteryLevel;
+            return sdp;
+        }
+
+        public List<MobileNode> GetNodeRoute() => nodeRoute;
 
         public RoutingPacket Copy()
         {

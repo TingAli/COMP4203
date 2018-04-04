@@ -23,6 +23,8 @@ namespace COMP4203.Web.Models
         private Dictionary<int, List<RoutingPacket>> knownRoutes;
         public Guid Id;
         public int CanvasIndex;
+        private int ac;
+        private bool drop = false;
 
         private ComponentController controller;
 
@@ -38,6 +40,7 @@ namespace COMP4203.Web.Models
             StrokeColour = "#FFFFFF";
             Radius = 10;
             controller = new ComponentController();
+            ac = 50;
         }
 
         public MobileNode(int x, int y, int bLevel, int range)
@@ -54,6 +57,12 @@ namespace COMP4203.Web.Models
             Radius = 10;
             this.range = range;
             controller = new ComponentController();
+            ac = 50;
+        }
+
+        public int GetAC()
+        {
+            return ac;
         }
 
         public int GetNodeID()
@@ -134,7 +143,159 @@ namespace COMP4203.Web.Models
             }
             return nodes;
         }
+        // Implement SA-DSR here 
+        public List<RoutingPacket> RouteDiscoverySADSR(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)
+        {
+            RoutingPacket rPacket = new RoutingPacket();
+            List<RoutingPacket> routes = SADSRDiscovery(destNode, env, rPacket, sData, delay);
+            return routes;
+        }
+        private List<RoutingPacket> SADSRDiscovery(MobileNode destNode, SimulationEnvironment env, RoutingPacket route, SessionData sData, int delay)
+        {
+            List<RoutingPacket> routes = new List<RoutingPacket>();
 
+            if (knownRoutes.ContainsKey(destNode.GetNodeID()))
+            {
+                foreach (RoutingPacket r in knownRoutes[destNode.GetNodeID()])
+                {
+                    RoutingPacket r2 = route.Copy();
+                    r2.AddNodesToRoute(r.GetNodeRoute());
+                    routes.Add(r2);
+                }
+                return routes;
+            }
+
+            List<MobileNode> nodesWithinRange = GetNodesWithinRange(env);
+            if (nodesWithinRange.Count == 0 && !destNode.Equals(this)) { return null; }
+
+            foreach (MobileNode node in nodesWithinRange)
+            {
+                // If node isn't in route yet...
+                if (!route.IsInRouteAlready(node))
+                {
+                    // If node is the destination node...
+                    if (node.Equals(destNode))
+                    {
+                        //Obtaining all possible route
+                        if (this.PacketDrop() == true)
+                        {
+                            route.GetNodeRoute()[0].ac -= 5;
+                            controller.PrintToOutputPane("SADSR", string.Format("RREQ dropped by node {0}", nodeID));
+                            return null;
+                        }
+                        if (this.PacketDrop() == false)
+                        {
+                            route.GetNodeRoute()[0].ac += 5;
+                            RoutingPacket rPacket = route.Copy();
+                            rPacket.AddNodeToRoute(this); // Adding nodes to route
+                            rPacket.AddNodeToRoute(node);
+                            routes.Add(rPacket); // Adding all possible routes
+                            controller.PrintToOutputPane("SADSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
+                            env.TransmitData(this, node, delay, env.RREQ_COLOUR);
+                            sData.numControlPackets++;
+                            controller.PrintToOutputPane("SADSR", string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
+                            env.TransmitData(node, this, delay, env.RREP_COLOUR);
+                            sData.numControlPackets++;
+                        }
+                    }
+                    else
+                    {
+                        if (this.PacketDrop() == true)
+                        {
+                            route.GetNodeRoute()[0].ac -= 5;
+                            controller.PrintToOutputPane("SADSR", string.Format("RREQ dropped by node {0}", nodeID));
+                            return null;
+                        }
+                        if (this.PacketDrop() == false)
+                        {
+                            RoutingPacket rPacket = route.Copy();
+                            rPacket.AddNodeToRoute(this);
+                            controller.PrintToOutputPane("SADSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
+                            env.TransmitData(this, node, delay, env.RREQ_COLOUR);
+                            sData.numControlPackets++;
+                            routes.AddRange(node.SADSRDiscovery(destNode, env, rPacket, sData, delay)); // Recursive call
+                        }
+                    }
+                }
+            }
+            foreach (RoutingPacket r in routes)
+            {
+                if (r.GetNodeRoute().Contains(destNode))
+                {
+                    List<MobileNode> rList = r.GetNodeRoute();
+                    for (int i = 0; i < rList.Count; i++)
+                    {
+                        if (rList[i] == this && i != 0)
+                        {
+                            controller.PrintToOutputPane("SADSR", string.Format("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i - 1].GetNodeID()));
+                            env.TransmitData(this, rList[i - 1], delay, env.RREP_COLOUR);
+                            sData.numControlPackets++;
+                        }
+                    }
+
+                }
+            }
+            return routes;
+        }
+        // Get the optimal route for SA-DSR
+        public RoutingPacket GetOptimalRouteSADSR(MobileNode node)
+        {
+            List<RoutingPacket> routes = GetRoutesToNode(node);
+            RoutingPacket optRoute = new RoutingPacket();
+            double sdp = 0;
+            if (routes == null) { return null; }
+            foreach (RoutingPacket r in routes)
+            {
+                if (sdp < r.CalcSDP())
+                {
+                    sdp = r.getSDP();
+                    optRoute = r;
+                }
+            }
+            return optRoute;
+        }
+        // Calculates the probability of a node dropping a packet based on their battery levels
+        public bool PacketDrop()
+        {
+            Random random = new Random();
+            // 50% chance of dropping packet if battery level is between 20 to 50 percent
+            if (20 <= this.BatteryLevel && this.BatteryLevel < 50)
+            {
+                int r = random.Next(0, 1);
+                if (r == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            // 10% chance of dropping packet if battery level is between 50 and 80 percent
+            else if (50 <= this.BatteryLevel && this.BatteryLevel < 80)
+            {
+                int r = random.Next(0, 11);
+                if (r == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            // 0% chance of dropping packet if battery level is between 80 to 100 percent
+            else if (80 <= this.BatteryLevel && this.BatteryLevel <= 100)
+            {
+                return false;
+            }
+            else
+            {
+                // 100% chance of dropping packet if battery level is less than 20 percent 
+                return true;
+            }
+        }
+        // DSR implementation
         public List<RoutingPacket> RouteDiscoveryDSR(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)
         {
             controller.PrintToOutputPane("DSR", "Performing Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");

@@ -94,6 +94,73 @@ namespace COMP4203.Web.Models
             }
         }
 
+        public bool SendMessageSADSR(Message message, SessionData sData, int delay)
+        {
+            MobileNode sourceNode = message.GetSourceNode();
+            MobileNode destinationNode = message.GetDestinstationNode();
+            RoutingPacket route = sourceNode.GetOptimalRouteSADSR(destinationNode);
+            bool drop = false;
+
+            /* If no known route, attempt to find one */
+            if (route == null)
+            {
+                controller.PrintToOutputPane("SADSR", "No Known Route to Destination");
+                sourceNode.RouteDiscoverySADSR(destinationNode, this, sData, delay);
+                route = sourceNode.GetOptimalRouteSADSR(destinationNode);
+                if (route == null)
+                {
+                    controller.PrintToOutputPane("SADSR", "No Route to Destination.");
+                    return false;
+                }
+            }
+            controller.PrintToOutputPane("SADSR", string.Format("Sending Message #{0}:", message.GetMessageID()));
+            controller.PrintToOutputPane("SADSR", "Source Node: " + sourceNode.GetNodeID());
+            controller.PrintToOutputPane("SADSR", "Destination Node: " + destinationNode.GetNodeID());
+            controller.PrintToOutputPane("SADSR", "Route Chosen: " + route.GetRouteAsString());
+
+            List<MobileNode> nodes = route.GetNodeRoute();
+
+            /* Send DATA Packet */
+            controller.PrintToOutputPane("SADSR", "Beginning Message Transmission from Source Node " + sourceNode.GetNodeID());
+            for (int i = 1; i < nodes.Count; i++)
+            {
+                if (nodes[i-1].PacketDrop() == false)
+                {
+                    controller.PrintToOutputPane("SADSR", "Sending Message from " + nodes[i - 1].GetNodeID() + " to " + nodes[i].GetNodeID() + ".");
+                    TransmitData(nodes[i - 1], nodes[i], delay * 4, DATA_COLOUR);
+                } else
+                {
+                    controller.PrintToOutputPane("SADSR", "Message dropped by node " + nodes[i - 1].GetNodeID() + ".");
+                    drop = true;
+                    break;
+                }
+
+            }
+            if (drop == false)
+            {
+                controller.PrintToOutputPane("SADSR", "Received Message at Destination Node " + destinationNode.GetNodeID());
+                sData.numDataPacketsReceived += 1;
+
+                /* Send ACK Packet */
+                controller.PrintToOutputPane("SADSR", "Beginning ACK Transmission from Destination Node " + destinationNode.GetNodeID());
+                for (int i = nodes.Count - 2; i >= 0; i--)
+                {
+                    controller.PrintToOutputPane("SADSR", "Sending ACK from " + nodes[i + 1].GetNodeID() + " to " + nodes[i].GetNodeID());
+                    TransmitData(nodes[i + 1], nodes[i], delay * 4, ACK_COLOUR);
+                    sData.numControlPackets += 1;
+                }
+                controller.PrintToOutputPane("SADSR", "Received ACK at Source Node " + sourceNode.GetNodeID());
+            }
+            else
+            {
+                controller.PrintToOutputPane("SADSR", "Destination Node " + sourceNode.GetNodeID() + " failed to receive message");
+            }
+
+            /* Calculate End-To-End Delay */
+            sData.endToEndDelays.Add((route.GetNodeRoute().Count - 1) * 4);
+            return true;
+        }
+
         public bool SendMessageDSR(Message message, SessionData sData, int delay)
         {
             MobileNode sourceNode = message.GetSourceNode();
