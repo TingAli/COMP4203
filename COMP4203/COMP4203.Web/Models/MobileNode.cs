@@ -117,28 +117,28 @@ namespace COMP4203.Web.Models
             if (BatteryLevel < 0) { BatteryLevel = 0; }
         }
 
-        public void SendDataPacket(MobileNode node, int wait)
+        public void SendDataPacket(MobileNode node, int wait, string tag)
         {
-            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Sending DATA from " + nodeID + " to " + node.GetNodeID() + ".");
+            controller.PrintToOutputPane(tag, "Sending DATA from " + nodeID + " to " + node.GetNodeID() + ".");
             TransmitData(this, node, wait, DATA_COLOUR);
         }
 
-        public void SendAckPacket(MobileNode node, int wait)
+        public void SendAckPacket(MobileNode node, int wait, string tag)
         {
-            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Sending ACK from " + nodeID + " to " + node.GetNodeID());
+            controller.PrintToOutputPane(tag, "Sending ACK from " + nodeID + " to " + node.GetNodeID());
             TransmitData(this, node, wait, ACK_COLOUR);
         }
 
-        public void SendRREQPacket(MobileNode node, int wait, SessionData sessionData)
+        public void SendRREQPacket(MobileNode node, int wait, SessionData sessionData, string tag)
         {
-            controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
+            controller.PrintToOutputPane(tag, string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
             TransmitData(this, node, wait, RREQ_COLOUR);
             sessionData.IncrementNumberOfControlPackets();
         }
 
-        public void SendRREPPacket(MobileNode node, int wait, SessionData session)
+        public void SendRREPPacket(MobileNode node, int wait, SessionData session, string tag)
         {
-            controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
+            controller.PrintToOutputPane(tag, string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
             TransmitData(node, this, wait, RREP_COLOUR);
             session.IncrementNumberOfControlPackets();
         }
@@ -245,9 +245,9 @@ namespace COMP4203.Web.Models
                         // Add new route to routes collection
                         routes.Add(rPacket);
                         /* Send RREQ from current node to the destination node */
-                        SendRREQPacket(node, delay, sData);
+                        SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR);
                         /* Send RREQ from destination node to the current node */
-                        node.SendRREPPacket(this, delay, sData);
+                        node.SendRREPPacket(this, delay, sData, OutputTag.TAG_DSR);
                     }
                     // If node is not the destination node...
                     else
@@ -256,7 +256,7 @@ namespace COMP4203.Web.Models
                         Route rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this);
                         /* Send RREQ from this node to node */
-                        SendRREQPacket(node, delay, sData);
+                        SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR);
                         /* Recursively perform discovery from this node, and collect all returned valid routes */
                         routes.AddRange(node.DSRDicovery(destNode, env, rPacket, sData, delay));
                     }
@@ -273,7 +273,7 @@ namespace COMP4203.Web.Models
                     {
                         if (rList[i] == this && i != 0)
                         {
-                            SendRREPPacket(rList[i-1], delay, sData);
+                            SendRREPPacket(rList[i-1], delay, sData, OutputTag.TAG_DSR);
                         }
                     }
                     
