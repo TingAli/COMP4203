@@ -7,23 +7,36 @@ namespace COMP4203.Web.Models
 {
     public class SessionData
     {
-        public double numControlPackets = 0;
-        public double numDataPacketsSent = 0;
-        public double numDataPacketsReceived = 0;
+        private double numberOfControlPackets = 0;
+        private double numberOfAttemptedTransmissions = 0;
+        private double numberOfSuccessfulTransmissions = 0;
         public List<double> endToEndDelays;
         public List<double> startingBatteryLevels;
         public List<double> endingBatteryLevels;
+
+        private ComponentController controller;
 
         public SessionData()
         {
             endToEndDelays = new List<double>();
             startingBatteryLevels = new List<double>();
             endingBatteryLevels = new List<double>();
+            controller = new ComponentController();
         }
+
+        public double GetNumberOfAttemptedTransmissions() { return numberOfAttemptedTransmissions; }
+        public void SetNumberOfAttemptedTransmissions(double n) { numberOfAttemptedTransmissions = n; }
+        public double GetNumberOfSuccessfulTranmissions() { return numberOfSuccessfulTransmissions; }
+        public void SetNumberOfSuccessfulTransmissions(double n) { numberOfSuccessfulTransmissions = n; }
+        public double GetNumberOfControlPackets() { return numberOfControlPackets; }
+        public void SetNumberOfControlPackets(double n) { numberOfControlPackets = n; }
+
+        public void IncrementNumberOfSuccessfulTransmissions() { numberOfSuccessfulTransmissions++; }
+        public void IncrementNumberOfControlPackets() { numberOfControlPackets++; }
 
         public double CalculatePacketDeliveryRatio()
         {
-            return numDataPacketsReceived / numDataPacketsSent;
+            return numberOfSuccessfulTransmissions / numberOfAttemptedTransmissions;
 
         }
 
@@ -40,7 +53,7 @@ namespace COMP4203.Web.Models
 
         public double CalculateNormalizedRoutingOverhead()
         {
-            return numControlPackets / numDataPacketsReceived;
+            return numberOfControlPackets / numberOfSuccessfulTransmissions;
         }
 
         public double CalculateBatteryDepletionDeviation()
@@ -80,6 +93,14 @@ namespace COMP4203.Web.Models
             {
                 endingBatteryLevels.Add(node.GetBatteryLevel());
             }
+        }
+
+        public void PrintResults()
+        {
+            controller.PrintToOutputPane("DSR_Results", "PDR: " + CalculatePacketDeliveryRatio());
+            controller.PrintToOutputPane("DSR_Results", "AEED: " + CalculateAverageEndToEndDelay());
+            controller.PrintToOutputPane("DSR_Results", "NRO: " + CalculateNormalizedRoutingOverhead());
+            controller.PrintToOutputPane("DSR_Results", "BDD: " + CalculateBatteryDepletionDeviation());
         }
     }
 }
