@@ -80,6 +80,7 @@
 											<input ng-model="runData.nodeRange" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Node Range #">
 										</div>
 										<div class="btn-group" role="group">
+											<button type="button" class="btn btn-success" ng-disabled="runData.isRunning" ng-click="generate(@tabIndex);">GENERATE</button>
 											<button type="button" class="btn btn-primary" ng-disabled="runData.isRunning" ng-click="initiateRun(@tabIndex);">RUN</button>
 											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
 											<button type="button" class="btn btn-info" ng-disabled="runData.isRunning" ng-click="runDemo(@tabIndex);">DEMO</button>
@@ -151,6 +152,7 @@
 											<input ng-model="runData.nodeRange" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Node Range #">
 										</div>
 										<div class="btn-group" role="group">
+											<button type="button" class="btn btn-success" ng-disabled="runData.isRunning" ng-click="generate(@tabIndex);">GENERATE</button>
 											<button type="button" class="btn btn-primary" ng-disabled="runData.isRunning" ng-click="initiateRun(@tabIndex);">RUN</button>
 											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
 											<button type="button" class="btn btn-info" ng-disabled="runData.isRunning" ng-click="runDemo(@tabIndex);">DEMO</button>
@@ -222,6 +224,7 @@
 											<input ng-model="runData.nodeRange" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Node Range #">
 										</div>
 										<div class="btn-group" role="group">
+											<button type="button" class="btn btn-success" ng-disabled="runData.isRunning" ng-click="generate(@tabIndex);">GENERATE</button>
 											<button type="button" class="btn btn-primary" ng-disabled="runData.isRunning" ng-click="initiateRun(@tabIndex);">RUN</button>
 											<button type="button" class="btn btn-danger" ng-click="reset(@tabIndex);">RESET</button>
 											<button type="button" class="btn btn-info" ng-disabled="runData.isRunning" ng-click="runDemo(@tabIndex);">DEMO</button>
@@ -270,6 +273,7 @@
 			</uib-tab>
 		</uib-tabset>
 	</div>
+	<div class="alert-box warning"><span>Warning: </span>{{ notification.Warning }}</div>
 </body>
 
 @Scripts.Render("~/bundles/jquery")

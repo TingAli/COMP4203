@@ -14,6 +14,11 @@ app.config(function($routeProvider) {
 
 app.factory("dataService",function($http) {
 	return {
+		generate: function (nodeNumber, messageNumber, simSpeedNumber, nodeRange,pureSelfishNodeNumber, partialSelfishNodeNumber, tabIndex) {
+			return $http.get("/api/main/generate/" + nodeNumber + "/" + messageNumber + "/" + simSpeedNumber + "/" + nodeRange + "/" 
+				+ pureSelfishNodeNumber + "/" + partialSelfishNodeNumber + "/" + tabIndex, {
+				});
+		},
         run: function (nodeNumber, messageNumber, simSpeedNumber, nodeRange,pureSelfishNodeNumber, partialSelfishNodeNumber, tabIndex) {
             return $http.get("/api/main/run/" + nodeNumber + "/" + messageNumber + "/" + simSpeedNumber + "/" + nodeRange + "/" 
 	            + pureSelfishNodeNumber + "/" + partialSelfishNodeNumber + "/" + tabIndex, {
