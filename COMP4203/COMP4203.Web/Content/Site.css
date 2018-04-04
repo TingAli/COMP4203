@@ -99,3 +99,18 @@ html, body {
 	overflow-x: hidden;
 	overflow-y: auto;
 }
+
+#latest-output {
+	border: 1.5px solid #000000;
+	color: #FFFFFF;
+	background-color: #000000;
+	min-width: 500px;
+}
+
+.navbar-header p {
+	padding: 5px;
+}
+
+.navbar-header a {
+	padding: 20px 20px;
+}

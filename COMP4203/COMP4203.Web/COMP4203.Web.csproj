@@ -185,6 +185,7 @@
     <Compile Include="Models\MobileNode.cs" />
     <Compile Include="Models\oldMobileNode.cs" />
     <Compile Include="Models\OutputMessage.cs" />
+    <Compile Include="Models\OutputTag.cs" />
     <Compile Include="Models\Route.cs" />
     <Compile Include="Models\SessionData.cs" />
     <Compile Include="Models\SimulationEnvironment.cs" />
