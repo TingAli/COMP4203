@@ -127,7 +127,20 @@ namespace COMP4203.Web.Models
         {
             controller.PrintToOutputPane(OutputTag.TAG_DSR, "Sending ACK from " + nodeID + " to " + node.GetNodeID());
             TransmitData(this, node, wait, ACK_COLOUR);
+        }
 
+        public void SendRREQPacket(MobileNode node, int wait, SessionData sessionData)
+        {
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
+            TransmitData(this, node, wait, RREQ_COLOUR);
+            sessionData.IncrementNumberOfControlPackets();
+        }
+
+        public void SendRREPPacket(MobileNode node, int wait, SessionData session)
+        {
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
+            TransmitData(node, this, wait, RREP_COLOUR);
+            session.IncrementNumberOfControlPackets();
         }
 
         public void TransmitData(MobileNode srcNode, MobileNode dstNode, int wait, string colour)
@@ -200,12 +213,13 @@ namespace COMP4203.Web.Models
         private List<Route> DSRDicovery(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
         {
             List<Route> routes = new List<Route>();     // List to hold routes from this node to the destination
-
+            
+            /* Collect all known routes from here */
             /* If there are already known routes to the destination node */
             if (knownRoutes.ContainsKey(destNode.GetNodeID()) && knownRoutes[destNode.GetNodeID()] != null)
             {   // for each known route to the destination...
-                foreach (Route r in knownRoutes[destNode.GetNodeID()]) // TODO: destNode nullpointer exception jet48
-                {
+                foreach (Route r in knownRoutes[destNode.GetNodeID()])
+                {   // create copy of route, add current node, and add to routes list
                     Route r2 = route.Copy();
                     r2.AddNodesToRoute(r.GetNodeRoute());
                     routes.Add(r2);
@@ -215,7 +229,7 @@ namespace COMP4203.Web.Models
 
             List<MobileNode> nodesWithinRange = GetNodesWithinRange(env);
             if (nodesWithinRange.Count == 0 && !destNode.Equals(this)) { return null; }
-
+            /* For all nodes within range... */
             foreach (MobileNode node in nodesWithinRange)
             {
                 // If node isn't in route yet...
@@ -224,41 +238,42 @@ namespace COMP4203.Web.Models
                     // If node is the destination node...
                     if (node.Equals(destNode))
                     {
-                        //Obtaining all possible routes
-                        Route rPacket = route.Copy();
-                        rPacket.AddNodeToRoute(this); // Adding nodes to route
-                        rPacket.AddNodeToRoute(node);
-                        routes.Add(rPacket); // Adding all possible routes
-                        controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
-                        env.TransmitData(this, node, delay, env.RREQ_COLOUR);
-                        sData.IncrementNumberOfControlPackets();
-                        controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
-                        env.TransmitData(node, this, delay, env.RREP_COLOUR);
-                        sData.IncrementNumberOfControlPackets();
-                    }
-                    else
-                    {
+                        // Add current node and dest node to route
                         Route rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this);
-                        controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
-                        env.TransmitData(this, node, delay, env.RREQ_COLOUR);
-                        sData.IncrementNumberOfControlPackets();
-                        routes.AddRange(node.DSRDicovery(destNode, env, rPacket, sData, delay)); // Recursive call
+                        rPacket.AddNodeToRoute(node);
+                        // Add new route to routes collection
+                        routes.Add(rPacket);
+                        /* Send RREQ from current node to the destination node */
+                        SendRREQPacket(node, delay, sData);
+                        /* Send RREQ from destination node to the current node */
+                        node.SendRREPPacket(this, delay, sData);
+                    }
+                    // If node is not the destination node...
+                    else
+                    {
+                        // Add current node to the route
+                        Route rPacket = route.Copy();
+                        rPacket.AddNodeToRoute(this);
+                        /* Send RREQ from this node to node */
+                        SendRREQPacket(node, delay, sData);
+                        /* Recursively perform discovery from this node, and collect all returned valid routes */
+                        routes.AddRange(node.DSRDicovery(destNode, env, rPacket, sData, delay));
                     }
                 }
             }
+
+            /* Iterate through valid found routes, performing RREP returns */
             foreach (Route r in routes)
             {
-                if (r.GetNodeRoute().Contains(destNode))
+                if (r.GetNodeRoute().Contains(destNode)) // redundancy check
                 {
                     List<MobileNode> rList = r.GetNodeRoute();
                     for (int i = 0; i < rList.Count; i++)
                     {
                         if (rList[i] == this && i != 0)
                         {
-                            controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i-1].GetNodeID()));
-                            env.TransmitData(this, rList[i - 1], delay, env.RREP_COLOUR);
-                            sData.IncrementNumberOfControlPackets();
+                            SendRREPPacket(rList[i-1], delay, sData);
                         }
                     }
                     
