@@ -20,7 +20,7 @@ namespace COMP4203.Web.Models
         private int nodeID;
         public double BatteryLevel;
         public int CenterX, CenterY;
-        private Dictionary<int, List<RoutingPacket>> knownRoutes;
+        private Dictionary<int, List<Route>> knownRoutes;
         public Guid Id;
         public int CanvasIndex;
 
@@ -31,7 +31,7 @@ namespace COMP4203.Web.Models
             nodeID = nodeCount++;
             BatteryLevel = 100;
             CenterX = CenterY = 0;
-            knownRoutes = new Dictionary<int, List<RoutingPacket>>();
+            knownRoutes = new Dictionary<int, List<Route>>();
             Id = Guid.NewGuid();
             CanvasIndex = -1;
             BorderWidth = 2;
@@ -46,7 +46,7 @@ namespace COMP4203.Web.Models
             BatteryLevel = 100;
             CenterX = x;
             CenterY = y;
-            BatteryLevel = bLevel; knownRoutes = new Dictionary<int, List<RoutingPacket>>();
+            BatteryLevel = bLevel; knownRoutes = new Dictionary<int, List<Route>>();
             Id = Guid.NewGuid();
             CanvasIndex = -1;
             BorderWidth = 2;
@@ -135,17 +135,17 @@ namespace COMP4203.Web.Models
             return nodes;
         }
 
-        public List<RoutingPacket> RouteDiscoveryDSR(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)
+        public List<Route> RouteDiscoveryDSR(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)
         {
             controller.PrintToOutputPane("DSR", "Performing Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
-            RoutingPacket rPacket = new RoutingPacket();
-            List<RoutingPacket> routes = DSRDicovery(destNode, env, rPacket, sData, delay);
+            Route rPacket = new Route();
+            List<Route> routes = DSRDicovery(destNode, env, rPacket, sData, delay);
             if (knownRoutes.ContainsKey(destNode.GetNodeID()))
             {
-                foreach (RoutingPacket r in routes)
+                foreach (Route r in routes)
                 {
                     bool exists = false;
-                    foreach (RoutingPacket r2 in knownRoutes[destNode.GetNodeID()])
+                    foreach (Route r2 in knownRoutes[destNode.GetNodeID()])
                     {
                         if (r2.RouteCompare(r))
                         {
@@ -166,15 +166,15 @@ namespace COMP4203.Web.Models
             return routes;
         }
 
-        private List<RoutingPacket> DSRDicovery(MobileNode destNode, SimulationEnvironment env, RoutingPacket route, SessionData sData, int delay)
+        private List<Route> DSRDicovery(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
         {
-            List<RoutingPacket> routes = new List<RoutingPacket>();
+            List<Route> routes = new List<Route>();
 
             if (knownRoutes.ContainsKey(destNode.GetNodeID()))
             {
-                foreach (RoutingPacket r in knownRoutes[destNode.GetNodeID()])
+                foreach (Route r in knownRoutes[destNode.GetNodeID()]) // TODO: destNode nullpointer exception jet48
                 {
-                    RoutingPacket r2 = route.Copy();
+                    Route r2 = route.Copy();
                     r2.AddNodesToRoute(r.GetNodeRoute());
                     routes.Add(r2);
                 }
@@ -193,7 +193,7 @@ namespace COMP4203.Web.Models
                     if (node.Equals(destNode))
                     {
                         //Obtaining all possible routes
-                        RoutingPacket rPacket = route.Copy();
+                        Route rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this); // Adding nodes to route
                         rPacket.AddNodeToRoute(node);
                         routes.Add(rPacket); // Adding all possible routes
@@ -206,7 +206,7 @@ namespace COMP4203.Web.Models
                     }
                     else
                     {
-                        RoutingPacket rPacket = route.Copy();
+                        Route rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this);
                         controller.PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
                         env.TransmitData(this, node, delay, env.RREQ_COLOUR);
@@ -215,7 +215,7 @@ namespace COMP4203.Web.Models
                     }
                 }
             }
-            foreach (RoutingPacket r in routes)
+            foreach (Route r in routes)
             {
                 if (r.GetNodeRoute().Contains(destNode))
                 {
@@ -235,7 +235,7 @@ namespace COMP4203.Web.Models
             return routes;
         }
 
-        public List<RoutingPacket> GetRoutesToNode(MobileNode node)
+        public List<Route> GetRoutesToNode(MobileNode node)
         {
             // If there are no known routes for this destination, return null.
             if (!knownRoutes.ContainsKey(node.GetNodeID())) { return null; }
@@ -243,9 +243,9 @@ namespace COMP4203.Web.Models
             return knownRoutes[node.GetNodeID()];
         }
 
-        public RoutingPacket GetBestRouteDSR(MobileNode node)
+        public Route GetBestRouteDSR(MobileNode node)
         {
-            List<RoutingPacket> routes = GetRoutesToNode(node);
+            List<Route> routes = GetRoutesToNode(node);
             if (routes == null) { return null; }
             if (routes.Count == 0) { return null; }
             int lowestValue = 99999999;
@@ -260,6 +260,15 @@ namespace COMP4203.Web.Models
                 }
             }
             return routes[lowestIndex];
+        }
+
+        public double GetTransmissionTimeToNode(MobileNode node)
+        {
+            if (IsWithinRangeOf(node))
+            {
+                return GetDistance(node) / (3.8 * Math.Pow(10,8));
+            }
+            return -1;
         }
     }
 }
