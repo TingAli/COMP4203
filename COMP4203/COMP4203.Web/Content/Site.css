@@ -95,7 +95,7 @@ html, body {
 }
 
 #output-panel {
-	height: 700px;
+	height: calc(100vh - 200px);
 	overflow-x: hidden;
 	overflow-y: auto;
 }
