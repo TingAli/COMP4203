@@ -27,28 +27,17 @@ namespace COMP4203.Web.Models
             // For each route, calculate the average battery level
             // Convert the average battery level of a route into a percentage and multiply it by the route's ac 
             double avgBatteryLevel = 0;
-            double avgAc = 0;
+            double avgAltruismCoefficient = 0;
             foreach (MobileNode node in this.nodeRoute)
             {
                 avgBatteryLevel += node.GetBatteryLevel();
-                avgAc += node.GetAC();
+                avgAltruismCoefficient += node.GetAltruismCoefficient();
             }
-            avgAc = (avgAc / this.nodeRoute.Count) / 100;
+            avgAltruismCoefficient = (avgAltruismCoefficient / this.nodeRoute.Count) / 100;
             avgBatteryLevel = (avgBatteryLevel / this.nodeRoute.Count) / 100;
-            sdp = avgAc * avgBatteryLevel;
+            sdp = avgAltruismCoefficient * avgBatteryLevel;
             return sdp;
         }
-
-        /*public double CalcSDP()
-        {
-            double fp = 0;
-            foreach (MobileNode node in this.nodeRoute)
-            {
-                fp = (node.GetBatteryLevel() / 100) * node.GetAC();
-                sdp = sdp * fp;
-            }
-            return sdp;
-        }*/
 
         public List<MobileNode> GetNodeRoute() => nodeRoute;
 

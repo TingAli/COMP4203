@@ -29,7 +29,7 @@ namespace COMP4203.Web.Models
         private Dictionary<int, List<Route>> knownRoutes;
         public Guid Id;
         public int CanvasIndex;
-        private int ac;
+        private int AltruismCoefficient;
         private bool dropStatus = false;
 
         private ComponentController controller;
@@ -46,7 +46,7 @@ namespace COMP4203.Web.Models
             StrokeColour = "#FFFFFF";
             Radius = 10;
             controller = new ComponentController();
-            ac = 50;
+            AltruismCoefficient = 50;
         }
 
         public MobileNode(int x, int y, int bLevel, int range)
@@ -63,12 +63,12 @@ namespace COMP4203.Web.Models
             Radius = 10;
             this.range = range;
             controller = new ComponentController();
-            ac = 50;
+            AltruismCoefficient = 50;
         }
 
-        public int GetAC()
+        public int GetAltruismCoefficient()
         {
-            return ac;
+            return AltruismCoefficient;
         }
 
         public bool GetDropStatus()
@@ -252,7 +252,7 @@ namespace COMP4203.Web.Models
                             Route rPacket = route.Copy();
                             rPacket.AddNodeToRoute(this);
                             rPacket.AddNodeToRoute(node);
-                            route.GetNodeRoute()[0].ac -= 10; // Decreasing altruism coefficient
+                            route.GetNodeRoute()[0].AltruismCoefficient -= 10; // Decreasing altruism coefficient
                             controller.PrintToOutputPane("SADSR", string.Format("RREQ dropped by node {0}", nodeID));
                             dropStatus = true;
                         }
@@ -261,7 +261,7 @@ namespace COMP4203.Web.Models
                             Route rPacket = route.Copy();
                             rPacket.AddNodeToRoute(this); // Adding nodes to route
                             rPacket.AddNodeToRoute(node);
-                            route.GetNodeRoute()[0].ac += 10; // Increase altruism coefficient
+                            route.GetNodeRoute()[0].AltruismCoefficient += 10; // Increase altruism coefficient
                             routes.Add(rPacket); // Adding all possible routes
                             controller.PrintToOutputPane("SADSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
                             env.TransmitData(this, node, delay, env.RREQ_COLOUR);
