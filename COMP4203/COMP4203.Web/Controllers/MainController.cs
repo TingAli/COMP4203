@@ -37,10 +37,10 @@ namespace COMP4203.Web.Controllers
                 node.Print();
                 node.PrintNodesWithinRange(sim);
             }
-            new ComponentController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
-            sim.SendMessageDSR(sim.GetMessages()[0], new SessionData(), 2000);
-            /*new ComponentController().PopulateNodesSADSR(sim.GetNodes(), tabIndex);
-            sim.SendMessageSADSR(sim.GetMessages()[0], new SessionData(), 500);*/
+            /*new ComponentController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
+            sim.SendMessageDSR(sim.GetMessages()[0], new SessionData(), 2000);*/
+            new ComponentController().PopulateNodesSADSR(sim.GetNodes(), tabIndex);
+            sim.SendMessageSADSR(sim.GetMessages()[0], new SessionData(), 500);
         }
 
         [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{pureSelfishNodeNumber}/{partialSelfishNodeNumber}/{tabIndex}")]

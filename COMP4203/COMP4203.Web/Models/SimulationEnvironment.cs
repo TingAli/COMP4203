@@ -172,12 +172,12 @@ namespace COMP4203.Web.Models
             List<MobileNode> nodes = route.GetNodeRoute();
 
             /* Send DATA Packet */
-            for (int i = 1; i < nodes.Count; i++) { nodes[i - 1].SendDataPacket(nodes[i], delay); }
+            for (int i = 1; i < nodes.Count; i++) { nodes[i - 1].SendDataPacket(nodes[i], delay, "DSR"); }
 
             /* Send ACK Packet */
             for (int i = nodes.Count-2; i >=0; i--)
             {
-                nodes[i + 1].SendAckPacket(nodes[i], delay);
+                nodes[i + 1].SendAckPacket(nodes[i], delay, "DSR");
                 sData.IncrementNumberOfControlPackets();
             }
 
