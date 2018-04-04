@@ -1,9 +1,12 @@
 ﻿app.controller("indexController",["$scope","dataService","$window","$timeout","$filter",function($scope,context,$window,$timeout,$filter) {
+	$scope.runData={};
+	$scope.runData.isRunning = false;
 	$scope.outputMessages=[];
 	$scope.canvasList=[];
-	$scope.runData={};
 
 	$scope.initiateRun=function(tabIndex) {
+		$scope.runData.isRunning = true;
+
         context.run($scope.runData.nodeNumber, $scope.runData.messageNumber, $scope.runData.simSpeedNumber,$scope.runData.nodeRange, 
 		        $scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,tabIndex)
 			.then(function() {
@@ -158,6 +161,7 @@
 	}
 
 	$scope.reset=function(tabIndex) {
+		$scope.runData.isRunning = false;
 		$scope.canvasList[tabIndex].clearRect(0,0,500,500);
 		$scope.canvasList[tabIndex].Nodes=[];
 		$scope.canvasList[tabIndex].LineHistory=[];
@@ -181,6 +185,7 @@
 	}
 
 	$scope.runDemo=function(tabIndex) {
+		$scope.runData.isRunning = true;
 		$scope.reset(tabIndex);
 
 		$scope.runData.nodeNumber=4;
@@ -196,6 +201,8 @@
 	}
 
 	$scope.runTest=function(tabIndex) {
+		$scope.runData.isRunning = true;
+
 		var testNodeList=[
 			{
 				Id: $scope.newGuid(),
@@ -273,6 +280,8 @@
 			testNodeList[2].BatteryLevel=84;
 			$scope.updateBatteryLevel(testNodeList[2]);
 		},$scope.runData.simSpeedNumber*3);
+
+		$scope.runData.isRunning = false;
 	}
 
 	angular.element(document).ready(function() {
@@ -300,6 +309,7 @@
 			var nodeStart=angular.fromJson(nodeStartJson);
 			var nodeEnd=angular.fromJson(nodeEndJson);
 
+			$scope.runData.isRunning = true;
 			$scope.drawMessageLine(nodeStart,nodeEnd,lineColour);
 			$scope.$apply();
 		};
@@ -307,6 +317,7 @@
 		$scope.mainHub.client.updateBatteryLevel=function(nodeJson) {
 			var node=angular.fromJson(nodeJson);
 
+			$scope.runData.isRunning = true;
 			$scope.updateBatteryLevel(node);
 			$scope.$apply();
 		};
@@ -314,7 +325,13 @@
 		$scope.mainHub.client.populateNodes=function(nodeListJson) {
 			var nodeList=angular.fromJson(nodeListJson);
 
+			$scope.runData.isRunning = true;
 			$scope.populateCanvas(nodeList);
+			$scope.$apply();
+		};
+
+		$scope.mainHub.client.completeRun=function(tabIndex) {
+			$scope.runData.isRunning = false;
 			$scope.$apply();
 		};
 	});
