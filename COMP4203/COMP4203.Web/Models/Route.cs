@@ -2,20 +2,20 @@
 
 namespace COMP4203.Web.Models
 {
-    public class RoutingPacket
+    public class Route
     {
         private List<MobileNode> nodeRoute;
 
-		public RoutingPacket()
+		public Route()
 		{
 			nodeRoute = new List<MobileNode>();
 		}
 
 		public List<MobileNode> GetNodeRoute() => nodeRoute;
 
-        public RoutingPacket Copy()
+        public Route Copy()
         {
-            RoutingPacket packet = new RoutingPacket();
+            Route packet = new Route();
             foreach (MobileNode node in nodeRoute)
             {
                 packet.AddNodeToRoute(node);
@@ -38,7 +38,7 @@ namespace COMP4203.Web.Models
             return nodeRoute.Contains(node);
         }
 
-        public bool RouteCompare(RoutingPacket route)
+        public bool RouteCompare(Route route)
         {
             if (nodeRoute.Count != route.GetNodeRoute().Count)
             {
@@ -69,6 +69,16 @@ namespace COMP4203.Web.Models
                 output += node.GetNodeID() + " ";
             }
             return output;
+        }
+
+        public double GetTransmissionTime()
+        {
+            double transmissionTime = 0;
+            for (int i = 0; i < nodeRoute.Count - 1; i++)
+            {
+                transmissionTime += nodeRoute[i].GetTransmissionTimeToNode(nodeRoute[i+1]);
+            }
+            return transmissionTime;
         }
     }
 }
