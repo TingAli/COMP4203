@@ -50,9 +50,9 @@ namespace COMP4203.Web.Models
             sessionData.SetEndingBatteryLevels(mobileNodes);    // Save ending battery levels
             sessionData.PrintResults();     // Print collected metrics
             sessions.Add(sessionData);      // Add collected data to recorded sessions
-            controller.PrintToOutputPane("DSR", sessionData.GetNumberOfAttemptedTransmissions() + " attempted transmissions.");
-            controller.PrintToOutputPane("DSR", sessionData.GetNumberOfSuccessfulTranmissions() + " successful transmissions.");
-            controller.PrintToOutputPane("DSR", "Finished Transmitting Messages.");
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, sessionData.GetNumberOfAttemptedTransmissions() + " attempted transmissions.");
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, sessionData.GetNumberOfSuccessfulTranmissions() + " successful transmissions.");
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Finished Transmitting Messages.");
             controller.MarkTransferAsComplete(tabIndex);
         }
 
@@ -102,7 +102,7 @@ namespace COMP4203.Web.Models
             /* If no known route, attempt to find one */
             if (route == null)
             {
-                controller.PrintToOutputPane("DSR", "No Known Route to Destination.");
+                controller.PrintToOutputPane(OutputTag.TAG_DSR, "No Known Route to Destination.");
                 /* Perform Route Discovery */
                 sourceNode.RouteDiscoveryDSR(destinationNode, this, sData, delay);
                 route = sourceNode.GetBestRouteDSR(destinationNode);
@@ -114,10 +114,10 @@ namespace COMP4203.Web.Models
                 }
             }
 
-            controller.PrintToOutputPane("DSR", string.Format("Sending Message #{0}.", message.GetMessageID()));
-            controller.PrintToOutputPane("DSR", "Source Node: " + sourceNode.GetNodeID());
-            controller.PrintToOutputPane("DSR", "Destination Node: " + destinationNode.GetNodeID());
-            controller.PrintToOutputPane("DSR", "Route Chosen: " + route.GetRouteAsString());
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending Message #{0}.", message.GetMessageID()));
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Source Node: " + sourceNode.GetNodeID());
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Destination Node: " + destinationNode.GetNodeID());
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Route Chosen: " + route.GetRouteAsString());
 
             List<MobileNode> nodes = route.GetNodeRoute();
 

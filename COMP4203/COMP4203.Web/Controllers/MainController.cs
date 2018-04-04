@@ -29,7 +29,7 @@ namespace COMP4203.Web.Controllers
             // Add Test Message
             sim.AddMessage(new Message(sim.GetNodes()[0], sim.GetNodes()[3]));
             // Print Simulation Nodes
-            new ComponentController().PrintToOutputPane("Note", "Simulation Nodes:");
+            new ComponentController().PrintToOutputPane(OutputTag.TAG_NOTE, "Simulation Nodes:");
             foreach (MobileNode node in sim.GetNodes())
             {
                 node.Print();
