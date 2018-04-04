@@ -68,6 +68,7 @@ namespace COMP4203.Web.Models
 
         public void GenerateRandomNodes(int numNodes, int range)
         {
+            mobileNodes.Clear();
             Random random = new Random();
             for (int i = 0; i < numNodes; i++)
             {
@@ -80,6 +81,7 @@ namespace COMP4203.Web.Models
 
         public void GenerateRandomMessages(int numMessages)
         {
+            messages.Clear();
             Random random = new Random();
             for (int i = 0; i < numMessages; i++)
             {

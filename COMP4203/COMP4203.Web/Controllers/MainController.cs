@@ -11,10 +11,12 @@ namespace COMP4203.Web.Controllers
     public class MainController : ApiControllerWithHub<MainHub>
     {
         ComponentController controller;
+        SimulationEnvironment simulationEnvironment;
 
 	    public MainController()
 	    {
             controller = new ComponentController();
+            simulationEnvironment = new SimulationEnvironment();
         }
 
         [HttpGet, Route("api/main/demo/{tabIndex}")]
@@ -49,11 +51,10 @@ namespace COMP4203.Web.Controllers
             int pureSelfishNodeNumber,
             int partialSelfishNodeNumber)
         {
-            SimulationEnvironment sim = new SimulationEnvironment();
-            sim.GenerateRandomNodes(nodeNumber, nodeRange);
-            sim.GenerateRandomMessages(messageNumber);
-            controller.PopulateNodesDSR(sim.GetNodes(), tabIndex);
-            sim.RunSimulation(simSpeedNumber, tabIndex);
+            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange);        // Generate Random Nodes
+            simulationEnvironment.GenerateRandomMessages(messageNumber);             // Generate Random Messages
+            controller.PopulateNodesDSR(simulationEnvironment.GetNodes(), tabIndex); // Populate Nodes on Canvas
+            simulationEnvironment.RunSimulation(simSpeedNumber, tabIndex);           // Run Simulation on Environment
         }
     }
 }
