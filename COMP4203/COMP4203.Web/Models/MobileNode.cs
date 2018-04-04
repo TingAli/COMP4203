@@ -169,25 +169,27 @@ namespace COMP4203.Web.Models
             controller.PrintToOutputPane(OutputTag.TAG_DSR, "Performing Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
             /* Perform Recursive Route Discovery to Collect all Valid Routes to the Destination */
             List<Route> routes = DSRDicovery(destNode, env, new Route(), sData, delay);
+            /* If there are already known routes, add if unique */
             if (knownRoutes.ContainsKey(destNode.GetNodeID()))
             {
                 foreach (Route r in routes)
                 {
                     bool exists = false;
-                    foreach (Route r2 in knownRoutes[destNode.GetNodeID()])
+                    foreach (Route r2 in knownRoutes[destNode.GetNodeID()]) // for each route in the routing table corresponding to the destination node
                     {
-                        if (r2.RouteCompare(r))
+                        if (r2.RouteCompare(r)) // if they are equivalent routes, don't bother adding to routing table
                         {
                             exists = true;
                             break;
                         }
                     }
-                    if (!exists)
+                    if (!exists) // if the route isn't in the routing table, add it
                     {
                         knownRoutes[destNode.GetNodeID()].Add(r);
                     }
                 }
             }
+            /* Otherwise, add all routes to routing table */
             else
             {
                 knownRoutes.Add(destNode.GetNodeID(), routes);
@@ -197,10 +199,11 @@ namespace COMP4203.Web.Models
 
         private List<Route> DSRDicovery(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
         {
-            List<Route> routes = new List<Route>();
+            List<Route> routes = new List<Route>();     // List to hold routes from this node to the destination
 
-            if (knownRoutes.ContainsKey(destNode.GetNodeID()))
-            {
+            /* If there are already known routes to the destination node */
+            if (knownRoutes.ContainsKey(destNode.GetNodeID()) && knownRoutes[destNode.GetNodeID()] != null)
+            {   // for each known route to the destination...
                 foreach (Route r in knownRoutes[destNode.GetNodeID()]) // TODO: destNode nullpointer exception jet48
                 {
                     Route r2 = route.Copy();
