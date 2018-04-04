@@ -22,10 +22,12 @@ namespace COMP4203.Web.Controllers
         {
             SimulationEnvironment sim = new SimulationEnvironment();
             // Add Test Nodes
-            sim.AddNode(new MobileNode(100, 100, 30, 200));
-            sim.AddNode(new MobileNode(200, 210, 30, 200));
-            sim.AddNode(new MobileNode(210, 200, 30, 200));
-            sim.AddNode(new MobileNode(298, 298, 30, 200));
+            sim.AddNode(new MobileNode(100, 100, 100, 200));
+            sim.AddNode(new MobileNode(200, 210, 20, 200));
+            sim.AddNode(new MobileNode(210, 200, 10, 200));
+            sim.AddNode(new MobileNode(298, 298, 100, 200));
+            sim.AddNode(new MobileNode(200, 100, 20, 200));
+            sim.AddNode(new MobileNode(150, 120, 100, 200));
             // Add Test Message
             sim.AddMessage(new Message(sim.GetNodes()[0], sim.GetNodes()[3]));
             // Print Simulation Nodes
@@ -38,7 +40,7 @@ namespace COMP4203.Web.Controllers
             /*new ComponentController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
             sim.SendMessageDSR(sim.GetMessages()[0], new SessionData(), 2000);*/
             new ComponentController().PopulateNodesSADSR(sim.GetNodes(), tabIndex);
-            sim.SendMessageSADSR(sim.GetMessages()[0], new SessionData(), 2000);
+            sim.SendMessageSADSR(sim.GetMessages()[0], new SessionData(), 500);
         }
 
         [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{tabIndex}")]

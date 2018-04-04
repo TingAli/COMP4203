@@ -24,7 +24,7 @@ namespace COMP4203.Web.Models
         public Guid Id;
         public int CanvasIndex;
         private int ac;
-        private bool drop = false;
+        private bool dropStatus = false;
 
         private ComponentController controller;
 
@@ -63,6 +63,11 @@ namespace COMP4203.Web.Models
         public int GetAC()
         {
             return ac;
+        }
+
+        public bool GetDropStatus()
+        {
+            return dropStatus;
         }
 
         public int GetNodeID()
@@ -148,6 +153,29 @@ namespace COMP4203.Web.Models
         {
             Route rPacket = new Route();
             List<Route> routes = SADSRDiscovery(destNode, env, rPacket, sData, delay);
+            if (knownRoutes.ContainsKey(destNode.GetNodeID()))
+            {
+                foreach (Route r in routes)
+                {
+                    bool exists = false;
+                    foreach (Route r2 in knownRoutes[destNode.GetNodeID()])
+                    {
+                        if (r2.RouteCompare(r))
+                        {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists)
+                    {
+                        knownRoutes[destNode.GetNodeID()].Add(r);
+                    }
+                }
+            }
+            else
+            {
+                knownRoutes.Add(destNode.GetNodeID(), routes);
+            }
             return routes;
         }
         private List<Route> SADSRDiscovery(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
@@ -179,16 +207,19 @@ namespace COMP4203.Web.Models
                         //Obtaining all possible route
                         if (this.PacketDrop() == true)
                         {
-                            route.GetNodeRoute()[0].ac -= 5;
+                            Route rPacket = route.Copy();
+                            rPacket.AddNodeToRoute(this);
+                            rPacket.AddNodeToRoute(node);
+                            route.GetNodeRoute()[0].ac -= 10; // Decreasing altruism coefficient
                             controller.PrintToOutputPane("SADSR", string.Format("RREQ dropped by node {0}", nodeID));
-                            return null;
+                            dropStatus = true;
                         }
                         if (this.PacketDrop() == false)
                         {
-                            route.GetNodeRoute()[0].ac += 5;
                             Route rPacket = route.Copy();
                             rPacket.AddNodeToRoute(this); // Adding nodes to route
                             rPacket.AddNodeToRoute(node);
+                            route.GetNodeRoute()[0].ac += 10; // Increase altruism coefficient
                             routes.Add(rPacket); // Adding all possible routes
                             controller.PrintToOutputPane("SADSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
                             env.TransmitData(this, node, delay, env.RREQ_COLOUR);
@@ -196,15 +227,18 @@ namespace COMP4203.Web.Models
                             controller.PrintToOutputPane("SADSR", string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
                             env.TransmitData(node, this, delay, env.RREP_COLOUR);
                             sData.numControlPackets++;
+                            dropStatus = false;
                         }
                     }
                     else
                     {
                         if (this.PacketDrop() == true)
                         {
-                            route.GetNodeRoute()[0].ac -= 5;
+                            Route rPacket = route.Copy();
+                            rPacket.AddNodeToRoute(this);
                             controller.PrintToOutputPane("SADSR", string.Format("RREQ dropped by node {0}", nodeID));
-                            return null;
+                            routes.AddRange(node.SADSRDiscovery(destNode, env, rPacket, sData, delay));
+                            dropStatus = true;
                         }
                         if (this.PacketDrop() == false)
                         {
@@ -213,6 +247,7 @@ namespace COMP4203.Web.Models
                             controller.PrintToOutputPane("SADSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
                             env.TransmitData(this, node, delay, env.RREQ_COLOUR);
                             sData.numControlPackets++;
+                            dropStatus = false;
                             routes.AddRange(node.SADSRDiscovery(destNode, env, rPacket, sData, delay)); // Recursive call
                         }
                     }
@@ -225,6 +260,11 @@ namespace COMP4203.Web.Models
                     List<MobileNode> rList = r.GetNodeRoute();
                     for (int i = 0; i < rList.Count; i++)
                     {
+                        if (rList[i] == this && rList[i].dropStatus == true)
+                        {
+                            controller.PrintToOutputPane("SADSR", string.Format("Node {0} has dropped a packet", nodeID));
+                            break;
+                        }
                         if (rList[i] == this && i != 0)
                         {
                             controller.PrintToOutputPane("SADSR", string.Format("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i - 1].GetNodeID()));
@@ -245,6 +285,7 @@ namespace COMP4203.Web.Models
             if (routes == null) { return null; }
             foreach (Route r in routes)
             {
+                controller.PrintToOutputPane("SADSR", string.Format("SDP is {0}", r.CalcSDP()));
                 if (sdp < r.CalcSDP())
                 {
                     sdp = r.getSDP();

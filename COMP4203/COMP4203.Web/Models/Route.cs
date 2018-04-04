@@ -11,6 +11,7 @@ namespace COMP4203.Web.Models
 		public Route()
 		{
 			nodeRoute = new List<MobileNode>();
+            sdp = 0;
 		}
 
         // Use to retrieve route's SDP
@@ -37,6 +38,17 @@ namespace COMP4203.Web.Models
             sdp = avgAc * avgBatteryLevel;
             return sdp;
         }
+
+        /*public double CalcSDP()
+        {
+            double fp = 0;
+            foreach (MobileNode node in this.nodeRoute)
+            {
+                fp = (node.GetBatteryLevel() / 100) * node.GetAC();
+                sdp = sdp * fp;
+            }
+            return sdp;
+        }*/
 
         public List<MobileNode> GetNodeRoute() => nodeRoute;
 
