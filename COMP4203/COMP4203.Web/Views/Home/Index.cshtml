@@ -257,12 +257,12 @@
 					<i class="glyphicon glyphicon-screenshot"></i> Output
 				</uib-tab-heading>
 				<div>
-					<div class="panel panel-danger">
+					<div id="output-panel" class="panel panel-danger">
 						<div class="panel-heading text-center">Output Messages</div>
 						<ul class="list-group">
 							<li class="list-group-item" ng-show="outputMessages.length == 0">No output messages...</li>
 							<li class="list-group-item" ng-show="outputMessages.length == 0">You can open this tab in a new browser window/tab.</li>
-							<li class="list-group-item" ng-repeat="outputMessage in outputMessages"><b>{{ outputMessage.Tag }}</b> : {{ outputMessage.Message }}</li>
+							<li class="list-group-item" ng-repeat="outputMessage in outputMessages | reverse"><b>{{ outputMessage.Tag }}</b> : {{ outputMessage.Message }}</li>
 						</ul>
 					</div>
 				</div>

@@ -93,3 +93,9 @@ html, body {
 .legend .ack_colour {
 	background-color: #df1313;
 }
+
+#output-panel {
+	height: 700px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
