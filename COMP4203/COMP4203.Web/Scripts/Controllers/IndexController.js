@@ -2,10 +2,10 @@
 	$scope.outputMessages=[];
 	$scope.canvasList=[];
 	$scope.runData={};
-	$scope.runData.nodeRange=200;
 
 	$scope.initiateRun=function(tabIndex) {
-        context.run($scope.runData.nodeNumber, $scope.runData.messageNumber, $scope.runData.simSpeedNumber,$scope.runData.nodeRange,tabIndex)
+        context.run($scope.runData.nodeNumber, $scope.runData.messageNumber, $scope.runData.simSpeedNumber,$scope.runData.nodeRange, 
+		        $scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,tabIndex)
 			.then(function() {
 			});
 	}
@@ -109,7 +109,7 @@
 		var found=$filter("filter")($scope.canvasList[node.CanvasIndex].Nodes,{ Id: node.Id },true);
 		if(found.length&&foundHistory.length) {
 			foundHistory[0].IsVisible=false;
-			found[0].BatteryLevel=node.BatteryLevel;
+			found[0].BatteryLevel=parseFloat(Math.round(node.BatteryLevel * 100) / 100).toFixed(2);
 		}
 
 		$scope.reDrawCurrentState(node.CanvasIndex);
@@ -164,6 +164,8 @@
 		$scope.canvasList[tabIndex].BatteryLevelTextHistory=[];
 		$scope.canvasList[tabIndex].NodeRangeHistory=[];
 		$scope.runData.nodeNumber=0;
+		$scope.runData.pureSelfishNodeNumber=0;
+		$scope.runData.partialSelfishNodeNumber=0;
 		$scope.runData.messageNumber=0;
 		$scope.runData.simSpeedNumber=0;
 		$scope.runData.nodeRange=200;
@@ -182,6 +184,8 @@
 		$scope.reset(tabIndex);
 
 		$scope.runData.nodeNumber=4;
+		$scope.runData.pureSelfishNodeNumber=0;
+		$scope.runData.partialSelfishNodeNumber=0;
 		$scope.runData.messageNumber=1;
 		$scope.runData.simSpeedNumber=2000;
 		$scope.runData.nodeRange=200;
@@ -248,6 +252,8 @@
 		];
 
 		$scope.runData.nodeNumber=testNodeList.length;
+		$scope.runData.pureSelfishNodeNumber=0;
+		$scope.runData.partialSelfishNodeNumber=0;
 		$scope.runData.messageNumber=1;
 		$scope.runData.simSpeedNumber=200;
 		$scope.runData.nodeRange=200;
@@ -270,6 +276,11 @@
 	}
 
 	angular.element(document).ready(function() {
+		$scope.runData.nodeNumber=0;
+		$scope.runData.pureSelfishNodeNumber=0;
+		$scope.runData.partialSelfishNodeNumber=0;
+		$scope.runData.messageNumber=0;
+		$scope.runData.simSpeedNumber=0;
 		$scope.runData.nodeRange=200;
 		$scope.mainHub=$.connection.mainHub;
 		$.connection.hub.start();
