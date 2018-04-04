@@ -1,14 +1,14 @@
 ﻿app.controller("indexController",["$scope","dataService","$window","$timeout","$filter",function($scope,context,$window,$timeout,$filter) {
 	$scope.runData={};
-	$scope.runData.isRunning = false;
 	$scope.outputMessages=[];
 	$scope.canvasList=[];
+	$scope.notification={};
 
 	$scope.initiateRun=function(tabIndex) {
-		$scope.runData.isRunning = true;
+		$scope.runData.isRunning=true;
 
-        context.run($scope.runData.nodeNumber, $scope.runData.messageNumber, $scope.runData.simSpeedNumber,$scope.runData.nodeRange, 
-		        $scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,tabIndex)
+		context.run($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,$scope.runData.nodeRange,
+			$scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,tabIndex)
 			.then(function() {
 			});
 	}
@@ -112,7 +112,7 @@
 		var found=$filter("filter")($scope.canvasList[node.CanvasIndex].Nodes,{ Id: node.Id },true);
 		if(found.length&&foundHistory.length) {
 			foundHistory[0].IsVisible=false;
-			found[0].BatteryLevel=parseFloat(Math.round(node.BatteryLevel * 100) / 100).toFixed(2);
+			found[0].BatteryLevel=parseFloat(Math.round(node.BatteryLevel*100)/100).toFixed(2);
 		}
 
 		$scope.reDrawCurrentState(node.CanvasIndex);
@@ -161,7 +161,7 @@
 	}
 
 	$scope.reset=function(tabIndex) {
-		$scope.runData.isRunning = false;
+		$scope.runData.isRunning=false;
 		$scope.canvasList[tabIndex].clearRect(0,0,500,500);
 		$scope.canvasList[tabIndex].Nodes=[];
 		$scope.canvasList[tabIndex].LineHistory=[];
@@ -185,7 +185,7 @@
 	}
 
 	$scope.runDemo=function(tabIndex) {
-		$scope.runData.isRunning = true;
+		$scope.runData.isRunning=true;
 		$scope.reset(tabIndex);
 
 		$scope.runData.nodeNumber=4;
@@ -201,7 +201,7 @@
 	}
 
 	$scope.runTest=function(tabIndex) {
-		$scope.runData.isRunning = true;
+		$scope.runData.isRunning=true;
 
 		var testNodeList=[
 			{
@@ -281,16 +281,17 @@
 			$scope.updateBatteryLevel(testNodeList[2]);
 		},$scope.runData.simSpeedNumber*3);
 
-		$scope.runData.isRunning = false;
+		$scope.runData.isRunning=false;
 	}
 
 	angular.element(document).ready(function() {
+		$scope.runData.isRunning=false;
 		$scope.runData.nodeNumber=0;
 		$scope.runData.pureSelfishNodeNumber=0;
 		$scope.runData.partialSelfishNodeNumber=0;
 		$scope.runData.messageNumber=0;
 		$scope.runData.simSpeedNumber=0;
-		$scope.runData.nodeRange=200;
+		$scope.runData.nodeRange=200;	
 		$scope.mainHub=$.connection.mainHub;
 		$.connection.hub.start();
 
@@ -309,7 +310,7 @@
 			var nodeStart=angular.fromJson(nodeStartJson);
 			var nodeEnd=angular.fromJson(nodeEndJson);
 
-			$scope.runData.isRunning = true;
+			$scope.runData.isRunning=true;
 			$scope.drawMessageLine(nodeStart,nodeEnd,lineColour);
 			$scope.$apply();
 		};
@@ -317,7 +318,7 @@
 		$scope.mainHub.client.updateBatteryLevel=function(nodeJson) {
 			var node=angular.fromJson(nodeJson);
 
-			$scope.runData.isRunning = true;
+			$scope.runData.isRunning=true;
 			$scope.updateBatteryLevel(node);
 			$scope.$apply();
 		};
@@ -325,13 +326,13 @@
 		$scope.mainHub.client.populateNodes=function(nodeListJson) {
 			var nodeList=angular.fromJson(nodeListJson);
 
-			$scope.runData.isRunning = true;
+			$scope.runData.isRunning=true;
 			$scope.populateCanvas(nodeList);
 			$scope.$apply();
 		};
 
 		$scope.mainHub.client.completeRun=function(tabIndex) {
-			$scope.runData.isRunning = false;
+			$scope.runData.isRunning=false;
 			$scope.$apply();
 		};
 	});
