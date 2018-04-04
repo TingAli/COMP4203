@@ -4,6 +4,13 @@
 	$scope.canvasList=[];
 	$scope.notification={};
 
+	$scope.generate=function(tabIndex) {
+		context.generate($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,$scope.runData.nodeRange,
+			$scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,tabIndex)
+			.then(function() {
+			});
+	}
+
 	$scope.initiateRun=function(tabIndex) {
 		$scope.runData.isRunning=true;
 
@@ -285,19 +292,22 @@
 	}
 
 	angular.element(document).ready(function() {
-		$scope.runData.isRunning=false;
-		$scope.runData.nodeNumber=0;
-		$scope.runData.pureSelfishNodeNumber=0;
-		$scope.runData.partialSelfishNodeNumber=0;
-		$scope.runData.messageNumber=0;
-		$scope.runData.simSpeedNumber=0;
-		$scope.runData.nodeRange=200;	
+		$timeout(function() {
+			$scope.runData.isRunning=false;
+			$scope.runData.nodeNumber=0;
+			$scope.runData.pureSelfishNodeNumber=0;
+			$scope.runData.partialSelfishNodeNumber=0;
+			$scope.runData.messageNumber=0;
+			$scope.runData.simSpeedNumber=0;
+			$scope.runData.nodeRange=200;
+
+			for(var index=0;index<3;index++) {
+				$scope.initAndAddCanvas(index);
+			}
+		},500);
+
 		$scope.mainHub=$.connection.mainHub;
 		$.connection.hub.start();
-
-		for(var index=0;index<3;index++) {
-			$scope.initAndAddCanvas(index);
-		}
 
 		$scope.mainHub.client.broadcastOutputMessage=function(outputMessageJson) {
 			var outputMessage=angular.fromJson(outputMessageJson);
