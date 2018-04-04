@@ -96,11 +96,11 @@ namespace COMP4203.Web.Models
                 {
                     if (IsWithinRangeOf(n))
                     {
-                        controller.PrintToOutputPane("Node_Range", "Node " + n.GetNodeID() + " is within range. Distance: " + GetDistance(n));
+                        controller.PrintToOutputPane(OutputTag.TAG_NOTE, "Node " + n.GetNodeID() + " is within range. Distance: " + GetDistance(n));
                     }
                     else
                     {
-                        controller.PrintToOutputPane("Node_Range", "Node " + n.GetNodeID() + " is not within range. Distance: " + GetDistance(n));
+                        controller.PrintToOutputPane(OutputTag.TAG_NOTE, "Node " + n.GetNodeID() + " is not within range. Distance: " + GetDistance(n));
                     }
                 }
             }
@@ -119,13 +119,13 @@ namespace COMP4203.Web.Models
 
         public void SendDataPacket(MobileNode node, int wait)
         {
-            controller.PrintToOutputPane("DSR", "Sending DATA from " + nodeID + " to " + node.GetNodeID() + ".");
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Sending DATA from " + nodeID + " to " + node.GetNodeID() + ".");
             TransmitData(this, node, wait, DATA_COLOUR);
         }
 
         public void SendAckPacket(MobileNode node, int wait)
         {
-            controller.PrintToOutputPane("DSR", "Sending ACK from " + nodeID + " to " + node.GetNodeID());
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Sending ACK from " + nodeID + " to " + node.GetNodeID());
             TransmitData(this, node, wait, ACK_COLOUR);
 
         }
@@ -166,9 +166,9 @@ namespace COMP4203.Web.Models
 
         public List<Route> RouteDiscoveryDSR(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)
         {
-            controller.PrintToOutputPane("DSR", "Performing Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
-            Route rPacket = new Route();
-            List<Route> routes = DSRDicovery(destNode, env, rPacket, sData, delay);
+            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Performing Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
+            /* Perform Recursive Route Discovery to Collect all Valid Routes to the Destination */
+            List<Route> routes = DSRDicovery(destNode, env, new Route(), sData, delay);
             if (knownRoutes.ContainsKey(destNode.GetNodeID()))
             {
                 foreach (Route r in routes)
@@ -226,10 +226,10 @@ namespace COMP4203.Web.Models
                         rPacket.AddNodeToRoute(this); // Adding nodes to route
                         rPacket.AddNodeToRoute(node);
                         routes.Add(rPacket); // Adding all possible routes
-                        controller.PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
+                        controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
                         env.TransmitData(this, node, delay, env.RREQ_COLOUR);
                         sData.IncrementNumberOfControlPackets();
-                        controller.PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
+                        controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
                         env.TransmitData(node, this, delay, env.RREP_COLOUR);
                         sData.IncrementNumberOfControlPackets();
                     }
@@ -237,7 +237,7 @@ namespace COMP4203.Web.Models
                     {
                         Route rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this);
-                        controller.PrintToOutputPane("DSR", string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
+                        controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
                         env.TransmitData(this, node, delay, env.RREQ_COLOUR);
                         sData.IncrementNumberOfControlPackets();
                         routes.AddRange(node.DSRDicovery(destNode, env, rPacket, sData, delay)); // Recursive call
@@ -253,7 +253,7 @@ namespace COMP4203.Web.Models
                     {
                         if (rList[i] == this && i != 0)
                         {
-                            controller.PrintToOutputPane("DSR", string.Format("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i-1].GetNodeID()));
+                            controller.PrintToOutputPane(OutputTag.TAG_DSR, string.Format("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i-1].GetNodeID()));
                             env.TransmitData(this, rList[i - 1], delay, env.RREP_COLOUR);
                             sData.IncrementNumberOfControlPackets();
                         }
