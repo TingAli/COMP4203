@@ -183,7 +183,6 @@
     <Compile Include="Models\OutputPane.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\MobileNode.cs" />
-    <Compile Include="Models\oldMobileNode.cs" />
     <Compile Include="Models\OutputMessage.cs" />
     <Compile Include="Models\OutputTag.cs" />
     <Compile Include="Models\Route.cs" />
