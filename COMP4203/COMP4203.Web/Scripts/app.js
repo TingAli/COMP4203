@@ -24,6 +24,9 @@ app.factory("dataService",function($http) {
 	            + pureSelfishNodeNumber + "/" + partialSelfishNodeNumber + "/" + tabIndex, {
 			});
 		},
+		reset: function () {
+			return $http.get("/api/main/reset");
+		},
 		demo: function(tabIndex) {
 			return $http.get("/api/main/demo/" + tabIndex,{
 			});

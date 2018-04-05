@@ -166,3 +166,26 @@ html, body {
 .greenBorder{    
 	border:3px solid #00FF00 !important;
 }
+
+.btn[disabled] {
+	cursor: not-allowed;
+	background-color: #888888;
+}
+
+.node-legend {
+	border: none;
+	color: #000000;
+	font-weight: 800;
+}
+
+.not-selfish {
+	background-color: #f2bd2b;
+}
+
+.pure-selfish {
+	background-color: #c9052e;
+}
+
+.partial-selfish {
+	background-color: #66a548;
+}
