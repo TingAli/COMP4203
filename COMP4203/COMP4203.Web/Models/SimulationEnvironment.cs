@@ -140,65 +140,6 @@ namespace COMP4203.Web.Models
             }
         }
 
-        public bool SendMessageSADSR(Message message, SessionData sData, int delay)
-        {
-            MobileNode sourceNode = message.GetSourceNode();
-            MobileNode destinationNode = message.GetDestinstationNode();
-            Route route = sourceNode.GetOptimalRouteSADSR(destinationNode);
-            bool dropStatus = false;
-
-            /* If no known route, attempt to find one */
-            if (route == null)
-            {
-                controller.PrintToOutputPane("SADSR", "No Known Route to Destination");
-                sourceNode.RouteDiscoverySADSR(destinationNode, this, sData, delay);
-                route = sourceNode.GetOptimalRouteSADSR(destinationNode);
-                if (route == null)
-                {
-                    controller.PrintToOutputPane("SADSR", "No Route to Destination.");
-                    return false;
-                }
-            }
-            controller.PrintToOutputPane("SADSR", string.Format("Sending Message #{0}:", message.GetMessageID()));
-            controller.PrintToOutputPane("SADSR", "Source Node: " + sourceNode.GetNodeID());
-            controller.PrintToOutputPane("SADSR", "Destination Node: " + destinationNode.GetNodeID());
-            controller.PrintToOutputPane("SADSR", "Route Chosen: " + route.GetRouteAsString());
-
-            List<MobileNode> nodes = route.GetNodeRoute();
-            for (int i = 0; i < nodes.Count-1; i++) { controller.PrintToOutputPane("SADSR", "Route Chosen: " + nodes[i].GetNodeID()); }
-            /* Send DATA Packet */
-            for (int i = 1; i < nodes.Count; i++)
-            {
-                if (nodes[i].IsPartialSelfish() == true)
-                {
-                    controller.PrintToOutputPane("SADSR", "Messaged dropped by node: " + nodes[i].GetNodeID());
-                    dropStatus = true;
-                    break;
-                }
-                nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_SADSR);
-            }
-
-            /* Send ACK Packet */
-            if (dropStatus == false)
-            {
-                for (int i = nodes.Count - 2; i >= 0; i--)
-                {
-                    nodes[i + 1].SendAckPacket(nodes[i], delay, OutputTag.TAG_SADSR);
-                    sData.IncrementNumberOfControlPackets();
-                }
-
-                /* Calculate End-To-End Delay */
-                sData.IncrementNumberOfSuccessfulTransmissions();
-            }
-            else
-            {
-                controller.PrintToOutputPane("SADSR", "Messaged failed to receive");
-            }
-            
-            sData.endToEndDelays.Add((route.GetTransmissionTime()) * 4);
-            return true;
-        }
-
         public bool SendMessageDSR(Message message, SessionData sData, int delay)
         {
             MobileNode sourceNode = message.GetSourceNode();
@@ -247,6 +188,68 @@ namespace COMP4203.Web.Models
             return true;
         }
 
+        public bool SendMessageSADSR(Message message, SessionData sData, int delay)
+        {
+            MobileNode sourceNode = message.GetSourceNode();
+            MobileNode destinationNode = message.GetDestinstationNode();
+            Route route = sourceNode.GetBestRouteSADSR(destinationNode);
+
+            /* If no route known, perform Route Discovery to find one */
+            List<Route> routes = null;
+            if (route == null)
+            {
+                controller.PrintToOutputPane(OutputTag.TAG_SADSR, "No Known Route to Destination.");
+                routes = sourceNode.SADSRRouteDiscovery(destinationNode, this, sData, delay); // Route Discovery
+                route = sourceNode.GetBestRouteSADSR(destinationNode);  // Get best known route
+                // If still no route found, abort.
+                if (route == null)
+                {
+                    controller.PrintToOutputPane(OutputTag.TAG_SADSR, "No Route to Destination.");
+                    return false;
+                }
+            }
+
+            int validCounter = 0;
+            if (routes != null)
+            {
+                controller.PrintToOutputPane(OutputTag.TAG_NOTE, routes.Count + " routes found.");
+
+                foreach (Route r in routes)
+                {
+                    controller.PrintToOutputPane(OutputTag.TAG_NOTE, "SDP: " + r.CalcSDP());
+                    controller.PrintToOutputPane(OutputTag.TAG_NOTE, "Delay: " + r.GetTransmissionTime());
+                    if (route.GetTransmissionTime() < MobileNode.SA_TIMEOUT) validCounter++;
+                }
+                controller.PrintToOutputPane(OutputTag.TAG_NOTE, validCounter + " routes within timeframe");
+            }
+
+            controller.PrintToOutputPane(OutputTag.TAG_SADSR, "Route Selected: " + route.GetRouteAsString());
+            controller.PrintToOutputPane(OutputTag.TAG_SADSR, "Selected Route's SDP: " + route.CalcSDP());
+            controller.PrintToOutputPane(OutputTag.TAG_SADSR, "Selected Route's Transmission Time: " + route.GetTransmissionTime());
+
+            List<MobileNode> nodes = route.GetNodeRoute();
+            /* Send DATA Packet */
+            for (int i = 1; i < nodes.Count; i++)
+            {
+                if (!nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_SADSR))
+                {
+                    return false;
+                }
+            }
+
+            /* Send ACK Packet */
+            for (int i = nodes.Count - 2; i >= 0; i--)
+            {
+                nodes[i + 1].SendAckPacket(nodes[i], delay, OutputTag.TAG_SADSR);
+                sData.IncrementNumberOfControlPackets();
+            }
+
+            /* Calculate End-To-End Delay */
+            sData.IncrementNumberOfSuccessfulTransmissions();
+            sData.endToEndDelays.Add((route.GetTransmissionTime()) * 4); // this is good for normal SA-DSR, not for MSA-DSR
+            return true;
+        }
+
         public bool SendMessageMSADSR(Message message, SessionData sData, int delay)
         {
             MobileNode sourceNode = message.GetSourceNode();
@@ -261,7 +264,7 @@ namespace COMP4203.Web.Models
                 route = sourceNode.GetBestRouteMSADSR(destinationNode);  // Get best known route
                 // If still no route found, abort.
                 if (route == null) {
-                    controller.PrintToOutputPane(OutputTag.TAG_DSR, "No Route to Destination.");
+                    controller.PrintToOutputPane(OutputTag.TAG_MSADSR, "No Route to Destination.");
                     return false;
                 }
             }
