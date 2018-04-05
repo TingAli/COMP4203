@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 using COMP4203.Web.Controllers.Extend;
 using COMP4203.Web.Controllers.Hubs;
@@ -55,16 +56,54 @@ namespace COMP4203.Web.Controllers
             int partialSelfishNodeNumber,
 	        int executionNumber)
         {
-            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange, pureSelfishNodeNumber, partialSelfishNodeNumber);        // Generate Random Nodes //<remove once lock fixed
-            simulationEnvironment.GenerateRandomMessages(messageNumber);             // Generate Random Messages //<remove once lock fixed
-            controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), tabIndex); // Populate Nodes on Canvas //<remove once lock fixed
-            simulationEnvironment.RunSimulation(simSpeedNumber, tabIndex);           // Run Simulation on Environment
+	        if (executionNumber > 1)
+	        {
+		        int currentTabIndex = tabIndex;
+
+				for (int currentExecutionNumber = 0; currentExecutionNumber < executionNumber; currentExecutionNumber++)
+				{
+					List<bool> tabIndexesDone = new List<bool> { false, false, false };
+					bool isAllTabsDone = false;
+
+					simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange, pureSelfishNodeNumber, partialSelfishNodeNumber);
+					simulationEnvironment.GenerateRandomMessages(messageNumber);
+
+			        while (!isAllTabsDone)
+			        {
+				        if (tabIndexesDone.Any(x => x == false))
+				        {
+							Hub.Clients.All.resetCanvas(currentTabIndex);
+
+							controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), currentTabIndex);
+							simulationEnvironment.RunSimulation(simSpeedNumber, currentTabIndex);
+
+					        tabIndexesDone[currentTabIndex] = true;
+
+					        if (tabIndexesDone.Any(x => x == false))
+					        {
+						        currentTabIndex = tabIndexesDone.FindIndex(x => x == false);
+					        }
+				        }
+				        else
+				        {
+					        isAllTabsDone = true;
+				        }
+			        }
+		        }
+	        }
+	        else
+	        {
+		        simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange, pureSelfishNodeNumber, partialSelfishNodeNumber); // Generate Random Nodes //<remove once lock fixed
+		        simulationEnvironment.GenerateRandomMessages(messageNumber); // Generate Random Messages //<remove once lock fixed
+		        controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), tabIndex); // Populate Nodes on Canvas //<remove once lock fixed
+		        simulationEnvironment.RunSimulation(simSpeedNumber, tabIndex); // Run Simulation on Environment
+	        }
         }
 
         [HttpGet, Route("api/main/reset")]
         public void Reset()
         {
-
+			
         }
     }
 }
