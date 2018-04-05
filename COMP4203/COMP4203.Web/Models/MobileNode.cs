@@ -37,7 +37,6 @@ namespace COMP4203.Web.Models
         public Guid Id;
         public int CanvasIndex;
         private int AltruismCoefficient;
-        private bool dropStatus = false;
         private bool selfish = false;
         private SelfishType selfishType = SelfishType.NOT_SELFISH;
 
@@ -113,11 +112,6 @@ namespace COMP4203.Web.Models
         public int GetAltruismCoefficient()
         {
             return AltruismCoefficient;
-        }
-
-        public bool GetDropStatus()
-        {
-            return dropStatus;
         }
 
         public int GetNodeID()
@@ -244,7 +238,7 @@ namespace COMP4203.Web.Models
         public void TWOACK(List<MobileNode> nodesWithinRange, int delay, int i)
         {
             SendTWOACKPacket(nodesWithinRange[i - 1], delay, "MSADSR");
-            if (nodesWithinRange[i - 1].dropStatus == true)
+            if (nodesWithinRange[i - 1].IsPartialSelfish() == true)
             {
                 selfish = true;
             }
@@ -285,6 +279,7 @@ namespace COMP4203.Web.Models
         private List<Route> SADSRDiscovery(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
         {
             List<Route> routes = new List<Route>();
+            bool dropStatus = false;
 
             if (knownRoutes.ContainsKey(destNode.GetNodeID()) && knownRoutes[destNode.GetNodeID()] != null)
             {
@@ -312,14 +307,13 @@ namespace COMP4203.Web.Models
                         Route rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this); 
                         rPacket.AddNodeToRoute(node);
-                        if (this.PacketDrop() == true)
+                        if (this.IsPureSelfish() == true)
                         {
                             controller.PrintToOutputPane("SADSR", string.Format("RREQ dropped by node {0}", nodeID));
                             dropStatus = true;
                         }
-                        if (this.PacketDrop() == false)
+                        if (this.IsPureSelfish() == false)
                         {
-                            //route.GetNodeRoute()[0].AltruismCoefficient += 10; // Increase altruism coefficient
                             routes.Add(rPacket); 
                             SendRREQPacket(node, delay, sData, "SADSR");
                             SendRREPPacket(node, delay, sData, "SADSR");
@@ -331,12 +325,12 @@ namespace COMP4203.Web.Models
                     {
                         Route rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this);
-                        if (this.PacketDrop() == true)
+                        if (this.IsPureSelfish() == true)
                         {
                             controller.PrintToOutputPane("SADSR", string.Format("RREQ dropped by node {0}", nodeID));
                             dropStatus = true;
                         }
-                        if (this.PacketDrop() == false)
+                        if (this.IsPureSelfish() == false)
                         {
                             SendRREQPacket(node, delay, sData, "SADSR");
                         }
@@ -351,7 +345,7 @@ namespace COMP4203.Web.Models
                     List<MobileNode> rList = r.GetNodeRoute();
                     for (int i = 0; i < rList.Count; i++)
                     {
-                        if (rList[i] == this && rList[i].dropStatus == true)
+                        if (rList[i] == this && rList[i].IsPureSelfish() == true)
                         {
                             controller.PrintToOutputPane("SADSR", string.Format("Node {0} has dropped a packet", nodeID));
                             break;
@@ -384,47 +378,6 @@ namespace COMP4203.Web.Models
                 }
             }
             return optRoute;
-        }
-        // Calculates the probability of a node dropping a packet based on their battery levels
-        public bool PacketDrop()
-        {
-            Random random = new Random();
-            // 50% chance of dropping packet if battery level is between 20 to 50 percent
-            if (20 <= this.BatteryLevel && this.BatteryLevel < 50)
-            {
-                int r = random.Next(0, 1);
-                if (r == 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            // 10% chance of dropping packet if battery level is between 50 and 80 percent
-            else if (50 <= this.BatteryLevel && this.BatteryLevel < 80)
-            {
-                int r = random.Next(0, 11);
-                if (r == 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            // 0% chance of dropping packet if battery level is between 80 to 100 percent
-            else if (80 <= this.BatteryLevel && this.BatteryLevel <= 100)
-            {
-                return false;
-            }
-            else
-            {
-                // 100% chance of dropping packet if battery level is less than 20 percent 
-                return true;
-            }
         }
         // DSR implementation
         public List<Route> RouteDiscoveryDSR(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)

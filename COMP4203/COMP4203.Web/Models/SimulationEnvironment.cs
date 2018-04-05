@@ -205,7 +205,6 @@ namespace COMP4203.Web.Models
             controller.PrintToOutputPane(OutputTag.TAG_DSR, "Route Chosen: " + route.GetRouteAsString());
 
             List<MobileNode> nodes = route.GetNodeRoute();
-            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Node count: " + nodes.Count);
             /* Send DATA Packet */
             for (int i = 1; i < nodes.Count; i++) { nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_DSR); }
 
