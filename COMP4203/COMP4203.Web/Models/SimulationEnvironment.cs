@@ -162,7 +162,7 @@ namespace COMP4203.Web.Models
             controller.PrintToOutputPane("SADSR", "Route Chosen: " + route.GetRouteAsString());
 
             List<MobileNode> nodes = route.GetNodeRoute();
-
+            for (int i = 0; i < nodes.Count-1; i++) { controller.PrintToOutputPane("SADSR", "Route Chosen: " + nodes[i].GetNodeID()); }
             /* Send DATA Packet */
             for (int i = 1; i < nodes.Count; i++) { nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_SADSR); }
 
