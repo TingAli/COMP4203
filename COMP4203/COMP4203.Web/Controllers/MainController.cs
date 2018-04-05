@@ -37,8 +37,23 @@ namespace COMP4203.Web.Controllers
                 node.Print();
                 node.PrintNodesWithinRange(sim);
             }
-            new ComponentController().PopulateNodesDSR(sim.GetNodes(), tabIndex);
+            new ComponentController().PopulateNodesOnCanvas(sim.GetNodes(), tabIndex);
             sim.SendMessageDSR(sim.GetMessages()[0], new SessionData(), 2000);
+        }
+
+        [HttpGet, Route("api/main/generate/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{pureSelfishNodeNumber}/{partialSelfishNodeNumber}/{tabIndex}")]
+        public void GenerateData(
+            int nodeNumber,
+            int messageNumber,
+            int simSpeedNumber,
+            int tabIndex,
+            int nodeRange,
+            int pureSelfishNodeNumber,
+            int partialSelfishNodeNumber)
+        {
+            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange);
+            simulationEnvironment.GenerateRandomMessages(messageNumber);
+            controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), tabIndex);
         }
 
         [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{pureSelfishNodeNumber}/{partialSelfishNodeNumber}/{tabIndex}")]
@@ -51,9 +66,9 @@ namespace COMP4203.Web.Controllers
             int pureSelfishNodeNumber,
             int partialSelfishNodeNumber)
         {
-            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange);        // Generate Random Nodes
-            simulationEnvironment.GenerateRandomMessages(messageNumber);             // Generate Random Messages
-            controller.PopulateNodesDSR(simulationEnvironment.GetNodes(), tabIndex); // Populate Nodes on Canvas
+            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange);        // Generate Random Nodes //<remove once lock fixed
+            simulationEnvironment.GenerateRandomMessages(messageNumber);             // Generate Random Messages //<remove once lock fixed
+            controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), tabIndex); // Populate Nodes on Canvas //<remove once lock fixed
             simulationEnvironment.RunSimulation(simSpeedNumber, tabIndex);           // Run Simulation on Environment
         }
     }
