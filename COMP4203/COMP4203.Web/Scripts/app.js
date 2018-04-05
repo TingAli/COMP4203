@@ -14,9 +14,9 @@ app.config(function($routeProvider) {
 
 app.factory("dataService",function($http) {
 	return {
-        run: function (nodeNumber, messageNumber, simSpeedNumber, nodeRange,pureSelfishNodeNumber, partialSelfishNodeNumber, tabIndex) {
+        run: function (nodeNumber, messageNumber, simSpeedNumber, nodeRange,pureSelfishNodeNumber, partialSelfishNodeNumber, executionNumber, tabIndex) {
             return $http.get("/api/main/run/" + nodeNumber + "/" + messageNumber + "/" + simSpeedNumber + "/" + nodeRange + "/" 
-	            + pureSelfishNodeNumber + "/" + partialSelfishNodeNumber + "/" + tabIndex, {
+	            + pureSelfishNodeNumber + "/" + partialSelfishNodeNumber + "/" + executionNumber + "/" + tabIndex, {
 			});
 		},
 		reset: function () {
