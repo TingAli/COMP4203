@@ -98,6 +98,27 @@ namespace COMP4203.Web.Models
                 int bLevel = random.Next(100);
                 mobileNodes.Add(new MobileNode(x, y, bLevel, range));
             }
+            List<int> selfishIndexes = new List<int>();
+            for (int i = 0; i < numPureSelfish; i++)
+            {
+                int choice = random.Next(numNodes);
+                while (selfishIndexes.Contains(choice))
+                {
+                    choice = random.Next(numNodes);
+                }
+                mobileNodes[choice].SetPureSelfish();
+                selfishIndexes.Add(choice);
+            }
+            for (int i = 0; i < numPartialSelfish; i++)
+            {
+                int choice = random.Next(numNodes);
+                while (selfishIndexes.Contains(choice))
+                {
+                    choice = random.Next(numNodes);
+                }
+                mobileNodes[choice].SetPartialSelfish();
+                selfishIndexes.Add(choice);
+            }
         }
 
         public void GenerateRandomMessages(int numMessages)

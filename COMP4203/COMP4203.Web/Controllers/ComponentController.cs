@@ -35,7 +35,6 @@ namespace COMP4203.Web.Controllers
         {
             foreach (MobileNode node in nodes) {
                 node.CanvasIndex = canvasIndex;
-                node.FillColour = "#FF0000";
             }
             Hub.Clients.All.populateNodes(JsonConvert.SerializeObject(nodes));
         }

@@ -54,7 +54,7 @@ namespace COMP4203.Web.Controllers
             int pureSelfishNodeNumber,
             int partialSelfishNodeNumber)
         {
-            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange);
+            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange, pureSelfishNodeNumber, partialSelfishNodeNumber);
             simulationEnvironment.GenerateRandomMessages(messageNumber);
             controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), tabIndex);
         }
@@ -69,7 +69,7 @@ namespace COMP4203.Web.Controllers
             int pureSelfishNodeNumber,
             int partialSelfishNodeNumber)
         {
-            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange);        // Generate Random Nodes //<remove once lock fixed
+            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange, pureSelfishNodeNumber, partialSelfishNodeNumber);        // Generate Random Nodes //<remove once lock fixed
             simulationEnvironment.GenerateRandomMessages(messageNumber);             // Generate Random Messages //<remove once lock fixed
             controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), tabIndex); // Populate Nodes on Canvas //<remove once lock fixed
             simulationEnvironment.RunSimulation(simSpeedNumber, tabIndex);           // Run Simulation on Environment
