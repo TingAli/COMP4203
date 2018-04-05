@@ -14,14 +14,17 @@ namespace COMP4203.Web.Models
         public List<double> startingBatteryLevels;
         public List<double> endingBatteryLevels;
 
+        public int tabIndex;
+
         private ComponentController controller;
 
-        public SessionData()
+        public SessionData(int tabIndex)
         {
             endToEndDelays = new List<double>();
             startingBatteryLevels = new List<double>();
             endingBatteryLevels = new List<double>();
             controller = new ComponentController();
+            this.tabIndex = tabIndex;
         }
 
         public double GetNumberOfAttemptedTransmissions() { return numberOfAttemptedTransmissions; }
