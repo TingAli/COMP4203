@@ -24,11 +24,11 @@ namespace COMP4203.Web.Controllers
         {
             SimulationEnvironment sim = new SimulationEnvironment();
             // Add Test Nodes
-            sim.AddNode(new MobileNode(100, 100, 20, 200));
-            sim.AddNode(new MobileNode(200, 210, 20, 200));
-            sim.AddNode(new MobileNode(210, 200, 100, 200));
-            sim.AddNode(new MobileNode(298, 298, 100, 200));
-            sim.AddNode(new MobileNode(200, 100, 20, 200));
+            sim.AddNode(new MobileNode(100, 100, 100, 200));
+            sim.AddNode(new MobileNode(200, 210, 100, 200));
+            sim.AddNode(new MobileNode(210, 200, 15, 200));
+            sim.AddNode(new MobileNode(298, 298, 15, 200));
+            sim.AddNode(new MobileNode(200, 100, 100, 200));
             sim.AddNode(new MobileNode(150, 120, 100, 200));
             // Add Test Message
             sim.AddMessage(new Message(sim.GetNodes()[0], sim.GetNodes()[3]));
@@ -54,7 +54,7 @@ namespace COMP4203.Web.Controllers
             int pureSelfishNodeNumber,
             int partialSelfishNodeNumber)
         {
-            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange);
+            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange, pureSelfishNodeNumber, partialSelfishNodeNumber);
             simulationEnvironment.GenerateRandomMessages(messageNumber);
             controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), tabIndex);
         }
@@ -69,7 +69,7 @@ namespace COMP4203.Web.Controllers
             int pureSelfishNodeNumber,
             int partialSelfishNodeNumber)
         {
-            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange);        // Generate Random Nodes //<remove once lock fixed
+            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange, pureSelfishNodeNumber, partialSelfishNodeNumber);        // Generate Random Nodes //<remove once lock fixed
             simulationEnvironment.GenerateRandomMessages(messageNumber);             // Generate Random Messages //<remove once lock fixed
             controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), tabIndex); // Populate Nodes on Canvas //<remove once lock fixed
             simulationEnvironment.RunSimulation(simSpeedNumber, tabIndex);           // Run Simulation on Environment

@@ -244,7 +244,7 @@ namespace COMP4203.Web.Models
         {
             List<Route> routes = new List<Route>();
 
-            if (knownRoutes.ContainsKey(destNode.GetNodeID()))
+            if (knownRoutes.ContainsKey(destNode.GetNodeID()) && knownRoutes[destNode.GetNodeID()] != null)
             {
                 foreach (Route r in knownRoutes[destNode.GetNodeID()])
                 {
@@ -272,18 +272,18 @@ namespace COMP4203.Web.Models
                         rPacket.AddNodeToRoute(node);
                         if (this.PacketDrop() == true)
                         {
-                            route.GetNodeRoute()[0].AltruismCoefficient -= 10; // Decreasing altruism coefficient
                             controller.PrintToOutputPane("SADSR", string.Format("RREQ dropped by node {0}", nodeID));
                             dropStatus = true;
                         }
                         if (this.PacketDrop() == false)
                         {
-                            route.GetNodeRoute()[0].AltruismCoefficient += 10; // Increase altruism coefficient
+                            //route.GetNodeRoute()[0].AltruismCoefficient += 10; // Increase altruism coefficient
                             routes.Add(rPacket); 
                             SendRREQPacket(node, delay, sData, "SADSR");
                             SendRREPPacket(node, delay, sData, "SADSR");
-                            dropStatus = false;
                         }
+                        if (dropStatus == true) { rPacket.GetNodeRoute()[0].AltruismCoefficient -= 10; }
+                        if (dropStatus == false) { rPacket.GetNodeRoute()[0].AltruismCoefficient += 10; }
                     }
                     else
                     {
@@ -297,7 +297,6 @@ namespace COMP4203.Web.Models
                         if (this.PacketDrop() == false)
                         {
                             SendRREQPacket(node, delay, sData, "SADSR");
-                            dropStatus = false;
                         }
                         routes.AddRange(node.SADSRDiscovery(destNode, env, rPacket, sData, delay)); 
                     }
