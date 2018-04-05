@@ -11,8 +11,12 @@
 		$scope.locks.DemoButtons=true;
 		$scope.locks.Inputs=true;
 
+		if (!$scope.runData.IsExecutionMode) {
+			$scope.runData.executionNumber = 1;
+		}
+
 		context.run($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,$scope.runData.nodeRange,
-			$scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,tabIndex)
+			$scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,$scope.runData.executionNumber,tabIndex)
 			.then(function() {
 			});
 	}
@@ -185,8 +189,16 @@
 				$scope.runData.messageNumber=0;
 				$scope.runData.simSpeedNumber=0;
 				$scope.runData.nodeRange=200;
-				$scope.runData.ExecutionNumber = 0;
+				$scope.runData.executionNumber = 1;
 			});
+	}
+
+	$scope.resetCanvas=function(tabIndex) {
+		$scope.canvasList[tabIndex].clearRect(0,0,500,500);
+		$scope.canvasList[tabIndex].Nodes=[];
+		$scope.canvasList[tabIndex].LineHistory=[];
+		$scope.canvasList[tabIndex].BatteryLevelTextHistory=[];
+		$scope.canvasList[tabIndex].NodeRangeHistory=[];
 	}
 
 	$scope.pushOutputMessage=function(tag,message) {
@@ -210,6 +222,7 @@
 		$scope.runData.messageNumber=1;
 		$scope.runData.simSpeedNumber=2000;
 		$scope.runData.nodeRange=200;
+		$scope.runData.executionNumber = 1;
 
 		context.demo(tabIndex)
 			.then(function() {
@@ -318,7 +331,7 @@
 			$scope.runData.messageNumber=0;
 			$scope.runData.simSpeedNumber=0;
 			$scope.runData.nodeRange=200;
-			$scope.runData.ExecutionNumber = 0;
+			$scope.runData.executionNumber = 1;
 
 			for(var index=0;index<3;index++) {
 				$scope.initAndAddCanvas(index);
@@ -367,6 +380,11 @@
 				jQuery("#latest-output").removeClass("greenBorder");
 			},2500);
 
+			$scope.$apply();
+		};
+
+		$scope.mainHub.client.resetCanvas=function(tabIndex) {
+			$scope.resetCanvas(tabIndex);
 			$scope.$apply();
 		};
 	});
