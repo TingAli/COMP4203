@@ -249,26 +249,57 @@ namespace COMP4203.Web.Models
         {
             MobileNode sourceNode = message.GetSourceNode();
             MobileNode destinationNode = message.GetDestinstationNode();
-            //Route route = sourceNode.GetBestRouteMSADSR(destinationNode);
-
-            List<Route> routes = sourceNode.MSADSRRouteDiscovery(destinationNode, this, sData, delay);
             Route route = sourceNode.GetBestRouteMSADSR(destinationNode);
 
-            //double timeout = 0.0000012;
-            //int validCounter = 0;
-            //if (routes != null)
-            //{
-            //    controller.PrintToOutputPane(OutputTag.TAG_NOTE, routes.Count + " routes found.");
-            //    foreach (Route route in routes)
-            //    {
-            //        controller.PrintToOutputPane(OutputTag.TAG_NOTE, "SDP: " + route.CalcSDP());
-            //        controller.PrintToOutputPane(OutputTag.TAG_NOTE, "Delay: " + route.GetTransmissionTime());
-            //        if (route.GetTransmissionTime() < timeout) validCounter++;
-            //    }
-            //    controller.PrintToOutputPane(OutputTag.TAG_NOTE, validCounter + " routes within timeframe");
-            //}
+            /* If no route known, perform Route Discovery to find one */
+            List<Route> routes = null;
+            if (route == null) {
+                controller.PrintToOutputPane(OutputTag.TAG_MSADSR, "No Known Route to Destination.");
+                routes = sourceNode.MSADSRRouteDiscovery(destinationNode, this, sData, delay); // Route Discovery
+                route = sourceNode.GetBestRouteMSADSR(destinationNode);  // Get best known route
+                // If still no route found, abort.
+                if (route == null) {
+                    controller.PrintToOutputPane(OutputTag.TAG_DSR, "No Route to Destination.");
+                    return false;
+                }
+            }
 
-            return false;
+            int validCounter = 0;
+            if (routes != null)
+            {
+                controller.PrintToOutputPane(OutputTag.TAG_NOTE, routes.Count + " routes found.");
+            
+                foreach (Route r in routes)
+                {
+                    controller.PrintToOutputPane(OutputTag.TAG_NOTE, "SDP: " + r.CalcSDP());
+                    controller.PrintToOutputPane(OutputTag.TAG_NOTE, "Delay: " + r.GetTransmissionTime());
+                    if (route.GetTransmissionTime() < MobileNode.SA_TIMEOUT) validCounter++;
+                }
+                controller.PrintToOutputPane(OutputTag.TAG_NOTE, validCounter + " routes within timeframe");
+            }
+
+            controller.PrintToOutputPane(OutputTag.TAG_MSADSR , "Route Selected: " + route.GetRouteAsString());
+            controller.PrintToOutputPane(OutputTag.TAG_MSADSR, "Selected Route's SDP: " + route.CalcSDP());
+            controller.PrintToOutputPane(OutputTag.TAG_MSADSR, "Selected Route's Transmission Time: " + route.GetTransmissionTime());
+
+            List<MobileNode> nodes = route.GetNodeRoute();
+            /* Send DATA Packet */
+            for (int i = 1; i < nodes.Count; i++) {
+                if (!nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_MSADSR)) {
+                    return false;
+                }
+            }
+
+            /* Send ACK Packet */
+            for (int i = nodes.Count - 2; i >= 0; i--) {
+                nodes[i + 1].SendAckPacket(nodes[i], delay, OutputTag.TAG_MSADSR);
+                sData.IncrementNumberOfControlPackets();
+            }
+
+            /* Calculate End-To-End Delay */
+            sData.IncrementNumberOfSuccessfulTransmissions();
+            sData.endToEndDelays.Add((route.GetTransmissionTime()) * 4); // this is good for normal SA-DSR, not for MSA-DSR
+            return true;
         }
 
         public void TransmitData(MobileNode srcNode, MobileNode dstNode, int wait, string colour)

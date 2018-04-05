@@ -13,7 +13,7 @@ namespace COMP4203.Web.Models
         static double TRANSMIT_COST = 0.02;
         static double RECEIVE_PROCESS_COST = 0.01;
 
-        public static double SA_TIMEOUT = 0.0000012;
+        public static double SA_TIMEOUT = 0.000001;
 
         public string RREQ_COLOUR = "#9bc146"; // Green
         public string RREP_COLOUR = "#ffe338"; // Yellow
@@ -243,6 +243,21 @@ namespace COMP4203.Web.Models
             return true;
         }
 
+        public bool SendRREQPacketSelfish(MobileNode node, int wait, SessionData sessionData, string tag)
+        {
+            Random r = new Random();
+            double poll = r.NextDouble();
+            if (poll > node.GetForwardingProbability())
+            {
+                return SendRREQPacket(node, wait, sessionData, tag);
+            } else
+            {
+                controller.PrintToOutputPane(tag, string.Format("Node {0} dropped RREQ Packet due to Protocol Driven Selfish Behaviour.", node.GetNodeID()));
+                TransmitDataDropped(this, node, wait, RREQ_COLOUR);
+                return false;
+            }
+        }
+
         public void SendRREPPacket(MobileNode node, int wait, SessionData session, string tag)
         {
             controller.PrintToOutputPane(tag, string.Format("Sending RREP from Node {0} to Node {1}.", node.GetNodeID(), nodeID));
@@ -282,7 +297,7 @@ namespace COMP4203.Web.Models
 
         public bool IsWithinRangeOf(MobileNode node)
         {
-            return (GetDistance(node) < 200);
+            return (GetDistance(node) < range);
         }
 
         public List<MobileNode> GetNodesWithinRange(SimulationEnvironment env)
@@ -613,7 +628,7 @@ namespace COMP4203.Web.Models
                     // If node is the destination node...
                     if (node.Equals(destNode)) {
                         /* Send RREQ from current node to the destination node */
-                        if (SendRREQPacket(node, delay, sData, OutputTag.TAG_MSADSR)) {
+                        if (SendRREQPacketSelfish(node, delay, sData, OutputTag.TAG_MSADSR)) {
                             // Add current node and dest node to route
                             Route rPacket = route.Copy();
                             rPacket.AddNodeToRoute(this);
@@ -630,7 +645,7 @@ namespace COMP4203.Web.Models
                     // If node is not the destination node...
                     else {
                         /* Send RREQ from this node to node */
-                        if (SendRREQPacket(node, delay, sData, OutputTag.TAG_MSADSR)) {
+                        if (SendRREQPacketSelfish(node, delay, sData, OutputTag.TAG_MSADSR)) {
                             // Add current node to the route
                             Route rPacket = route.Copy();
                             rPacket.AddNodeToRoute(this);
@@ -662,8 +677,8 @@ namespace COMP4203.Web.Models
 
         public List<Route> GetRoutesToNode(MobileNode node)
         {
-            // If there are no known routes for this destination, return null.
-            if (!knownRoutes.ContainsKey(node.GetNodeID())) { return null; }
+            // If there are no known routes for this destination, return empty list.
+            if (!knownRoutes.ContainsKey(node.GetNodeID())) { return new List<Route>(); }
             // Otherwise, return the list of known routes.
             return knownRoutes[node.GetNodeID()];
         }
@@ -690,24 +705,25 @@ namespace COMP4203.Web.Models
         public Route GetBestRouteMSADSR(MobileNode node)
         {
             List<Route> routes = GetRoutesToNode(node);
-            if (routes == null) { return null; }
             if (routes.Count == 0) { return null; }
-            foreach (Route route in routes)
+            List<Route> validRoutes = new List<Route>();
+            foreach (Route route in routes) // TODO fix bug cant remove in iteration
             {
-                if (route.GetTransmissionTime() > SA_TIMEOUT) routes.Remove(route);
+                if (route.GetTransmissionTime() <= SA_TIMEOUT) validRoutes.Add(route);
             }
             double bestSDP = -1;
             int bestIndex = -1;
-            for (int i = 0; i < routes.Count; i++)
+            for (int i = 0; i < validRoutes.Count; i++)
             {
-                double sdp = routes[i].CalcSDP();
+                double sdp = validRoutes[i].CalcSDP();
                 if (sdp > bestSDP)
                 {
                     bestSDP = sdp;
                     bestIndex = i;
                 }
             }
-            return routes[bestIndex];
+            if (bestIndex == -1) { return null; }
+            return validRoutes[bestIndex];
         }
 
         public double GetTransmissionTimeToNode(MobileNode node)
