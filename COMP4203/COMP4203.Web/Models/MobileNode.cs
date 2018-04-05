@@ -198,95 +198,7 @@ namespace COMP4203.Web.Models
             }
             return nodes;
         }
-        private List<Route> RouteDiscoveryMSADSR(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
-        {
-            Route rPacket = new Route();
-            List<Route> routes = MSADSRDiscovery(destNode, env, rPacket, sData, delay);
-            
-            return routes;
-        }
-        public List<Route> MSADSRDiscovery(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
-        {
-            List<Route> routes = new List<Route>();
 
-            if (knownRoutes.ContainsKey(destNode.GetNodeID()))
-            {
-                foreach (Route r in knownRoutes[destNode.GetNodeID()])
-                {
-                    Route r2 = route.Copy();
-                    r2.AddNodesToRoute(r.GetNodeRoute());
-                    routes.Add(r2);
-                }
-                return routes;
-            }
-
-            List<MobileNode> nodesWithinRange = GetNodesWithinRange(env);
-            if (nodesWithinRange.Count == 0 && !destNode.Equals(this)) { return null; }
-            for (int i = 0; i < nodesWithinRange.Count; i++)
-            {
-                if (nodesWithinRange[i] == destNode)
-                {
-                    Route rPacket = route.Copy();
-                    rPacket.AddNodeToRoute(this);
-                    rPacket.AddNodeToRoute(nodesWithinRange[i]);
-                    routes.Add(rPacket);
-                    TWOACK(nodesWithinRange, delay, i);
-                    if (nodesWithinRange[i].PacketDrop() == false)
-                    {
-                        SendRREQPacket(nodesWithinRange[i], delay, sData, "MSADSR");
-                        SendRREPPacket(nodesWithinRange[i], delay, sData, "MSADSR");
-                        dropStatus = false;
-                    }
-                    if (nodesWithinRange[i].PacketDrop() == true)
-                    {
-                        controller.PrintToOutputPane("MSADSR", string.Format("RREQ dropped by node {0}", nodeID));
-                        dropStatus = true;
-                    }
-                }
-                else
-                {
-                    Route rPacket = route.Copy();
-                    rPacket.AddNodeToRoute(this);
-                    if (i >= 2)
-                    {
-                        TWOACK(nodesWithinRange, delay, i);
-                    }
-                    if (nodesWithinRange[i].PacketDrop() == true)
-                    {
-                        controller.PrintToOutputPane("MSADSR", string.Format("RREQ dropped by node {0}", nodeID));
-                        dropStatus = true;
-                    }
-                    if (nodesWithinRange[i].PacketDrop() == false)
-                    {
-                        SendRREQPacket(nodesWithinRange[i], delay, sData, "MSADSR");
-                        dropStatus = false;
-                    }
-                    routes.AddRange(nodesWithinRange[i].MSADSRDiscovery(destNode, env, rPacket, sData, delay));
-                }
-            }
-            foreach (Route r in routes)
-            {
-                if (r.GetNodeRoute().Contains(destNode))
-                {
-                    List<MobileNode> rList = r.GetNodeRoute();
-                    for (int i = 0; i < rList.Count; i++)
-                    {
-                        if (rList[i] == this && rList[i].dropStatus == true)
-                        {
-                            controller.PrintToOutputPane("MSADSR", string.Format("Node {0} has dropped a packet", nodeID));
-                            break;
-                        }
-                        if (rList[i] == this && i != 0)
-                        {
-                            controller.PrintToOutputPane("MSADSR", string.Format("Sending RREP from Node {0} to Node {1}.", nodeID, rList[i - 1].GetNodeID()));
-                            env.TransmitData(this, rList[i - 1], delay, env.RREP_COLOUR);
-                            sData.IncrementNumberOfControlPackets();
-                        }
-                    }
-                }
-            }
-            return routes;
-        }
         public void TWOACK(List<MobileNode> nodesWithinRange, int delay, int i)
         {
             SendTWOACKPacket(nodesWithinRange[i - 1], delay, "MSADSR");
@@ -542,9 +454,9 @@ namespace COMP4203.Web.Models
                         // Add new route to routes collection
                         routes.Add(rPacket);
                         /* Send RREQ from current node to the destination node */
-                        SendRREQPacket(node, delay, sData, "DSR");
+                        SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR);
                         /* Send RREQ from destination node to the current node */
-                        node.SendRREPPacket(this, delay, sData, "DSR");
+                        node.SendRREPPacket(this, delay, sData, OutputTag.TAG_DSR);
                     }
                     // If node is not the destination node...
                     else
@@ -553,7 +465,7 @@ namespace COMP4203.Web.Models
                         Route rPacket = route.Copy();
                         rPacket.AddNodeToRoute(this);
                         /* Send RREQ from this node to node */
-                        SendRREQPacket(node, delay, sData, "DSR");
+                        SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR);
                         /* Recursively perform discovery from this node, and collect all returned valid routes */
                         routes.AddRange(node.DSRDicovery(destNode, env, rPacket, sData, delay));
                     }
@@ -570,7 +482,7 @@ namespace COMP4203.Web.Models
                     {
                         if (rList[i] == this && i != 0)
                         {
-                            SendRREPPacket(rList[i-1], delay, sData, "DSR");
+                            SendRREPPacket(rList[i-1], delay, sData, OutputTag.TAG_DSR);
                         }
                     }
                     
