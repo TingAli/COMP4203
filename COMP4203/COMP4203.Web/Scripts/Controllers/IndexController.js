@@ -6,32 +6,30 @@
 	$scope.graphs=[];
 
 	var series = 0;
-	$scope.addGraphSeries = function () {
-		var rnd = [];
-		for (var i = 0; i < 10; i++) {
-			rnd.push(Math.floor(Math.random() * 20) + 1);
-		}
+	$scope.addGraphSeries = function (graphData) {
 		$scope.chartConfig.series.push({
-			data: rnd,
+			data: graphData,
 			id: "series_" + series++
 		});
 	}
+
+	//{
+	//	data: [10, 15, 12, 8, 7],
+	//		id: "DSR"
+	//}, {
+	//	data: [15, 25, 42, 5, 7],
+	//		id: "SA-DSR"
+	//},
+	//{
+	//	data: [5, 10, 2, 5, 4],
+	//		id: "MSA-DSR"
+	//}
 
 	$scope.chartConfig = {
 		chart: {
 			type: "line"
 		},
-		series: [{
-				data: [10, 15, 12, 8, 7],
-				id: "DSR"
-			}, {
-				data: [15, 25, 42, 5, 7],
-				id: "SA-DSR"
-			},
-			{
-				data: [5, 10, 2, 5, 4],
-				id: "MSA-DSR"
-			}],
+		series: [], 
 		title: {
 			text: "AEED"
 		},
@@ -61,7 +59,7 @@
 		context.run($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,$scope.runData.nodeRange,
 			$scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,$scope.runData.executionNumber,tabIndex)
 			.then(function(response) {
-				console.log(response);
+				$scope.addGraphSeries(response.data[2].YAxisValuesDsr);
 			});
 	}
 

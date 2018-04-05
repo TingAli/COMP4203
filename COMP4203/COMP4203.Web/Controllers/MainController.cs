@@ -58,7 +58,7 @@ namespace COMP4203.Web.Controllers
         {
 	        if (executionNumber > 1)
 	        {
-				List<GraphData> graphDataList = new List<GraphData>();
+		        List<GraphData> graphDataList;
 				List<List<SessionData>> sessionDataList = new List<List<SessionData>>();
 		        int currentTabIndex = tabIndex;
 
@@ -97,6 +97,8 @@ namespace COMP4203.Web.Controllers
 					sessionDataList.Add(currentExecutionSessionDataList);
 		        }
 
+		        graphDataList = SessionDataListToGraphDataList(sessionDataList);
+
 		        return graphDataList;
 	        }
 	        else
@@ -113,8 +115,43 @@ namespace COMP4203.Web.Controllers
 	    public List<GraphData> SessionDataListToGraphDataList(List<List<SessionData>> sessionDataList)
 	    {
 			List<GraphData> graphDataList = new List<GraphData>();
+			GraphData aeedGraphData = new GraphData() {YAxisTitle = "AEED Value"};
+			GraphData nroGraphData = new GraphData() {YAxisTitle = "NRO Value"};
+		    GraphData bddGraphData = new GraphData() {YAxisTitle = "BDD Value"};
+			GraphData pdrGraphData = new GraphData() {YAxisTitle = "PDR Value"};
 
+		    for (var executionNumber = 0; executionNumber < sessionDataList.Count; executionNumber++)
+		    {
+			    foreach (var sessionData in sessionDataList[executionNumber])
+			    {
+				    if (sessionData.tabIndex == 0)
+				    {
+						aeedGraphData.YAxisValuesDsr.Add(sessionData.CalculateAverageEndToEndDelay());
+					    nroGraphData.YAxisValuesDsr.Add(sessionData.CalculateNormalizedRoutingOverhead());
+					    bddGraphData.YAxisValuesDsr.Add(sessionData.CalculateBatteryDepletionDeviation());
+					    pdrGraphData.YAxisValuesDsr.Add(sessionData.CalculatePacketDeliveryRatio());
+				    }
+					else if (sessionData.tabIndex == 1)
+				    {
+					    aeedGraphData.YAxisValuesSadsr.Add(sessionData.CalculateAverageEndToEndDelay());
+					    nroGraphData.YAxisValuesSadsr.Add(sessionData.CalculateNormalizedRoutingOverhead());
+					    bddGraphData.YAxisValuesSadsr.Add(sessionData.CalculateBatteryDepletionDeviation());
+					    pdrGraphData.YAxisValuesSadsr.Add(sessionData.CalculatePacketDeliveryRatio());
+				    }
+					else if (sessionData.tabIndex == 2)
+				    {
+					    aeedGraphData.YAxisValuesMsadsr.Add(sessionData.CalculateAverageEndToEndDelay());
+					    nroGraphData.YAxisValuesMsadsr.Add(sessionData.CalculateNormalizedRoutingOverhead());
+					    bddGraphData.YAxisValuesMsadsr.Add(sessionData.CalculateBatteryDepletionDeviation());
+					    pdrGraphData.YAxisValuesMsadsr.Add(sessionData.CalculatePacketDeliveryRatio());
+				    }
+			    }
+		    }
 
+			graphDataList.Add(aeedGraphData);
+		    graphDataList.Add(nroGraphData);
+		    graphDataList.Add(bddGraphData);
+		    graphDataList.Add(pdrGraphData);
 
 		    return graphDataList;
 	    }
