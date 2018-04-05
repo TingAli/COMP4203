@@ -8,6 +8,8 @@ namespace COMP4203.Web.Models
 {
 	public class MobileNode
     {
+        public enum SelfishType { NOT_SELFISH, PURE_SELFISH, PARTIAL_SELFISH};
+
         static double TRANSMIT_COST = 0.02;
         static double RECEIVE_PROCESS_COST = 0.01;
 
@@ -16,6 +18,10 @@ namespace COMP4203.Web.Models
         public string DATA_COLOUR = "#52a0d0"; // Blue
         public string ACK_COLOUR = "#df1313"; // Red
         public string TWOACK_COLOR = "#000000"; // Black
+
+        public static string NODE_COLOUR_NOT_SELFISH = "#f2bd2b"; // yellow
+        public static string NODE_COLOUR_PURE_SELFISH = "#c9052e"; // red
+        public static string NODE_COLOUR_PARTIAL_SELFISH = "#66a548"; // green
 
         public string FillColour { get; set; }
         public int BorderWidth { get; set; }
@@ -33,6 +39,7 @@ namespace COMP4203.Web.Models
         private int AltruismCoefficient;
         private bool dropStatus = false;
         private bool selfish = false;
+        private SelfishType selfishType = SelfishType.NOT_SELFISH;
 
         private ComponentController controller;
 
@@ -49,6 +56,7 @@ namespace COMP4203.Web.Models
             Radius = 10;
             controller = new ComponentController();
             AltruismCoefficient = 50;
+            FillColour = NODE_COLOUR_NOT_SELFISH;
         }
 
         public MobileNode(int x, int y, int bLevel, int range)
@@ -66,6 +74,40 @@ namespace COMP4203.Web.Models
             this.range = range;
             controller = new ComponentController();
             AltruismCoefficient = 50;
+            FillColour = NODE_COLOUR_NOT_SELFISH;
+        }
+
+        public void SetNotSelfish()
+        {
+            selfishType = SelfishType.NOT_SELFISH;
+            FillColour = NODE_COLOUR_NOT_SELFISH;
+        }
+
+        public void SetPureSelfish()
+        {
+            selfishType = SelfishType.PURE_SELFISH;
+            FillColour = NODE_COLOUR_PURE_SELFISH;
+        }
+
+        public void SetPartialSelfish()
+        {
+            selfishType = SelfishType.PURE_SELFISH;
+            FillColour = NODE_COLOUR_PARTIAL_SELFISH;
+        }
+
+        public Boolean IsSelfish()
+        {
+            return selfishType == SelfishType.NOT_SELFISH;
+        }
+
+        public Boolean IsPartialSelfish()
+        {
+            return selfishType == SelfishType.PARTIAL_SELFISH;
+        }
+
+        public Boolean IsPureSelfish()
+        {
+            return selfishType == SelfishType.PURE_SELFISH;
         }
 
         public int GetAltruismCoefficient()
