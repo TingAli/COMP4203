@@ -5,24 +5,11 @@
 	$scope.canvasList=[];
 	$scope.notification={};
 
-	$scope.generate=function(tabIndex) {
-		context.generate($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,$scope.runData.nodeRange,
-			$scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,tabIndex)
-			.then(function() {
-				$scope.locks.GenerateButton=true;
-				$scope.locks.RunButton=false;
-				$scope.locks.DemoButtons=true;
-				$scope.locks.Inputs=true;
-			});
-	}
-
 	$scope.initiateRun=function(tabIndex) {
-
 		context.run($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,$scope.runData.nodeRange,
 			$scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,tabIndex)
 			.then(function() {
 				$scope.runData.isRunning=true;
-				$scope.locks.GenerateButton=true;
 				$scope.locks.RunButton=true;
 				$scope.locks.DemoButtons=true;
 				$scope.locks.Inputs=true;
@@ -180,7 +167,6 @@
 		context.reset()
 			.then(function() {
 				$scope.runData.isRunning=false;
-				$scope.locks.GenerateButton=false;
 				$scope.locks.RunButton=true;
 				$scope.locks.DemoButtons=false;
 				$scope.locks.Inputs=false;
@@ -212,7 +198,6 @@
 
 	$scope.runDemo=function(tabIndex) {
 		$scope.runData.isRunning=true;
-		$scope.locks.GenerateButton=true;
 		$scope.locks.RunButton=true;
 		$scope.locks.DemoButtons=true;
 		$scope.locks.Inputs=true;
@@ -231,7 +216,6 @@
 
 	$scope.runTest=function(tabIndex) {
 		$scope.runData.isRunning=true;
-		$scope.locks.GenerateButton=true;
 		$scope.locks.RunButton=true;
 		$scope.locks.DemoButtons=true;
 		$scope.locks.Inputs=true;
@@ -314,7 +298,7 @@
 			$scope.updateBatteryLevel(testNodeList[2]);
 
 			$scope.runData.isRunning=false;
-			$scope.locks.GenerateButton=false;
+
 			$scope.locks.RunButton=true;
 			$scope.locks.DemoButtons=false;
 			$scope.locks.Inputs=false;
@@ -345,8 +329,7 @@
 		$timeout(function() {
 			$scope.runData.isRunning=false;
 
-			$scope.locks.GenerateButton=false;
-			$scope.locks.RunButton=true;
+			$scope.locks.RunButton=false;
 			$scope.locks.DemoButtons=false;
 			$scope.locks.Inputs=false;
 
