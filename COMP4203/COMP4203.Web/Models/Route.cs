@@ -23,20 +23,11 @@ namespace COMP4203.Web.Models
         // Used to calculate route's SDP
         public double CalcSDP()
         {
-            // Calculated as selfishness level times ac 
-            // For each route, calculate the average battery level
-            // Convert the average battery level of a route into a percentage and multiply it by the route's ac 
-            double avgBatteryLevel = 0;
-            double avgAltruismCoefficient = 0;
-            foreach (MobileNode node in this.nodeRoute)
-            {
-                avgBatteryLevel += node.GetBatteryLevel();
-                avgAltruismCoefficient += node.GetAltruismCoefficient();
+            double total = 0;
+            foreach (MobileNode node in nodeRoute) {
+                total += node.GetForwardingProbability();
             }
-            avgAltruismCoefficient = (avgAltruismCoefficient / this.nodeRoute.Count) / 100;
-            avgBatteryLevel = (avgBatteryLevel / this.nodeRoute.Count) / 100;
-            sdp = avgAltruismCoefficient * avgBatteryLevel;
-            return sdp;
+            return total / nodeRoute.Count;
         }
 
         public List<MobileNode> GetNodeRoute() => nodeRoute;
