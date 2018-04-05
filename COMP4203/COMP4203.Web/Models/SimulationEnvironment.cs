@@ -41,7 +41,7 @@ namespace COMP4203.Web.Models
 
         public SessionData RunSimulation(int delay, int tabIndex)
         {
-            SessionData sessionData = new SessionData();
+            SessionData sessionData = new SessionData(tabIndex);
             sessionData.SetStartingBatteryLevels(mobileNodes);              // Save starting battery levels
             sessionData.SetNumberOfAttemptedTransmissions(messages.Count);  // Save number of attempted transmissions
 
@@ -199,7 +199,7 @@ namespace COMP4203.Web.Models
             if (route == null)
             {
                 controller.PrintToOutputPane(OutputTag.TAG_SADSR, "No Known Route to Destination.");
-                routes = sourceNode.SADSRRouteDiscovery(destinationNode, this, sData, delay); // Route Discovery
+                routes = sourceNode.SADSRRouteDiscovery(destinationNode, this, sData, delay, false); // Route Discovery
                 route = sourceNode.GetBestRouteSADSR(destinationNode);  // Get best known route
                 // If still no route found, abort.
                 if (route == null)
@@ -260,7 +260,7 @@ namespace COMP4203.Web.Models
             List<Route> routes = null;
             if (route == null) {
                 controller.PrintToOutputPane(OutputTag.TAG_MSADSR, "No Known Route to Destination.");
-                routes = sourceNode.MSADSRRouteDiscovery(destinationNode, this, sData, delay); // Route Discovery
+                routes = sourceNode.SADSRRouteDiscovery(destinationNode, this, sData, delay, true); // Route Discovery
                 route = sourceNode.GetBestRouteMSADSR(destinationNode);  // Get best known route
                 // If still no route found, abort.
                 if (route == null) {
@@ -292,6 +292,10 @@ namespace COMP4203.Web.Models
             for (int i = 1; i < nodes.Count; i++) {
                 if (!nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_MSADSR)) {
                     return false;
+                }
+                if (i > 2)
+                {
+                    nodes[i].SendAckPacket(nodes[i - 1], delay, OutputTag.TAG_MSADSR);
                 }
             }
 

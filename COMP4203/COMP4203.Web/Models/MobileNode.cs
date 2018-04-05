@@ -235,6 +235,7 @@ namespace COMP4203.Web.Models
             if (node.IsPureSelfish()) {
                 controller.PrintToOutputPane(tag, string.Format("Node {0} dropped RREQ Packet.", node.GetNodeID()));
                 TransmitDataDropped(this, node, wait, RREQ_COLOUR);
+                sessionData.IncrementNumberOfControlPackets();
                 return false; 
             }
             /* Otherwise, transmission is successful */
@@ -254,6 +255,7 @@ namespace COMP4203.Web.Models
             {
                 controller.PrintToOutputPane(tag, string.Format("Node {0} dropped RREQ Packet due to Protocol Driven Selfish Behaviour.", node.GetNodeID()));
                 TransmitDataDropped(this, node, wait, RREQ_COLOUR);
+                sessionData.IncrementNumberOfControlPackets();
                 return false;
             }
         }
@@ -444,10 +446,13 @@ namespace COMP4203.Web.Models
             return routes;
         }
 
-        public List<Route> SADSRRouteDiscovery(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)
+        public List<Route> SADSRRouteDiscovery(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay, bool modVersion)
         {
-            controller.PrintToOutputPane(OutputTag.TAG_SADSR, "Performing SA-DSR Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
-            List<Route> routes = SADSRRouteDiscoveryHelper(destNode, env, new Route(), sData, delay);
+            string tag = "";
+            if (modVersion) tag = OutputTag.TAG_MSADSR;
+            else tag = OutputTag.TAG_SADSR;
+            controller.PrintToOutputPane(tag, "Performing " + tag + " Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
+            List<Route> routes = SADSRRouteDiscoveryHelper(destNode, env, new Route(), sData, delay, modVersion, tag);
             if (routes == null) { return null; }
             /* If there are already known routes, add if unique */
             if (knownRoutes.ContainsKey(destNode.GetNodeID()))
@@ -477,7 +482,7 @@ namespace COMP4203.Web.Models
             return routes;
         }
 
-        private List<Route> SADSRRouteDiscoveryHelper(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
+        private List<Route> SADSRRouteDiscoveryHelper(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay, bool modVersion, string tag)
         {
             /* Collect all known routes from here  to destination */
             List<Route> routes = new List<Route>();
@@ -506,7 +511,7 @@ namespace COMP4203.Web.Models
                     if (node.Equals(destNode))
                     {
                         /* Send RREQ from current node to the destination node */
-                        if (SendRREQPacketSelfish(node, delay, sData, OutputTag.TAG_SADSR))
+                        if (SendRREQPacketSelfish(node, delay, sData, tag))
                         {
                             // Add current node and dest node to route
                             Route rPacket = route.Copy();
@@ -520,19 +525,19 @@ namespace COMP4203.Web.Models
                             continue;
                         }
                         /* Send RREQ from destination node to the current node */
-                        node.SendRREPPacket(this, delay, sData, OutputTag.TAG_SADSR);
+                        node.SendRREPPacket(this, delay, sData, tag);
                     }
                     // If node is not the destination node...
                     else
                     {
                         /* Send RREQ from this node to node */
-                        if (SendRREQPacketSelfish(node, delay, sData, OutputTag.TAG_SADSR))
+                        if (SendRREQPacketSelfish(node, delay, sData, tag))
                         {
                             // Add current node to the route
                             Route rPacket = route.Copy();
                             rPacket.AddNodeToRoute(this);
                             /* Recursively perform discovery from this node, and collect all returned valid routes */
-                            if (routes != null) routes.AddRange(node.SADSRRouteDiscoveryHelper(destNode, env, rPacket, sData, delay));
+                            if (routes != null) routes.AddRange(node.SADSRRouteDiscoveryHelper(destNode, env, rPacket, sData, delay, modVersion, tag));
                         }
                         else
                         {
@@ -557,106 +562,6 @@ namespace COMP4203.Web.Models
                     }
                 }
             }
-            return routes;
-        }
-
-
-        public List<Route> MSADSRRouteDiscovery(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)
-        {
-            controller.PrintToOutputPane(OutputTag.TAG_MSADSR, "Performing MSA-DSR Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
-            List<Route> routes = MSADSRRouteDiscoveryHelper(destNode, env, new Route(), sData, delay);
-            if (routes == null) { return null; }
-            /* If there are already known routes, add if unique */
-            if (knownRoutes.ContainsKey(destNode.GetNodeID())) {
-                foreach (Route r in routes) {
-                    bool exists = false;
-                    // for each route in the routing table corresponding to the destination node
-                    foreach (Route r2 in knownRoutes[destNode.GetNodeID()]) {
-                        // if they are equivalent routes, don't bother adding to routing table
-                        if (r2.RouteCompare(r)) {
-                            exists = true;
-                            break;
-                        }
-                    }
-                    // if the route isn't in the routing table, add it
-                    if (!exists) {
-                        knownRoutes[destNode.GetNodeID()].Add(r);
-                    }
-                }
-            }
-            /* Otherwise, add all routes to routing table */
-            else { knownRoutes.Add(destNode.GetNodeID(), routes); }
-            return routes;
-        }
-
-        private List<Route> MSADSRRouteDiscoveryHelper(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
-        {
-            /* Collect all known routes from here  to destination */
-            List<Route> routes = new List<Route>();
-            if (knownRoutes.ContainsKey(destNode.GetNodeID()) && knownRoutes[destNode.GetNodeID()] != null) {
-                foreach (Route r in knownRoutes[destNode.GetNodeID()]) {
-                    // create copy of route, add current node, and add to routes list
-                    Route r2 = route.Copy();
-                    r2.AddNodesToRoute(r.GetNodeRoute());
-                    routes.Add(r2);
-                }
-                return routes;
-            }
-
-            /* Flood RREQ's to Nodes within Range */
-            List<MobileNode> nodesWithinRange = GetNodesWithinRange(env);
-            if (nodesWithinRange.Count == 0 && !destNode.Equals(this)) { return null; }
-            /* For all nodes within range... */
-            foreach (MobileNode node in nodesWithinRange) {
-                // If node isn't in route yet...
-                if (!route.IsInRouteAlready(node)) {
-                    // If node is the destination node...
-                    if (node.Equals(destNode)) {
-                        /* Send RREQ from current node to the destination node */
-                        if (SendRREQPacketSelfish(node, delay, sData, OutputTag.TAG_MSADSR)) {
-                            // Add current node and dest node to route
-                            Route rPacket = route.Copy();
-                            rPacket.AddNodeToRoute(this);
-                            rPacket.AddNodeToRoute(node);
-                            // Add new route to routes collection
-                            routes.Add(rPacket);
-                        }
-                        else {
-                            continue;
-                        }
-                        /* Send RREQ from destination node to the current node */
-                        node.SendRREPPacket(this, delay, sData, OutputTag.TAG_MSADSR);
-                    }
-                    // If node is not the destination node...
-                    else {
-                        /* Send RREQ from this node to node */
-                        if (SendRREQPacketSelfish(node, delay, sData, OutputTag.TAG_MSADSR)) {
-                            // Add current node to the route
-                            Route rPacket = route.Copy();
-                            rPacket.AddNodeToRoute(this);
-                            /* Recursively perform discovery from this node, and collect all returned valid routes */
-                            if (routes != null ) routes.AddRange(node.MSADSRRouteDiscoveryHelper(destNode, env, rPacket, sData, delay));
-                        }
-                        else {
-                            continue;
-                        }
-                    }
-                }
-            }
-
-            /* Iterate through valid found routes, performing RREP returns */
-            foreach (Route r in routes) {
-                if (r.GetNodeRoute().Contains(destNode)) { // redundancy check
-                    List<MobileNode> rList = r.GetNodeRoute();
-                    for (int i = 0; i < rList.Count; i++)  {
-                        if (rList[i] == this && i != 0) {
-                            SendRREPPacket(rList[i - 1], delay, sData, OutputTag.TAG_MSADSR);
-                        }
-                    }
-                }
-            }
-
-
             return routes;
         }
 

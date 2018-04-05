@@ -42,7 +42,7 @@ namespace COMP4203.Web.Controllers
             }
             new ComponentController().PopulateNodesOnCanvas(sim.GetNodes(), tabIndex);
             //sim.SendMessageDSR(sim.GetMessages()[0], new SessionData(), 2000);
-            sim.SendMessageSADSR(sim.GetMessages()[0], new SessionData(), 500);
+            sim.SendMessageSADSR(sim.GetMessages()[0], new SessionData(0), 500);
         }
 
         [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{pureSelfishNodeNumber}/{partialSelfishNodeNumber}/{executionNumber}/{tabIndex}")]
