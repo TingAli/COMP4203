@@ -42,6 +42,7 @@ namespace COMP4203.Web.Models
         public void RunSimulation(int delay, int tabIndex)
         {
             SessionData sessionData = new SessionData();
+            DataExporter exporter = new DataExporter();
             sessionData.SetStartingBatteryLevels(mobileNodes);              // Save starting battery levels
             sessionData.SetNumberOfAttemptedTransmissions(messages.Count);  // Save number of attempted transmissions
 
@@ -56,14 +57,17 @@ namespace COMP4203.Web.Models
                 if (tabIndex == PROTOCOL_INDEX_DSR)
                 {
                     SendMessageDSR(message, sessionData, delay);
+                    exporter.export(sessionData, "DSR");
                 } else if (tabIndex == PROTOCOL_INDEX_SADSR)
                 {
                     // SendMessageSADSR()
                     controller.PrintToOutputPane(OutputTag.TAG_SADSR, "Running SA-DSR Simulation.");
+                    exporter.export(sessionData, "SADSR");
                 } else if (tabIndex == PROTOCOL_INDEX_MSADSR)
                 {
                     // SendMessageMSADSR()
                     controller.PrintToOutputPane(OutputTag.TAG_MSADSR, "Running MSA-DSR Simulation.");
+                    exporter.export(sessionData, "MSADSR");
                 }
             }
 
