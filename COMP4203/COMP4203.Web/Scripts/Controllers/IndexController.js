@@ -5,6 +5,49 @@
 	$scope.canvasList=[];
 	$scope.graphs=[];
 
+	var series = 0;
+	$scope.addGraphSeries = function () {
+		var rnd = [];
+		for (var i = 0; i < 10; i++) {
+			rnd.push(Math.floor(Math.random() * 20) + 1);
+		}
+		$scope.chartConfig.series.push({
+			data: rnd,
+			id: "series_" + series++
+		});
+	}
+
+	$scope.chartConfig = {
+		chart: {
+			type: "line"
+		},
+		series: [{
+				data: [10, 15, 12, 8, 7],
+				id: "DSR"
+			}, {
+				data: [15, 25, 42, 5, 7],
+				id: "SA-DSR"
+			},
+			{
+				data: [5, 10, 2, 5, 4],
+				id: "MSA-DSR"
+			}],
+		title: {
+			text: "AEED"
+		},
+		xAxis: [{
+			data: [1, 2, 3, 4],
+			title: {
+				text: "Number Of Executions",
+			}
+		}],
+		yAxis: [{
+			title: {
+				text: "AEED Value"
+			}
+		}]
+	};
+
 	$scope.initiateRun=function(tabIndex) {
 		$scope.runData.isRunning=true;
 		$scope.locks.RunButton=true;
@@ -17,7 +60,8 @@
 
 		context.run($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,$scope.runData.nodeRange,
 			$scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,$scope.runData.executionNumber,tabIndex)
-			.then(function() {
+			.then(function(response) {
+				console.log(response);
 			});
 	}
 
