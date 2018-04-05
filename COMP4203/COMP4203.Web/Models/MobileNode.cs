@@ -550,7 +550,6 @@ namespace COMP4203.Web.Models
                 }
             }
 
-            /* Iterate through valid found routes, performing RREP returns */
             foreach (Route r in routes)
             {
                 if (r.GetNodeRoute().Contains(destNode))

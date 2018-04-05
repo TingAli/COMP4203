@@ -204,9 +204,11 @@ namespace COMP4203.Web.Models
                 // If still no route found, abort.
                 if (route == null)
                 {
+                    sourceNode.DecreaseAltruismCoefficient();
                     controller.PrintToOutputPane(OutputTag.TAG_SADSR, "No Route to Destination.");
                     return false;
                 }
+                sourceNode.IncreaseAltruismCoefficient();
             }
 
             int validCounter = 0;
@@ -264,9 +266,11 @@ namespace COMP4203.Web.Models
                 route = sourceNode.GetBestRouteMSADSR(destinationNode);  // Get best known route
                 // If still no route found, abort.
                 if (route == null) {
+                    sourceNode.DecreaseAltruismCoefficient();
                     controller.PrintToOutputPane(OutputTag.TAG_MSADSR, "No Route to Destination.");
                     return false;
                 }
+                sourceNode.IncreaseAltruismCoefficient();
             }
 
             int validCounter = 0;
