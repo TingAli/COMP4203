@@ -74,5 +74,11 @@ namespace COMP4203.Web.Controllers
             controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), tabIndex); // Populate Nodes on Canvas //<remove once lock fixed
             simulationEnvironment.RunSimulation(simSpeedNumber, tabIndex);           // Run Simulation on Environment
         }
+
+        [HttpGet, Route("api/main/reset")]
+        public void Reset()
+        {
+
+        }
     }
 }
