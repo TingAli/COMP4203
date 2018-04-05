@@ -177,25 +177,28 @@
 	}
 
 	$scope.reset=function() {
-		$scope.runData.isRunning=false;
-		$scope.locks.GenerateButton=false;
-		$scope.locks.RunButton=true;
-		$scope.locks.DemoButtons=false;
-		$scope.locks.Inputs=false;
-		for(var index=0;index<$scope.canvasList.length; index++ )
-		{
-			$scope.canvasList[index].clearRect(0,0,500,500);
-			$scope.canvasList[index].Nodes=[];
-			$scope.canvasList[index].LineHistory=[];
-			$scope.canvasList[index].BatteryLevelTextHistory=[];
-			$scope.canvasList[index].NodeRangeHistory=[];
-		}
-		$scope.runData.nodeNumber=0;
-		$scope.runData.pureSelfishNodeNumber=0;
-		$scope.runData.partialSelfishNodeNumber=0;
-		$scope.runData.messageNumber=0;
-		$scope.runData.simSpeedNumber=0;
-		$scope.runData.nodeRange=200;
+		context.reset()
+			.then(function() {
+				$scope.runData.isRunning=false;
+				$scope.locks.GenerateButton=false;
+				$scope.locks.RunButton=true;
+				$scope.locks.DemoButtons=false;
+				$scope.locks.Inputs=false;
+				for(var index=0;index<$scope.canvasList.length; index++ )
+				{
+					$scope.canvasList[index].clearRect(0,0,500,500);
+					$scope.canvasList[index].Nodes=[];
+					$scope.canvasList[index].LineHistory=[];
+					$scope.canvasList[index].BatteryLevelTextHistory=[];
+					$scope.canvasList[index].NodeRangeHistory=[];
+				}
+				$scope.runData.nodeNumber=0;
+				$scope.runData.pureSelfishNodeNumber=0;
+				$scope.runData.partialSelfishNodeNumber=0;
+				$scope.runData.messageNumber=0;
+				$scope.runData.simSpeedNumber=0;
+				$scope.runData.nodeRange=200;
+			});
 	}
 
 	$scope.pushOutputMessage=function(tag,message) {
