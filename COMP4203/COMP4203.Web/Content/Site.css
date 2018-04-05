@@ -126,7 +126,7 @@ html, body {
 }
 
 .navbar-header p {
-	padding: 5px;
+	padding: 2px;
 }
 
 .navbar-header a {
@@ -161,4 +161,8 @@ html, body {
 	margin: 0;
 	-ms-border-radius: 0;
 	border-radius: 0;
+}
+
+.greenBorder{    
+	border:3px solid #00FF00 !important;
 }
