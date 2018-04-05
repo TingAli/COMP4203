@@ -291,11 +291,19 @@ namespace COMP4203.Web.Models
             /* Send DATA Packet */
             for (int i = 1; i < nodes.Count; i++) {
                 if (!nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_MSADSR)) {
+                    if (i >=2)
+                    {
+                        // add nodes[i-1] to nodes[i-2].blacklist
+                        nodes[i - 2].blackList.Add(nodes[i - 1]);
+                    }
                     return false;
                 }
-                if (i > 2)
+                if (i >= 2)
                 {
                     nodes[i].SendAckPacket(nodes[i - 1], delay, OutputTag.TAG_MSADSR);
+                    sData.IncrementNumberOfControlPackets();
+                    nodes[i-1].SendAckPacket(nodes[i - 2], delay, OutputTag.TAG_MSADSR);
+                    sData.IncrementNumberOfControlPackets();
                 }
             }
 

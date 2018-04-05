@@ -36,6 +36,7 @@ namespace COMP4203.Web.Models
         public double BatteryLevel;
         public int CenterX, CenterY;
         private Dictionary<int, List<Route>> knownRoutes;
+        public List<MobileNode> blackList;
         public Guid Id;
         public int CanvasIndex;
         private double AltruismCoefficient;
@@ -59,6 +60,7 @@ namespace COMP4203.Web.Models
             controller = new ComponentController();
             AltruismCoefficient = 1.0;
             FillColour = NODE_COLOUR_NOT_SELFISH;
+            blackList = new List<MobileNode>();
         }
 
         public MobileNode(int x, int y, int bLevel, int range)
@@ -77,6 +79,7 @@ namespace COMP4203.Web.Models
             controller = new ComponentController();
             AltruismCoefficient = 1.0;
             FillColour = NODE_COLOUR_NOT_SELFISH;
+            blackList = new List<MobileNode>();
         }
 
         public void SetNotSelfish()
@@ -114,7 +117,7 @@ namespace COMP4203.Web.Models
 
         public double GetForwardingProbability()
         {
-            return (GetDropProbabilityFromBattery() + AltruismCoefficient) / 2;
+            return ((GetDropProbabilityFromBattery() + AltruismCoefficient) / 2);
         }
 
         public double GetAltruismCoefficient()
