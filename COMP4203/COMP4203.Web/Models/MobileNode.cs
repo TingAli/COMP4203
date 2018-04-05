@@ -112,7 +112,7 @@ namespace COMP4203.Web.Models
 
         public double GetForwardingProbability()
         {
-            return 0;
+            return (GetDropProbabilityFromBattery() + AltruismCoefficient) / 2;
         }
 
         public double GetAltruismCoefficient()
