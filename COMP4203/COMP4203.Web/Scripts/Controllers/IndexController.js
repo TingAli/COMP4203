@@ -1,5 +1,6 @@
 ﻿app.controller("indexController",["$scope","dataService","$window","$timeout","$filter",function($scope,context,$window,$timeout,$filter) {
 	$scope.runData={};
+	$scope.locks={};
 	$scope.outputMessages=[];
 	$scope.canvasList=[];
 	$scope.notification={};
@@ -292,7 +293,7 @@
 	}
 
 	$scope.addWarningNotification=function(warning) {
-		$scope.notification.Warnings.Selected = 0;
+		$scope.notification.Warnings.Selected=0;
 		$scope.notification.Warnings.push(warning);
 	}
 
@@ -304,7 +305,7 @@
 	}
 
 	$scope.changeWarningNotificationSelected=function() {
-		if ($scope.notification.Warnings.Selected < $scope.notification.Warnings.length - 1) {
+		if($scope.notification.Warnings.Selected<$scope.notification.Warnings.length-1) {
 			$scope.notification.Warnings.Selected++;
 		} else {
 			$scope.notification.Warnings.Selected--;
@@ -314,7 +315,7 @@
 	angular.element(document).ready(function() {
 		$timeout(function() {
 			$scope.runData.isRunning=false;
-			$scope.notification.Warnings = [];
+			$scope.notification.Warnings=[];
 			$scope.runData.nodeNumber=0;
 			$scope.runData.pureSelfishNodeNumber=0;
 			$scope.runData.partialSelfishNodeNumber=0;
@@ -364,6 +365,12 @@
 
 		$scope.mainHub.client.completeRun=function(tabIndex) {
 			$scope.runData.isRunning=false;
+
+			jQuery("#latest-output").addClass("greenBorder");
+			$timeout(function() {
+				jQuery("#latest-output").removeClass("greenBorder");
+			},2500);
+
 			$scope.$apply();
 		};
 	});
