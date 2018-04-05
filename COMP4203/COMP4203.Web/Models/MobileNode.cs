@@ -36,7 +36,7 @@ namespace COMP4203.Web.Models
         private Dictionary<int, List<Route>> knownRoutes;
         public Guid Id;
         public int CanvasIndex;
-        private int AltruismCoefficient;
+        private double AltruismCoefficient;
         private bool dropStatus = false;
         private bool selfish = false;
         private SelfishType selfishType = SelfishType.NOT_SELFISH;
@@ -55,7 +55,7 @@ namespace COMP4203.Web.Models
             StrokeColour = "#FFFFFF";
             Radius = 10;
             controller = new ComponentController();
-            AltruismCoefficient = 50;
+            AltruismCoefficient = 1.0;
             FillColour = NODE_COLOUR_NOT_SELFISH;
         }
 
@@ -73,7 +73,7 @@ namespace COMP4203.Web.Models
             Radius = 10;
             this.range = range;
             controller = new ComponentController();
-            AltruismCoefficient = 50;
+            AltruismCoefficient = 1.0;
             FillColour = NODE_COLOUR_NOT_SELFISH;
         }
 
@@ -110,9 +110,45 @@ namespace COMP4203.Web.Models
             return selfishType == SelfishType.PURE_SELFISH;
         }
 
-        public int GetAltruismCoefficient()
+        public double GetForwardingProbability()
+        {
+            return 0;
+        }
+
+        public double GetAltruismCoefficient()
         {
             return AltruismCoefficient;
+        }
+
+        public void IncreaseAltruismCoefficient()
+        {
+            AltruismCoefficient *= 1.1;
+            if (AltruismCoefficient > 1) { AltruismCoefficient = 1; }
+        }
+
+        public void DecreaseAltruismCoefficient()
+        {
+            AltruismCoefficient *= 0.9;
+        }
+
+        public double GetDropProbabilityFromBattery()
+        {
+            if (100 >= BatteryLevel && BatteryLevel >= 80)
+            {
+                return 1;
+            }
+            else if (BatteryLevel >= 50)
+            {
+                return 0.5;
+            }
+            else if (BatteryLevel >= 20)
+            {
+                return 0.1;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         public bool GetDropStatus()
@@ -570,6 +606,105 @@ namespace COMP4203.Web.Models
             return routes;
         }
 
+        public List<Route> MSADSRRouteDiscovery(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)
+        {
+            controller.PrintToOutputPane(OutputTag.TAG_MSADSR, "Performing MSA-DSR Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
+            List<Route> routes = MSADSRRouteDiscoveryHelper(destNode, env, new Route(), sData, delay);
+            if (routes == null) { return null; }
+            /* If there are already known routes, add if unique */
+            if (knownRoutes.ContainsKey(destNode.GetNodeID())) {
+                foreach (Route r in routes) {
+                    bool exists = false;
+                    // for each route in the routing table corresponding to the destination node
+                    foreach (Route r2 in knownRoutes[destNode.GetNodeID()]) {
+                        // if they are equivalent routes, don't bother adding to routing table
+                        if (r2.RouteCompare(r)) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    // if the route isn't in the routing table, add it
+                    if (!exists) {
+                        knownRoutes[destNode.GetNodeID()].Add(r);
+                    }
+                }
+            }
+            /* Otherwise, add all routes to routing table */
+            else { knownRoutes.Add(destNode.GetNodeID(), routes); }
+            return routes;
+        }
+
+        private List<Route> MSADSRRouteDiscoveryHelper(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
+        {
+            /* Collect all known routes from here  to destination */
+            List<Route> routes = new List<Route>();
+            if (knownRoutes.ContainsKey(destNode.GetNodeID()) && knownRoutes[destNode.GetNodeID()] != null) {
+                foreach (Route r in knownRoutes[destNode.GetNodeID()]) {
+                    // create copy of route, add current node, and add to routes list
+                    Route r2 = route.Copy();
+                    r2.AddNodesToRoute(r.GetNodeRoute());
+                    routes.Add(r2);
+                }
+                return routes;
+            }
+
+            /* Flood RREQ's to Nodes within Range */
+            List<MobileNode> nodesWithinRange = GetNodesWithinRange(env);
+            if (nodesWithinRange.Count == 0 && !destNode.Equals(this)) { return null; }
+            /* For all nodes within range... */
+            foreach (MobileNode node in nodesWithinRange) {
+                // If node isn't in route yet...
+                if (!route.IsInRouteAlready(node)) {
+                    // If node is the destination node...
+                    if (node.Equals(destNode)) {
+                        /* Send RREQ from current node to the destination node */
+                        if (SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR)) {
+                            // Add current node and dest node to route
+                            Route rPacket = route.Copy();
+                            rPacket.AddNodeToRoute(this);
+                            rPacket.AddNodeToRoute(node);
+                            // Add new route to routes collection
+                            routes.Add(rPacket);
+                        }
+                        else {
+                            continue;
+                        }
+                        /* Send RREQ from destination node to the current node */
+                        node.SendRREPPacket(this, delay, sData, OutputTag.TAG_DSR);
+                    }
+                    // If node is not the destination node...
+                    else {
+                        /* Send RREQ from this node to node */
+                        if (SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR)) {
+                            // Add current node to the route
+                            Route rPacket = route.Copy();
+                            rPacket.AddNodeToRoute(this);
+                            /* Recursively perform discovery from this node, and collect all returned valid routes */
+                            routes.AddRange(node.DSRRouteDiscoveryHelper(destNode, env, rPacket, sData, delay));
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            /* Iterate through valid found routes, performing RREP returns */
+            foreach (Route r in routes) {
+                if (r.GetNodeRoute().Contains(destNode)) { // redundancy check
+                    List<MobileNode> rList = r.GetNodeRoute();
+                    for (int i = 0; i < rList.Count; i++)  {
+                        if (rList[i] == this && i != 0) {
+                            SendRREPPacket(rList[i - 1], delay, sData, OutputTag.TAG_DSR);
+                        }
+                    }
+                }
+            }
+
+
+            return routes;
+        }
+
         public List<Route> GetRoutesToNode(MobileNode node)
         {
             // If there are no known routes for this destination, return null.
@@ -595,6 +730,12 @@ namespace COMP4203.Web.Models
                 }
             }
             return routes[lowestIndex];
+        }
+
+        public Route GetBestRouteMSADSR(MobileNode node)
+        {
+            // TODO Implement
+            return null;
         }
 
         public double GetTransmissionTimeToNode(MobileNode node)
