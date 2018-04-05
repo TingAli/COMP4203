@@ -36,6 +36,7 @@ namespace COMP4203.Web.Models
 
         public double CalculatePacketDeliveryRatio()
         {
+            if (numberOfAttemptedTransmissions == 0) { return 0; }
             return numberOfSuccessfulTransmissions / numberOfAttemptedTransmissions;
 
         }
@@ -53,12 +54,14 @@ namespace COMP4203.Web.Models
 
         public double CalculateNormalizedRoutingOverhead()
         {
+            if (numberOfSuccessfulTransmissions == 0) { return -1; }
             return numberOfControlPackets / numberOfSuccessfulTransmissions;
         }
 
         public double CalculateBatteryDepletionDeviation()
         {
             List<double> values = GetDeviationValues();
+            if (values.Count == 0) { return -1; }
             double mean = values.Average();
             double total = 0;
             foreach (int value in values)

@@ -31,21 +31,11 @@ namespace COMP4203.Web.Controllers
             Hub.Clients.All.updateBatteryLevel(JsonConvert.SerializeObject(node));
         }
 
-        public void PopulateNodesDSR(List<MobileNode> nodes, int canvasIndex)
+        public void PopulateNodesOnCanvas(List<MobileNode> nodes, int canvasIndex)
         {
             foreach (MobileNode node in nodes) {
                 node.CanvasIndex = canvasIndex;
                 node.FillColour = "#FF0000";
-            }
-            Hub.Clients.All.populateNodes(JsonConvert.SerializeObject(nodes));
-        }
-
-        public void PopulateNodesSADSR(List<MobileNode> nodes, int canvasIndex)
-        {
-            foreach (MobileNode node in nodes)
-            {
-                node.CanvasIndex = canvasIndex;
-                node.FillColour = "#FF2E8B57";
             }
             Hub.Clients.All.populateNodes(JsonConvert.SerializeObject(nodes));
         }

@@ -291,9 +291,30 @@
 		$scope.runData.isRunning=false;
 	}
 
+	$scope.addWarningNotification=function(warning) {
+		$scope.notification.Warnings.Selected = 0;
+		$scope.notification.Warnings.push(warning);
+	}
+
+	$scope.addWarningNotifications=function() {
+		$scope.addWarningNotification("LOL");
+		$scope.addWarningNotification("HAHA");
+		$scope.addWarningNotification("HAHA2");
+		$scope.addWarningNotification("HAHA3");
+	}
+
+	$scope.changeWarningNotificationSelected=function() {
+		if ($scope.notification.Warnings.Selected < $scope.notification.Warnings.length - 1) {
+			$scope.notification.Warnings.Selected++;
+		} else {
+			$scope.notification.Warnings.Selected--;
+		}
+	}
+
 	angular.element(document).ready(function() {
 		$timeout(function() {
 			$scope.runData.isRunning=false;
+			$scope.notification.Warnings = [];
 			$scope.runData.nodeNumber=0;
 			$scope.runData.pureSelfishNodeNumber=0;
 			$scope.runData.partialSelfishNodeNumber=0;

@@ -13,6 +13,10 @@ namespace COMP4203.Web.Models
         public string DATA_COLOUR = "#52a0d0"; // Blue
         public string ACK_COLOUR = "#df1313"; // Red
 
+        public static int PROTOCOL_INDEX_DSR = 0;
+        public static int PROTOCOL_INDEX_SADSR = 1;
+        public static int PROTOCOL_INDEX_MSADSR = 2;
+
         private int height, width;
         private List<MobileNode> mobileNodes;
         private List<Message> messages;
@@ -41,18 +45,34 @@ namespace COMP4203.Web.Models
             sessionData.SetStartingBatteryLevels(mobileNodes);              // Save starting battery levels
             sessionData.SetNumberOfAttemptedTransmissions(messages.Count);  // Save number of attempted transmissions
 
+            string tag = "";
+            if (tabIndex == PROTOCOL_INDEX_DSR) { tag = OutputTag.TAG_DSR; }
+            else if (tabIndex == PROTOCOL_INDEX_SADSR) { tag = OutputTag.TAG_SADSR; }
+            else if (tabIndex == PROTOCOL_INDEX_MSADSR) { tag = OutputTag.TAG_MSADSR; }
+
             /* Send all messages */
             foreach (Message message in messages)
             {
-                SendMessageDSR(message, sessionData, delay);
+                if (tabIndex == PROTOCOL_INDEX_DSR)
+                {
+                    SendMessageDSR(message, sessionData, delay);
+                } else if (tabIndex == PROTOCOL_INDEX_SADSR)
+                {
+                    // SendMessageSADSR()
+                    controller.PrintToOutputPane(OutputTag.TAG_SADSR, "Running SA-DSR Simulation.");
+                } else if (tabIndex == PROTOCOL_INDEX_MSADSR)
+                {
+                    // SendMessageMSADSR()
+                    controller.PrintToOutputPane(OutputTag.TAG_MSADSR, "Running MSA-DSR Simulation.");
+                }
             }
 
             sessionData.SetEndingBatteryLevels(mobileNodes);    // Save ending battery levels
             sessionData.PrintResults();     // Print collected metrics
             sessions.Add(sessionData);      // Add collected data to recorded sessions
-            controller.PrintToOutputPane(OutputTag.TAG_DSR, sessionData.GetNumberOfAttemptedTransmissions() + " attempted transmissions.");
-            controller.PrintToOutputPane(OutputTag.TAG_DSR, sessionData.GetNumberOfSuccessfulTranmissions() + " successful transmissions.");
-            controller.PrintToOutputPane(OutputTag.TAG_DSR, "Finished Transmitting Messages.");
+            controller.PrintToOutputPane(tag, sessionData.GetNumberOfAttemptedTransmissions() + " attempted transmissions.");
+            controller.PrintToOutputPane(tag, sessionData.GetNumberOfSuccessfulTranmissions() + " successful transmissions.");
+            controller.PrintToOutputPane(tag, "Finished Transmitting Messages.");
             controller.MarkTransferAsComplete(tabIndex);
         }
 
@@ -68,6 +88,7 @@ namespace COMP4203.Web.Models
 
         public void GenerateRandomNodes(int numNodes, int range)
         {
+            mobileNodes.Clear();
             Random random = new Random();
             for (int i = 0; i < numNodes; i++)
             {
@@ -80,6 +101,7 @@ namespace COMP4203.Web.Models
 
         public void GenerateRandomMessages(int numMessages)
         {
+            messages.Clear();
             Random random = new Random();
             for (int i = 0; i < numMessages; i++)
             {
@@ -172,12 +194,12 @@ namespace COMP4203.Web.Models
             List<MobileNode> nodes = route.GetNodeRoute();
 
             /* Send DATA Packet */
-            for (int i = 1; i < nodes.Count; i++) { nodes[i - 1].SendDataPacket(nodes[i], delay, "DSR"); }
+            for (int i = 1; i < nodes.Count; i++) { nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_DSR); }
 
             /* Send ACK Packet */
             for (int i = nodes.Count-2; i >=0; i--)
             {
-                nodes[i + 1].SendAckPacket(nodes[i], delay, "DSR");
+                nodes[i + 1].SendAckPacket(nodes[i], delay, OutputTag.TAG_DSR);
                 sData.IncrementNumberOfControlPackets();
             }
 
