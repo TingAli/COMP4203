@@ -3,7 +3,7 @@
 	$scope.locks={};
 	$scope.outputMessages=[];
 	$scope.canvasList=[];
-	$scope.notification={};
+	$scope.graphs=[];
 
 	$scope.initiateRun=function(tabIndex) {
 		$scope.runData.isRunning=true;
@@ -168,11 +168,11 @@
 		context.reset()
 			.then(function() {
 				$scope.runData.isRunning=false;
+				$scope.runData.IsExecutionMode=false;
 				$scope.locks.RunButton=false;
 				$scope.locks.DemoButtons=false;
 				$scope.locks.Inputs=false;
-				for(var index=0;index<$scope.canvasList.length; index++ )
-				{
+				for(var index=0;index<$scope.canvasList.length;index++) {
 					$scope.canvasList[index].clearRect(0,0,500,500);
 					$scope.canvasList[index].Nodes=[];
 					$scope.canvasList[index].LineHistory=[];
@@ -185,6 +185,7 @@
 				$scope.runData.messageNumber=0;
 				$scope.runData.simSpeedNumber=0;
 				$scope.runData.nodeRange=200;
+				$scope.runData.ExecutionNumber = 0;
 			});
 	}
 
@@ -302,41 +303,22 @@
 		},$scope.runData.simSpeedNumber*3);
 	}
 
-	$scope.addWarningNotification=function(warning) {
-		$scope.notification.Warnings.Selected=0;
-		$scope.notification.Warnings.push(warning);
-	}
-
-	$scope.addWarningNotifications=function() {
-		$scope.addWarningNotification("LOL");
-		$scope.addWarningNotification("HAHA");
-		$scope.addWarningNotification("HAHA2");
-		$scope.addWarningNotification("HAHA3");
-	}
-
-	$scope.changeWarningNotificationSelected=function() {
-		if($scope.notification.Warnings.Selected<$scope.notification.Warnings.length-1) {
-			$scope.notification.Warnings.Selected++;
-		} else {
-			$scope.notification.Warnings.Selected--;
-		}
-	}
-
 	angular.element(document).ready(function() {
 		$timeout(function() {
 			$scope.runData.isRunning=false;
+			$scope.runData.IsExecutionMode=false;
 
 			$scope.locks.RunButton=false;
 			$scope.locks.DemoButtons=false;
 			$scope.locks.Inputs=false;
 
-			$scope.notification.Warnings=[];
 			$scope.runData.nodeNumber=0;
 			$scope.runData.pureSelfishNodeNumber=0;
 			$scope.runData.partialSelfishNodeNumber=0;
 			$scope.runData.messageNumber=0;
 			$scope.runData.simSpeedNumber=0;
 			$scope.runData.nodeRange=200;
+			$scope.runData.ExecutionNumber = 0;
 
 			for(var index=0;index<3;index++) {
 				$scope.initAndAddCanvas(index);

@@ -55,6 +55,7 @@
 								<div class="panel panel-success">
 									<div class="panel-heading text-center">Modifications</div>
 									<div class="session-modifications-container">
+										<h5 class="detail-annotation"><span class="label label-info">Parameters</span></h5>
 										<div class="input-group">
 											<span class="input-group-addon"># of Nodes</span>
 											<input ng-model="runData.nodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Nodes">
@@ -94,11 +95,18 @@
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
 											<input ng-model="runData.simSpeedNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="Event Sim Speed #">
 										</div>
+										<h5 class="detail-annotation"><span class="label label-info">Execution Mode</span></h5>
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);">RUN</button>
-											<button type="button" class="btn btn-danger" ng-click="reset();">RESET</button>
-											<button type="button" class="btn btn-info" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
-											<button type="button" class="btn btn-warning" ng-disabled="locks.DemoButtons" ng-click="runTest(@tabIndex);">TEST</button>
+											<label class="btn btn-primary" ng-disabled="locks.Inputs" ng-model="runData.IsExecutionMode" uib-btn-radio="true">ON</label>
+											<label class="btn btn-primary" ng-disabled="locks.Inputs" ng-model="runData.IsExecutionMode" uib-btn-radio="false">OFF</label>
+											<input ng-model="runData.ExecutionNumber" ng-disabled="locks.Inputs" ng-show="runData.IsExecutionMode" type="number" class="execution-mode-input form-control">
+										</div>
+										<h5 class="detail-annotation"><span class="label label-info">Actions</span></h5>
+										<div class="btn-group" role="group">
+											<button type="button" class="high-priority-btn btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);"><span class="glyphicon glyphicon-play-circle"></span> RUN</button>
+											<button type="button" class="high-priority-btn btn btn-danger" ng-click="reset();"><span class="glyphicon glyphicon-stop"></span> RESET</button>
+											<button type="button" class="btn btn-warning" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
+											<button type="button" class="btn btn-success" ng-disabled="locks.DemoButtons" ng-click="runTest(@tabIndex);">TEST</button>
 										</div>
 									</div>
 								</div>
@@ -141,6 +149,7 @@
 								<div class="panel panel-success">
 									<div class="panel-heading text-center">Modifications</div>
 									<div class="session-modifications-container">
+										<h5 class="detail-annotation"><span class="label label-info">Parameters</span></h5>
 										<div class="input-group">
 											<span class="input-group-addon"># of Nodes</span>
 											<input ng-model="runData.nodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Nodes">
@@ -180,11 +189,18 @@
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
 											<input ng-model="runData.simSpeedNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="Event Sim Speed #">
 										</div>
+										<h5 class="detail-annotation"><span class="label label-info">Execution Mode</span></h5>
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);">RUN</button>
-											<button type="button" class="btn btn-danger" ng-click="reset();">RESET</button>
-											<button type="button" class="btn btn-info" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
-											<button type="button" class="btn btn-warning" ng-disabled="locks.DemoButtons" ng-click="runTest(@tabIndex);">TEST</button>
+											<label class="btn btn-primary" ng-disabled="locks.Inputs" ng-model="runData.IsExecutionMode" uib-btn-radio="true">ON</label>
+											<label class="btn btn-primary" ng-disabled="locks.Inputs" ng-model="runData.IsExecutionMode" uib-btn-radio="false">OFF</label>
+											<input ng-model="runData.ExecutionNumber" ng-disabled="locks.Inputs" ng-show="runData.IsExecutionMode" type="number" class="execution-mode-input form-control">
+										</div>
+										<h5 class="detail-annotation"><span class="label label-info">Actions</span></h5>
+										<div class="btn-group" role="group">
+											<button type="button" class="high-priority-btn btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);"><span class="glyphicon glyphicon-play-circle"></span> RUN</button>
+											<button type="button" class="high-priority-btn btn btn-danger" ng-click="reset();"><span class="glyphicon glyphicon-stop"></span> RESET</button>
+											<button type="button" class="btn btn-warning" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
+											<button type="button" class="btn btn-success" ng-disabled="locks.DemoButtons" ng-click="runTest(@tabIndex);">TEST</button>
 										</div>
 									</div>
 								</div>
@@ -227,6 +243,7 @@
 								<div class="panel panel-success">
 									<div class="panel-heading text-center">Modifications</div>
 									<div class="session-modifications-container">
+										<h5 class="detail-annotation"><span class="label label-info">Parameters</span></h5>
 										<div class="input-group">
 											<span class="input-group-addon"># of Nodes</span>
 											<input ng-model="runData.nodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Nodes">
@@ -266,11 +283,18 @@
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
 											<input ng-model="runData.simSpeedNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="Event Sim Speed #">
 										</div>
+										<h5 class="detail-annotation"><span class="label label-info">Execution Mode</span></h5>
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);">RUN</button>
-											<button type="button" class="btn btn-danger" ng-click="reset();">RESET</button>
-											<button type="button" class="btn btn-info" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
-											<button type="button" class="btn btn-warning" ng-disabled="locks.DemoButtons" ng-click="runTest(@tabIndex);">TEST</button>
+											<label class="btn btn-primary" ng-disabled="locks.Inputs" ng-model="runData.IsExecutionMode" uib-btn-radio="true">ON</label>
+											<label class="btn btn-primary" ng-disabled="locks.Inputs" ng-model="runData.IsExecutionMode" uib-btn-radio="false">OFF</label>
+											<input ng-model="runData.ExecutionNumber" ng-disabled="locks.Inputs" ng-show="runData.IsExecutionMode" type="number" class="execution-mode-input form-control">
+										</div>
+										<h5 class="detail-annotation"><span class="label label-info">Actions</span></h5>
+										<div class="btn-group" role="group">
+											<button type="button" class="high-priority-btn btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);"><span class="glyphicon glyphicon-play-circle"></span> RUN</button>
+											<button type="button" class="high-priority-btn btn btn-danger" ng-click="reset();"><span class="glyphicon glyphicon-stop"></span> RESET</button>
+											<button type="button" class="btn btn-warning" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
+											<button type="button" class="btn btn-success" ng-disabled="locks.DemoButtons" ng-click="runTest(@tabIndex);">TEST</button>
 										</div>
 									</div>
 								</div>
@@ -316,13 +340,6 @@
 		</uib-tabset>
 	</div>
 </body>
-@*<button ng-click="addWarningNotifications();" style="position: fixed; top: 0; display: block; z-index: 9999">add</button>
-<div class="alert-box warning" ng-show="notification.Warnings.length > 0">
-	<span>Warning: {{ notification.Warnings[notification.Warnings.Selected] }}</span>
-	<button type="button" class="btn btn-primary" ng-click="changeWarningNotificationSelected();" ng-show="notification.Warnings.length > 1">
-		NEXT
-	</button>
-</div>*@
 
 @Scripts.Render("~/bundles/jquery")
 @Scripts.Render("~/bundles/jqueryval")

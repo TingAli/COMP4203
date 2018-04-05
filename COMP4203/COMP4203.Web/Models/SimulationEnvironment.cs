@@ -53,7 +53,7 @@ namespace COMP4203.Web.Models
             /* Send all messages */
             foreach (Message message in messages)
             {
-                controller.PrintToOutputPane("DEBUG", "Message: " + message.GetMessageID());
+                controller.PrintToOutputPane(OutputTag.TAG_NOTE, "Message: " + message.GetMessageID());
                 if (tabIndex == PROTOCOL_INDEX_DSR)
                 {
                     controller.PrintToOutputPane(OutputTag.TAG_DSR, "Running DSR Simulation.");
@@ -64,8 +64,8 @@ namespace COMP4203.Web.Models
                     SendMessageSADSR(message, sessionData, delay);
                 } else if (tabIndex == PROTOCOL_INDEX_MSADSR)
                 {
-                    // SendMessageMSADSR()
                     controller.PrintToOutputPane(OutputTag.TAG_MSADSR, "Running MSA-DSR Simulation.");
+                    SendMessageMSADSR(message, sessionData, delay);
                 }
             }
 
@@ -225,6 +225,19 @@ namespace COMP4203.Web.Models
             sData.IncrementNumberOfSuccessfulTransmissions();
             sData.endToEndDelays.Add((route.GetTransmissionTime())*4);
             return true;
+        }
+
+        public bool SendMessageMSADSR(Message message, SessionData sData, int delay)
+        {
+            MobileNode sourceNode = message.GetSourceNode();
+            MobileNode destinationNode = message.GetDestinstationNode();
+            //Route route = sourceNode.GetBestRouteMSADSR(destinationNode);
+
+            List<Route> routes = sourceNode.MSADSRRouteDiscovery(destinationNode, this, sData, delay);
+
+
+
+            return false;
         }
 
         public void TransmitData(MobileNode srcNode, MobileNode dstNode, int wait, string colour)

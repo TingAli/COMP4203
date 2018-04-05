@@ -44,21 +44,6 @@ namespace COMP4203.Web.Controllers
             sim.SendMessageSADSR(sim.GetMessages()[0], new SessionData(), 500);
         }
 
-        [HttpGet, Route("api/main/generate/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{pureSelfishNodeNumber}/{partialSelfishNodeNumber}/{tabIndex}")]
-        public void GenerateData(
-            int nodeNumber,
-            int messageNumber,
-            int simSpeedNumber,
-            int tabIndex,
-            int nodeRange,
-            int pureSelfishNodeNumber,
-            int partialSelfishNodeNumber)
-        {
-            simulationEnvironment.GenerateRandomNodes(nodeNumber, nodeRange, pureSelfishNodeNumber, partialSelfishNodeNumber);
-            simulationEnvironment.GenerateRandomMessages(messageNumber);
-            controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), tabIndex);
-        }
-
         [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{pureSelfishNodeNumber}/{partialSelfishNodeNumber}/{tabIndex}")]
         public void RunTest(
 	        int nodeNumber,
