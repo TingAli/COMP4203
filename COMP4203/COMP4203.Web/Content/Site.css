@@ -189,3 +189,11 @@ html, body {
 .partial-selfish {
 	background-color: #66a548;
 }
+
+.glyphicon {
+	top: 2px;
+}
+
+.high-priority-btn {
+	font-weight: 800;
+}
