@@ -3,6 +3,7 @@
 	$scope.locks={};
 	$scope.outputMessages=[];
 	$scope.canvasList=[];
+	$scope.graphs=[];
 
 	$scope.initiateRun=function(tabIndex) {
 		$scope.runData.isRunning=true;
@@ -167,11 +168,11 @@
 		context.reset()
 			.then(function() {
 				$scope.runData.isRunning=false;
+				$scope.runData.IsExecutionMode=false;
 				$scope.locks.RunButton=false;
 				$scope.locks.DemoButtons=false;
 				$scope.locks.Inputs=false;
-				for(var index=0;index<$scope.canvasList.length; index++ )
-				{
+				for(var index=0;index<$scope.canvasList.length;index++) {
 					$scope.canvasList[index].clearRect(0,0,500,500);
 					$scope.canvasList[index].Nodes=[];
 					$scope.canvasList[index].LineHistory=[];
@@ -184,6 +185,7 @@
 				$scope.runData.messageNumber=0;
 				$scope.runData.simSpeedNumber=0;
 				$scope.runData.nodeRange=200;
+				$scope.runData.ExecutionNumber = 0;
 			});
 	}
 
@@ -304,6 +306,7 @@
 	angular.element(document).ready(function() {
 		$timeout(function() {
 			$scope.runData.isRunning=false;
+			$scope.runData.IsExecutionMode=false;
 
 			$scope.locks.RunButton=false;
 			$scope.locks.DemoButtons=false;
@@ -315,6 +318,7 @@
 			$scope.runData.messageNumber=0;
 			$scope.runData.simSpeedNumber=0;
 			$scope.runData.nodeRange=200;
+			$scope.runData.ExecutionNumber = 0;
 
 			for(var index=0;index<3;index++) {
 				$scope.initAndAddCanvas(index);
