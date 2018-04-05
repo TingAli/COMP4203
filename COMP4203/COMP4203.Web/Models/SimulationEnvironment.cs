@@ -162,29 +162,20 @@ namespace COMP4203.Web.Models
             controller.PrintToOutputPane("SADSR", "Route Chosen: " + route.GetRouteAsString());
 
             List<MobileNode> nodes = route.GetNodeRoute();
-
+            for (int i = 0; i < nodes.Count-1; i++) { controller.PrintToOutputPane("SADSR", "Route Chosen: " + nodes[i].GetNodeID()); }
             /* Send DATA Packet */
-            controller.PrintToOutputPane("SADSR", "Beginning Message Transmission from Source Node " + sourceNode.GetNodeID());
-            for (int i = 1; i < nodes.Count; i++)
-            {
-                controller.PrintToOutputPane("SADSR", "Sending Message from " + nodes[i - 1].GetNodeID() + " to " + nodes[i].GetNodeID() + ".");
-                TransmitData(nodes[i - 1], nodes[i], delay * 4, DATA_COLOUR);
-            }
-            controller.PrintToOutputPane("SADSR", "Received Message at Destination Node " + destinationNode.GetNodeID());
-            sData.IncrementNumberOfSuccessfulTransmissions();
+            for (int i = 1; i < nodes.Count; i++) { nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_SADSR); }
 
             /* Send ACK Packet */
-            controller.PrintToOutputPane("SADSR", "Beginning ACK Transmission from Destination Node " + destinationNode.GetNodeID());
             for (int i = nodes.Count - 2; i >= 0; i--)
             {
-                controller.PrintToOutputPane("SADSR", "Sending ACK from " + nodes[i + 1].GetNodeID() + " to " + nodes[i].GetNodeID());
-                TransmitData(nodes[i + 1], nodes[i], delay * 4, ACK_COLOUR);
+                nodes[i + 1].SendAckPacket(nodes[i], delay, OutputTag.TAG_SADSR);
                 sData.IncrementNumberOfControlPackets();
             }
-            controller.PrintToOutputPane("SADSR", "Received ACK at Source Node " + sourceNode.GetNodeID());
 
             /* Calculate End-To-End Delay */
-            sData.endToEndDelays.Add((route.GetNodeRoute().Count - 1) * 4);
+            sData.IncrementNumberOfSuccessfulTransmissions();
+            sData.endToEndDelays.Add((route.GetTransmissionTime()) * 4);
             return true;
         }
 
@@ -215,7 +206,6 @@ namespace COMP4203.Web.Models
             controller.PrintToOutputPane(OutputTag.TAG_DSR, "Route Chosen: " + route.GetRouteAsString());
 
             List<MobileNode> nodes = route.GetNodeRoute();
-
             /* Send DATA Packet */
             for (int i = 1; i < nodes.Count; i++) {
                 if (!nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_DSR))
