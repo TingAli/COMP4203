@@ -46,7 +46,7 @@ namespace COMP4203.Web.Controllers
         }
 
         [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{pureSelfishNodeNumber}/{partialSelfishNodeNumber}/{executionNumber}/{tabIndex}")]
-        public void RunTest(
+        public List<GraphData> RunTest(
 	        int nodeNumber,
 	        int messageNumber,
 	        int simSpeedNumber,
@@ -58,6 +58,8 @@ namespace COMP4203.Web.Controllers
         {
 	        if (executionNumber > 1)
 	        {
+				List<GraphData> graphDataList = new List<GraphData>();
+				List<SessionData> sessionDataList = new List<SessionData>();
 		        int currentTabIndex = tabIndex;
 
 				for (int currentExecutionNumber = 0; currentExecutionNumber < executionNumber; currentExecutionNumber++)
@@ -75,7 +77,10 @@ namespace COMP4203.Web.Controllers
 							Hub.Clients.All.resetCanvas(currentTabIndex);
 
 							controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), currentTabIndex);
-							simulationEnvironment.RunSimulation(simSpeedNumber, currentTabIndex);
+							var sessionData = simulationEnvironment.RunSimulation(simSpeedNumber, currentTabIndex);
+							sessionDataList.Add(sessionData);
+
+
 
 					        tabIndexesDone[currentTabIndex] = true;
 
@@ -90,6 +95,8 @@ namespace COMP4203.Web.Controllers
 				        }
 			        }
 		        }
+
+		        return graphDataList;
 	        }
 	        else
 	        {
@@ -97,6 +104,8 @@ namespace COMP4203.Web.Controllers
 		        simulationEnvironment.GenerateRandomMessages(messageNumber); // Generate Random Messages //<remove once lock fixed
 		        controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), tabIndex); // Populate Nodes on Canvas //<remove once lock fixed
 		        simulationEnvironment.RunSimulation(simSpeedNumber, tabIndex); // Run Simulation on Environment
+
+				return new List<GraphData>();
 	        }
         }
 

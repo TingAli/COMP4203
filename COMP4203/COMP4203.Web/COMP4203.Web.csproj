@@ -180,6 +180,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\DataExporter.cs" />
+    <Compile Include="Models\GraphData.cs" />
     <Compile Include="Models\OutputPane.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\MobileNode.cs" />

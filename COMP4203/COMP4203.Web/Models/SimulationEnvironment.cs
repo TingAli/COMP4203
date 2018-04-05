@@ -39,7 +39,7 @@ namespace COMP4203.Web.Models
         public List<MobileNode> GetNodes() { return mobileNodes; }
         public List<Message> GetMessages() { return messages; }
 
-        public void RunSimulation(int delay, int tabIndex)
+        public SessionData RunSimulation(int delay, int tabIndex)
         {
             SessionData sessionData = new SessionData();
             sessionData.SetStartingBatteryLevels(mobileNodes);              // Save starting battery levels
@@ -76,6 +76,8 @@ namespace COMP4203.Web.Models
             controller.PrintToOutputPane(tag, sessionData.GetNumberOfSuccessfulTranmissions() + " successful transmissions.");
             controller.PrintToOutputPane(tag, "Finished Transmitting Messages.");
             controller.MarkTransferAsComplete(tabIndex);
+
+	        return sessionData;
         }
 
         public void AddNode(MobileNode node)
