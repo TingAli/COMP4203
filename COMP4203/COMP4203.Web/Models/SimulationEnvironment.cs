@@ -143,6 +143,7 @@ namespace COMP4203.Web.Models
             MobileNode sourceNode = message.GetSourceNode();
             MobileNode destinationNode = message.GetDestinstationNode();
             Route route = sourceNode.GetOptimalRouteSADSR(destinationNode);
+            bool dropStatus = false;
 
             /* If no known route, attempt to find one */
             if (route == null)
@@ -164,17 +165,34 @@ namespace COMP4203.Web.Models
             List<MobileNode> nodes = route.GetNodeRoute();
             for (int i = 0; i < nodes.Count-1; i++) { controller.PrintToOutputPane("SADSR", "Route Chosen: " + nodes[i].GetNodeID()); }
             /* Send DATA Packet */
-            for (int i = 1; i < nodes.Count; i++) { nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_SADSR); }
-
-            /* Send ACK Packet */
-            for (int i = nodes.Count - 2; i >= 0; i--)
+            for (int i = 1; i < nodes.Count; i++)
             {
-                nodes[i + 1].SendAckPacket(nodes[i], delay, OutputTag.TAG_SADSR);
-                sData.IncrementNumberOfControlPackets();
+                if (nodes[i].IsPartialSelfish() == true)
+                {
+                    controller.PrintToOutputPane("SADSR", "Messaged dropped by node: " + nodes[i].GetNodeID());
+                    dropStatus = true;
+                    break;
+                }
+                nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_SADSR);
             }
 
-            /* Calculate End-To-End Delay */
-            sData.IncrementNumberOfSuccessfulTransmissions();
+            /* Send ACK Packet */
+            if (dropStatus == false)
+            {
+                for (int i = nodes.Count - 2; i >= 0; i--)
+                {
+                    nodes[i + 1].SendAckPacket(nodes[i], delay, OutputTag.TAG_SADSR);
+                    sData.IncrementNumberOfControlPackets();
+                }
+
+                /* Calculate End-To-End Delay */
+                sData.IncrementNumberOfSuccessfulTransmissions();
+            }
+            else
+            {
+                controller.PrintToOutputPane("SADSR", "Messaged failed to receive");
+            }
+            
             sData.endToEndDelays.Add((route.GetTransmissionTime()) * 4);
             return true;
         }
