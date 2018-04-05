@@ -55,11 +55,12 @@ namespace COMP4203.Web.Models
             {
                 if (tabIndex == PROTOCOL_INDEX_DSR)
                 {
+                    controller.PrintToOutputPane(OutputTag.TAG_DSR, "Running DSR Simulation.");
                     SendMessageDSR(message, sessionData, delay);
                 } else if (tabIndex == PROTOCOL_INDEX_SADSR)
                 {
-                    // SendMessageSADSR()
                     controller.PrintToOutputPane(OutputTag.TAG_SADSR, "Running SA-DSR Simulation.");
+                    SendMessageSADSR(message, sessionData, delay);
                 } else if (tabIndex == PROTOCOL_INDEX_MSADSR)
                 {
                     // SendMessageMSADSR()
@@ -86,7 +87,7 @@ namespace COMP4203.Web.Models
             messages.Add(message);
         }
 
-        public void GenerateRandomNodes(int numNodes, int range)
+        public void GenerateRandomNodes(int numNodes, int range, int numPureSelfish, int numPartialSelfish)
         {
             mobileNodes.Clear();
             Random random = new Random();

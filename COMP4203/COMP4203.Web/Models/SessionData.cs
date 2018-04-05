@@ -100,10 +100,10 @@ namespace COMP4203.Web.Models
 
         public void PrintResults()
         {
-            controller.PrintToOutputPane("DSR_Results", "PDR: " + CalculatePacketDeliveryRatio());
-            controller.PrintToOutputPane("DSR_Results", "AEED: " + CalculateAverageEndToEndDelay());
-            controller.PrintToOutputPane("DSR_Results", "NRO: " + CalculateNormalizedRoutingOverhead());
-            controller.PrintToOutputPane("DSR_Results", "BDD: " + CalculateBatteryDepletionDeviation());
+            controller.PrintToOutputPane(OutputTag.TAG_RESULTS, "PDR: " + CalculatePacketDeliveryRatio());
+            controller.PrintToOutputPane(OutputTag.TAG_RESULTS, "AEED: " + CalculateAverageEndToEndDelay());
+            controller.PrintToOutputPane(OutputTag.TAG_RESULTS, "NRO: " + CalculateNormalizedRoutingOverhead());
+            controller.PrintToOutputPane(OutputTag.TAG_RESULTS, "BDD: " + CalculateBatteryDepletionDeviation());
         }
     }
 }
