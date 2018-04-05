@@ -53,6 +53,7 @@ namespace COMP4203.Web.Models
             /* Send all messages */
             foreach (Message message in messages)
             {
+                controller.PrintToOutputPane("DEBUG", "Message: " + message.GetMessageID());
                 if (tabIndex == PROTOCOL_INDEX_DSR)
                 {
                     controller.PrintToOutputPane(OutputTag.TAG_DSR, "Running DSR Simulation.");
@@ -189,7 +190,7 @@ namespace COMP4203.Web.Models
             {
                 controller.PrintToOutputPane(OutputTag.TAG_DSR, "No Known Route to Destination.");
                 /* Perform Route Discovery */
-                sourceNode.RouteDiscoveryDSR(destinationNode, this, sData, delay);
+                sourceNode.DSRRouteDiscovery(destinationNode, this, sData, delay);
                 route = sourceNode.GetBestRouteDSR(destinationNode);
                 /* If no route found, abort transfer */
                 if (route == null)
@@ -206,10 +207,15 @@ namespace COMP4203.Web.Models
 
             List<MobileNode> nodes = route.GetNodeRoute();
             /* Send DATA Packet */
-            for (int i = 1; i < nodes.Count; i++) { nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_DSR); }
+            for (int i = 1; i < nodes.Count; i++) {
+                if (!nodes[i - 1].SendDataPacket(nodes[i], delay, OutputTag.TAG_DSR))
+                {
+                    return false;
+                }
+            }
 
             /* Send ACK Packet */
-            for (int i = nodes.Count-2; i >=0; i--)
+            for (int i = nodes.Count - 2; i >= 0; i--)
             {
                 nodes[i + 1].SendAckPacket(nodes[i], delay, OutputTag.TAG_DSR);
                 sData.IncrementNumberOfControlPackets();

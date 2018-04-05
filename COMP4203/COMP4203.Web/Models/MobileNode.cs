@@ -90,13 +90,13 @@ namespace COMP4203.Web.Models
 
         public void SetPartialSelfish()
         {
-            selfishType = SelfishType.PURE_SELFISH;
+            selfishType = SelfishType.PARTIAL_SELFISH;
             FillColour = NODE_COLOUR_PARTIAL_SELFISH;
         }
 
         public Boolean IsSelfish()
         {
-            return selfishType == SelfishType.NOT_SELFISH;
+            return selfishType != SelfishType.NOT_SELFISH;
         }
 
         public Boolean IsPartialSelfish()
@@ -169,10 +169,19 @@ namespace COMP4203.Web.Models
             if (BatteryLevel < 0) { BatteryLevel = 0; }
         }
 
-        public void SendDataPacket(MobileNode node, int wait, string tag)
+        public bool SendDataPacket(MobileNode node, int wait, string tag)
         {
             controller.PrintToOutputPane(tag, "Sending DATA from " + nodeID + " to " + node.GetNodeID() + ".");
+            /* If the node we're sendin to is partial selfish, drop the packet */
+            if (node.IsPartialSelfish())
+            {
+                controller.PrintToOutputPane(tag, string.Format("Node {0} dropped DATA Packet.", node.GetNodeID()));
+                TransmitDataDropped(this, node, wait, DATA_COLOUR);
+                return false;
+            }
+            /* Otherwise, transmission is successful */
             TransmitData(this, node, wait, DATA_COLOUR);
+            return true;
         }
 
         public void SendAckPacket(MobileNode node, int wait, string tag)
@@ -181,11 +190,19 @@ namespace COMP4203.Web.Models
             TransmitData(this, node, wait, ACK_COLOUR);
         }
 
-        public void SendRREQPacket(MobileNode node, int wait, SessionData sessionData, string tag)
+        public bool SendRREQPacket(MobileNode node, int wait, SessionData sessionData, string tag)
         {
             controller.PrintToOutputPane(tag, string.Format("Sending RREQ from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
+            /* If the node we're sending to is pure selfish, drop the packet */
+            if (node.IsPureSelfish()) {
+                controller.PrintToOutputPane(tag, string.Format("Node {0} dropped RREQ Packet.", node.GetNodeID()));
+                TransmitDataDropped(this, node, wait, RREQ_COLOUR);
+                return false; 
+            }
+            /* Otherwise, transmission is successful */
             TransmitData(this, node, wait, RREQ_COLOUR);
             sessionData.IncrementNumberOfControlPackets();
+            return true;
         }
 
         public void SendRREPPacket(MobileNode node, int wait, SessionData session, string tag)
@@ -199,6 +216,14 @@ namespace COMP4203.Web.Models
         {
             controller.PrintToOutputPane(tag, string.Format("Sending TWOACK from Node {0} to Node {1}.", nodeID, node.GetNodeID()));
             TransmitData(this, node, wait, TWOACK_COLOR);
+        }
+
+        public void TransmitDataDropped(MobileNode srcNode, MobileNode dstNode, int wait, string colour)
+        {
+            controller.PrintArrow(srcNode, dstNode, colour);
+            Thread.Sleep(wait);
+            srcNode.TransmitPacket();
+            controller.UpdateBatteryLevel(srcNode);
         }
 
         public void TransmitData(MobileNode srcNode, MobileNode dstNode, int wait, string colour)
@@ -380,11 +405,12 @@ namespace COMP4203.Web.Models
             return optRoute;
         }
         // DSR implementation
-        public List<Route> RouteDiscoveryDSR(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)
+        public List<Route> DSRRouteDiscovery(MobileNode destNode, SimulationEnvironment env, SessionData sData, int delay)
         {
             controller.PrintToOutputPane(OutputTag.TAG_DSR, "Performing Route Discovery from Node " + nodeID + " to Node " + destNode.GetNodeID() + ".");
             /* Perform Recursive Route Discovery to Collect all Valid Routes to the Destination */
-            List<Route> routes = DSRDicovery(destNode, env, new Route(), sData, delay);
+            List<Route> routes = DSRRouteDiscoveryHelper(destNode, env, new Route(), sData, delay);
+            if (routes == null) { return null; }
             /* If there are already known routes, add if unique */
             if (knownRoutes.ContainsKey(destNode.GetNodeID()))
             {
@@ -413,7 +439,7 @@ namespace COMP4203.Web.Models
             return routes;
         }
 
-        private List<Route> DSRDicovery(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
+        private List<Route> DSRRouteDiscoveryHelper(MobileNode destNode, SimulationEnvironment env, Route route, SessionData sData, int delay)
         {
             List<Route> routes = new List<Route>();     // List to hold routes from this node to the destination
             
@@ -441,27 +467,38 @@ namespace COMP4203.Web.Models
                     // If node is the destination node...
                     if (node.Equals(destNode))
                     {
-                        // Add current node and dest node to route
-                        Route rPacket = route.Copy();
-                        rPacket.AddNodeToRoute(this);
-                        rPacket.AddNodeToRoute(node);
-                        // Add new route to routes collection
-                        routes.Add(rPacket);
+                        
                         /* Send RREQ from current node to the destination node */
-                        SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR);
+                        if (SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR))
+                        {
+                            // Add current node and dest node to route
+                            Route rPacket = route.Copy();
+                            rPacket.AddNodeToRoute(this);
+                            rPacket.AddNodeToRoute(node);
+                            // Add new route to routes collection
+                            routes.Add(rPacket);
+                        } else
+                        {
+                            continue;
+                        }
                         /* Send RREQ from destination node to the current node */
                         node.SendRREPPacket(this, delay, sData, OutputTag.TAG_DSR);
                     }
                     // If node is not the destination node...
                     else
                     {
-                        // Add current node to the route
-                        Route rPacket = route.Copy();
-                        rPacket.AddNodeToRoute(this);
                         /* Send RREQ from this node to node */
-                        SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR);
-                        /* Recursively perform discovery from this node, and collect all returned valid routes */
-                        routes.AddRange(node.DSRDicovery(destNode, env, rPacket, sData, delay));
+                        if (SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR))
+                        {
+                            // Add current node to the route
+                            Route rPacket = route.Copy();
+                            rPacket.AddNodeToRoute(this);
+                            /* Recursively perform discovery from this node, and collect all returned valid routes */
+                            routes.AddRange(node.DSRRouteDiscoveryHelper(destNode, env, rPacket, sData, delay));
+                        } else
+                        {
+                            continue;
+                        }
                     }
                 }
             }

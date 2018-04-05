@@ -24,7 +24,7 @@
 			@{
 				var tabIndex = 0;
 			}
-			<uib-tab index="@tabIndex" disable="runData.isRunning">
+			<uib-tab index="@tabIndex" disable="false">
 				<uib-tab-heading>
 					<i class="glyphicon glyphicon-play-circle"></i> DSR Session
 				</uib-tab-heading>
@@ -58,14 +58,29 @@
 										<div class="input-group">
 											<span class="input-group-addon"># of Nodes</span>
 											<input ng-model="runData.nodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Nodes">
+											<span class="node-legend not-selfish input-group-addon">
+												<svg height="10" width="10">
+													<circle cx="5" cy="5" r="5" stroke="black" stroke-width="1" fill="#f2bd2b" />
+												</svg>
+											</span>
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Pure Selfish Nodes</span>
 											<input ng-model="runData.pureSelfishNodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Pure Selfish Nodes">
+											<span class="node-legend pure-selfish input-group-addon">
+												<svg height="10" width="10">
+													<circle cx="5" cy="5" r="5" stroke="black" stroke-width="1" fill="#c9052e" />
+												</svg>
+											</span>
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Partial Selfish Nodes</span>
 											<input ng-model="runData.partialSelfishNodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Partial Selfish Nodes">
+											<span class="node-legend partial-selfish input-group-addon">
+												<svg height="10" width="10">
+													<circle cx="5" cy="5" r="5" stroke="black" stroke-width="1" fill="#66a548" />
+												</svg>
+											</span>
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Messages</span>
@@ -77,10 +92,9 @@
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
-											<input ng-model="runData.simSpeedNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Event Sim Speed #">
+											<input ng-model="runData.simSpeedNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="Event Sim Speed #">
 										</div>
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-success" ng-disabled="locks.GenerateButton" ng-click="generate(@tabIndex);">GENERATE</button>
 											<button type="button" class="btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);">RUN</button>
 											<button type="button" class="btn btn-danger" ng-click="reset();">RESET</button>
 											<button type="button" class="btn btn-info" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
@@ -96,7 +110,7 @@
 			@{
 				tabIndex = 1;
 			}
-			<uib-tab index="@tabIndex" disable="runData.isRunning">
+			<uib-tab index="@tabIndex" disable="false">
 				<uib-tab-heading>
 					<i class="glyphicon glyphicon-play-circle"></i> SA-DSR Session
 				</uib-tab-heading>
@@ -130,14 +144,29 @@
 										<div class="input-group">
 											<span class="input-group-addon"># of Nodes</span>
 											<input ng-model="runData.nodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Nodes">
+											<span class="node-legend not-selfish input-group-addon">
+												<svg height="10" width="10">
+													<circle cx="5" cy="5" r="5" stroke="black" stroke-width="1" fill="#f2bd2b" />
+												</svg>
+											</span>
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Pure Selfish Nodes</span>
 											<input ng-model="runData.pureSelfishNodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Pure Selfish Nodes">
+											<span class="node-legend pure-selfish input-group-addon">
+												<svg height="10" width="10">
+													<circle cx="5" cy="5" r="5" stroke="black" stroke-width="1" fill="#c9052e" />
+												</svg>
+											</span>
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Partial Selfish Nodes</span>
 											<input ng-model="runData.partialSelfishNodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Partial Selfish Nodes">
+											<span class="node-legend partial-selfish input-group-addon">
+												<svg height="10" width="10">
+													<circle cx="5" cy="5" r="5" stroke="black" stroke-width="1" fill="#66a548" />
+												</svg>
+											</span>
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Messages</span>
@@ -149,10 +178,9 @@
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
-											<input ng-model="runData.simSpeedNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Event Sim Speed #">
+											<input ng-model="runData.simSpeedNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="Event Sim Speed #">
 										</div>
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-success" ng-disabled="locks.GenerateButton" ng-click="generate(@tabIndex);">GENERATE</button>
 											<button type="button" class="btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);">RUN</button>
 											<button type="button" class="btn btn-danger" ng-click="reset();">RESET</button>
 											<button type="button" class="btn btn-info" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
@@ -168,7 +196,7 @@
 			@{
 				tabIndex = 2;
 			}
-			<uib-tab index="@tabIndex" disable="runData.isRunning">
+			<uib-tab index="@tabIndex" disable="false">
 				<uib-tab-heading>
 					<i class="glyphicon glyphicon-play-circle"></i> SA-DSR [Modified] Session
 				</uib-tab-heading>
@@ -202,14 +230,29 @@
 										<div class="input-group">
 											<span class="input-group-addon"># of Nodes</span>
 											<input ng-model="runData.nodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Nodes">
+											<span class="node-legend not-selfish input-group-addon">
+												<svg height="10" width="10">
+													<circle cx="5" cy="5" r="5" stroke="black" stroke-width="1" fill="#f2bd2b" />
+												</svg>
+											</span>
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Pure Selfish Nodes</span>
 											<input ng-model="runData.pureSelfishNodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Pure Selfish Nodes">
+											<span class="node-legend pure-selfish input-group-addon">
+												<svg height="10" width="10">
+													<circle cx="5" cy="5" r="5" stroke="black" stroke-width="1" fill="#c9052e" />
+												</svg>
+											</span>
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Partial Selfish Nodes</span>
 											<input ng-model="runData.partialSelfishNodeNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="# of Partial Selfish Nodes">
+											<span class="node-legend partial-selfish input-group-addon">
+												<svg height="10" width="10">
+													<circle cx="5" cy="5" r="5" stroke="black" stroke-width="1" fill="#66a548" />
+												</svg>
+											</span>
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon"># of Messages</span>
@@ -221,10 +264,9 @@
 										</div>
 										<div class="input-group">
 											<span class="input-group-addon">Event Sim Speed (ms)</span>
-											<input ng-model="runData.simSpeedNumber" ng-disabled="runData.isRunning" type="number" class="form-control" placeholder="Event Sim Speed #">
+											<input ng-model="runData.simSpeedNumber" ng-disabled="locks.Inputs" type="number" class="form-control" placeholder="Event Sim Speed #">
 										</div>
 										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-success" ng-disabled="locks.GenerateButton" ng-click="generate(@tabIndex);">GENERATE</button>
 											<button type="button" class="btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);">RUN</button>
 											<button type="button" class="btn btn-danger" ng-click="reset();">RESET</button>
 											<button type="button" class="btn btn-info" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
@@ -240,7 +282,7 @@
 			@{
 				tabIndex = 3;
 			}
-			<uib-tab index="@tabIndex" disable="runData.isRunning">
+			<uib-tab index="@tabIndex" disable="false">
 				<uib-tab-heading>
 					<i class="glyphicon glyphicon-link"></i> Graphs
 				</uib-tab-heading>
@@ -256,7 +298,7 @@
 			@{
 				tabIndex = 4;
 			}
-			<uib-tab index="@tabIndex" disable="runData.isRunning">
+			<uib-tab index="@tabIndex" disable="false">
 				<uib-tab-heading>
 					<i class="glyphicon glyphicon-screenshot"></i> Output
 				</uib-tab-heading>
