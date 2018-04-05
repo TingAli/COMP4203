@@ -15,7 +15,7 @@ namespace COMP4203.Web.Models
 		}
 
         // Use to retrieve route's SDP
-        public double getSDP()
+        public double GetSDP()
         {
             return sdp;
         }

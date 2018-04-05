@@ -244,8 +244,21 @@ namespace COMP4203.Web.Models
             //Route route = sourceNode.GetBestRouteMSADSR(destinationNode);
 
             List<Route> routes = sourceNode.MSADSRRouteDiscovery(destinationNode, this, sData, delay);
+            Route route = sourceNode.GetBestRouteMSADSR(destinationNode);
 
-
+            //double timeout = 0.0000012;
+            //int validCounter = 0;
+            //if (routes != null)
+            //{
+            //    controller.PrintToOutputPane(OutputTag.TAG_NOTE, routes.Count + " routes found.");
+            //    foreach (Route route in routes)
+            //    {
+            //        controller.PrintToOutputPane(OutputTag.TAG_NOTE, "SDP: " + route.CalcSDP());
+            //        controller.PrintToOutputPane(OutputTag.TAG_NOTE, "Delay: " + route.GetTransmissionTime());
+            //        if (route.GetTransmissionTime() < timeout) validCounter++;
+            //    }
+            //    controller.PrintToOutputPane(OutputTag.TAG_NOTE, validCounter + " routes within timeframe");
+            //}
 
             return false;
         }

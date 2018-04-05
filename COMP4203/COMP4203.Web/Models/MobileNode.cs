@@ -13,6 +13,8 @@ namespace COMP4203.Web.Models
         static double TRANSMIT_COST = 0.02;
         static double RECEIVE_PROCESS_COST = 0.01;
 
+        public static double SA_TIMEOUT = 0.0000012;
+
         public string RREQ_COLOUR = "#9bc146"; // Green
         public string RREP_COLOUR = "#ffe338"; // Yellow
         public string DATA_COLOUR = "#52a0d0"; // Blue
@@ -441,7 +443,7 @@ namespace COMP4203.Web.Models
                 controller.PrintToOutputPane("SADSR", string.Format("SDP is {0}", r.CalcSDP()));
                 if (sdp < r.CalcSDP())
                 {
-                    sdp = r.getSDP();
+                    sdp = r.GetSDP();
                     optRoute = r;
                 }
             }
@@ -658,7 +660,7 @@ namespace COMP4203.Web.Models
                     // If node is the destination node...
                     if (node.Equals(destNode)) {
                         /* Send RREQ from current node to the destination node */
-                        if (SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR)) {
+                        if (SendRREQPacket(node, delay, sData, OutputTag.TAG_MSADSR)) {
                             // Add current node and dest node to route
                             Route rPacket = route.Copy();
                             rPacket.AddNodeToRoute(this);
@@ -670,17 +672,17 @@ namespace COMP4203.Web.Models
                             continue;
                         }
                         /* Send RREQ from destination node to the current node */
-                        node.SendRREPPacket(this, delay, sData, OutputTag.TAG_DSR);
+                        node.SendRREPPacket(this, delay, sData, OutputTag.TAG_MSADSR);
                     }
                     // If node is not the destination node...
                     else {
                         /* Send RREQ from this node to node */
-                        if (SendRREQPacket(node, delay, sData, OutputTag.TAG_DSR)) {
+                        if (SendRREQPacket(node, delay, sData, OutputTag.TAG_MSADSR)) {
                             // Add current node to the route
                             Route rPacket = route.Copy();
                             rPacket.AddNodeToRoute(this);
                             /* Recursively perform discovery from this node, and collect all returned valid routes */
-                            routes.AddRange(node.DSRRouteDiscoveryHelper(destNode, env, rPacket, sData, delay));
+                            if (routes != null ) routes.AddRange(node.MSADSRRouteDiscoveryHelper(destNode, env, rPacket, sData, delay));
                         }
                         else {
                             continue;
@@ -695,7 +697,7 @@ namespace COMP4203.Web.Models
                     List<MobileNode> rList = r.GetNodeRoute();
                     for (int i = 0; i < rList.Count; i++)  {
                         if (rList[i] == this && i != 0) {
-                            SendRREPPacket(rList[i - 1], delay, sData, OutputTag.TAG_DSR);
+                            SendRREPPacket(rList[i - 1], delay, sData, OutputTag.TAG_MSADSR);
                         }
                     }
                 }
@@ -734,8 +736,25 @@ namespace COMP4203.Web.Models
 
         public Route GetBestRouteMSADSR(MobileNode node)
         {
-            // TODO Implement
-            return null;
+            List<Route> routes = GetRoutesToNode(node);
+            if (routes == null) { return null; }
+            if (routes.Count == 0) { return null; }
+            foreach (Route route in routes)
+            {
+                if (route.GetTransmissionTime() > SA_TIMEOUT) routes.Remove(route);
+            }
+            double bestSDP = -1;
+            int bestIndex = -1;
+            for (int i = 0; i < routes.Count; i++)
+            {
+                double sdp = routes[i].CalcSDP();
+                if (sdp > bestSDP)
+                {
+                    bestSDP = sdp;
+                    bestIndex = i;
+                }
+            }
+            return routes[bestIndex];
         }
 
         public double GetTransmissionTimeToNode(MobileNode node)
