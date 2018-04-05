@@ -59,11 +59,12 @@ namespace COMP4203.Web.Controllers
 	        if (executionNumber > 1)
 	        {
 				List<GraphData> graphDataList = new List<GraphData>();
-				List<SessionData> sessionDataList = new List<SessionData>();
+				List<List<SessionData>> sessionDataList = new List<List<SessionData>>();
 		        int currentTabIndex = tabIndex;
 
 				for (int currentExecutionNumber = 0; currentExecutionNumber < executionNumber; currentExecutionNumber++)
 				{
+					List<SessionData> currentExecutionSessionDataList = new List<SessionData>();
 					List<bool> tabIndexesDone = new List<bool> { false, false, false };
 					bool isAllTabsDone = false;
 
@@ -78,9 +79,7 @@ namespace COMP4203.Web.Controllers
 
 							controller.PopulateNodesOnCanvas(simulationEnvironment.GetNodes(), currentTabIndex);
 							var sessionData = simulationEnvironment.RunSimulation(simSpeedNumber, currentTabIndex);
-							sessionDataList.Add(sessionData);
-
-
+					        currentExecutionSessionDataList.Add(sessionData);
 
 					        tabIndexesDone[currentTabIndex] = true;
 
@@ -94,6 +93,8 @@ namespace COMP4203.Web.Controllers
 					        isAllTabsDone = true;
 				        }
 			        }
+
+					sessionDataList.Add(currentExecutionSessionDataList);
 		        }
 
 		        return graphDataList;
@@ -108,6 +109,15 @@ namespace COMP4203.Web.Controllers
 				return new List<GraphData>();
 	        }
         }
+
+	    public List<GraphData> SessionDataListToGraphDataList(List<List<SessionData>> sessionDataList)
+	    {
+			List<GraphData> graphDataList = new List<GraphData>();
+
+
+
+		    return graphDataList;
+	    }
 
         [HttpGet, Route("api/main/reset")]
         public void Reset()
