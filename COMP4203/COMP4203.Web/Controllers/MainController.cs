@@ -24,11 +24,11 @@ namespace COMP4203.Web.Controllers
         {
             SimulationEnvironment sim = new SimulationEnvironment();
             // Add Test Nodes
-            sim.AddNode(new MobileNode(100, 100, 20, 200));
-            sim.AddNode(new MobileNode(200, 210, 20, 200));
-            sim.AddNode(new MobileNode(210, 200, 100, 200));
-            sim.AddNode(new MobileNode(298, 298, 100, 200));
-            sim.AddNode(new MobileNode(200, 100, 20, 200));
+            sim.AddNode(new MobileNode(100, 100, 100, 200));
+            sim.AddNode(new MobileNode(200, 210, 100, 200));
+            sim.AddNode(new MobileNode(210, 200, 15, 200));
+            sim.AddNode(new MobileNode(298, 298, 15, 200));
+            sim.AddNode(new MobileNode(200, 100, 100, 200));
             sim.AddNode(new MobileNode(150, 120, 100, 200));
             // Add Test Message
             sim.AddMessage(new Message(sim.GetNodes()[0], sim.GetNodes()[3]));
