@@ -166,3 +166,8 @@ html, body {
 .greenBorder{    
 	border:3px solid #00FF00 !important;
 }
+
+.btn[disabled] {
+	cursor: not-allowed;
+	background-color: #888888;
+}

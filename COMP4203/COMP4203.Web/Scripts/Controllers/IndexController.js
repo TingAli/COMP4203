@@ -9,15 +9,23 @@
 		context.generate($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,$scope.runData.nodeRange,
 			$scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,tabIndex)
 			.then(function() {
+				$scope.locks.GenerateButton=true;
+				$scope.locks.RunButton=false;
+				$scope.locks.DemoButtons=true;
+				$scope.locks.Inputs=true;
 			});
 	}
 
 	$scope.initiateRun=function(tabIndex) {
-		$scope.runData.isRunning=true;
 
 		context.run($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,$scope.runData.nodeRange,
 			$scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,tabIndex)
 			.then(function() {
+				$scope.runData.isRunning=true;
+				$scope.locks.GenerateButton=true;
+				$scope.locks.RunButton=true;
+				$scope.locks.DemoButtons=true;
+				$scope.locks.Inputs=true;
 			});
 	}
 
@@ -168,13 +176,20 @@
 		});
 	}
 
-	$scope.reset=function(tabIndex) {
+	$scope.reset=function() {
 		$scope.runData.isRunning=false;
-		$scope.canvasList[tabIndex].clearRect(0,0,500,500);
-		$scope.canvasList[tabIndex].Nodes=[];
-		$scope.canvasList[tabIndex].LineHistory=[];
-		$scope.canvasList[tabIndex].BatteryLevelTextHistory=[];
-		$scope.canvasList[tabIndex].NodeRangeHistory=[];
+		$scope.locks.GenerateButton=false;
+		$scope.locks.RunButton=true;
+		$scope.locks.DemoButtons=false;
+		$scope.locks.Inputs=false;
+		for(var index=0;index<$scope.canvasList.length; index++ )
+		{
+			$scope.canvasList[index].clearRect(0,0,500,500);
+			$scope.canvasList[index].Nodes=[];
+			$scope.canvasList[index].LineHistory=[];
+			$scope.canvasList[index].BatteryLevelTextHistory=[];
+			$scope.canvasList[index].NodeRangeHistory=[];
+		}
 		$scope.runData.nodeNumber=0;
 		$scope.runData.pureSelfishNodeNumber=0;
 		$scope.runData.partialSelfishNodeNumber=0;
@@ -194,7 +209,10 @@
 
 	$scope.runDemo=function(tabIndex) {
 		$scope.runData.isRunning=true;
-		$scope.reset(tabIndex);
+		$scope.locks.GenerateButton=true;
+		$scope.locks.RunButton=true;
+		$scope.locks.DemoButtons=true;
+		$scope.locks.Inputs=true;
 
 		$scope.runData.nodeNumber=4;
 		$scope.runData.pureSelfishNodeNumber=0;
@@ -210,6 +228,10 @@
 
 	$scope.runTest=function(tabIndex) {
 		$scope.runData.isRunning=true;
+		$scope.locks.GenerateButton=true;
+		$scope.locks.RunButton=true;
+		$scope.locks.DemoButtons=true;
+		$scope.locks.Inputs=true;
 
 		var testNodeList=[
 			{
@@ -290,6 +312,10 @@
 		},$scope.runData.simSpeedNumber*3);
 
 		$scope.runData.isRunning=false;
+		$scope.locks.GenerateButton=false;
+		$scope.locks.RunButton=true;
+		$scope.locks.DemoButtons=false;
+		$scope.locks.Inputs=false;
 	}
 
 	$scope.addWarningNotification=function(warning) {
@@ -315,6 +341,12 @@
 	angular.element(document).ready(function() {
 		$timeout(function() {
 			$scope.runData.isRunning=false;
+
+			$scope.locks.GenerateButton=false;
+			$scope.locks.RunButton=true;
+			$scope.locks.DemoButtons=false;
+			$scope.locks.Inputs=false;
+
 			$scope.notification.Warnings=[];
 			$scope.runData.nodeNumber=0;
 			$scope.runData.pureSelfishNodeNumber=0;
@@ -358,7 +390,6 @@
 		$scope.mainHub.client.populateNodes=function(nodeListJson) {
 			var nodeList=angular.fromJson(nodeListJson);
 
-			$scope.runData.isRunning=true;
 			$scope.populateCanvas(nodeList);
 			$scope.$apply();
 		};
