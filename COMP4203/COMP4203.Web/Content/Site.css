@@ -133,36 +133,6 @@ html, body {
 	padding: 20px 20px;
 }
 
-.alert-box {
-	color:#555555;
-	font-family:Tahoma,Geneva,Arial,sans-serif;font-size:11px;
-	padding:10px 10px 10px 36px;
-	margin:10px;
-}
-
-.alert-box span {
-	font-weight:bold;
-	text-transform:uppercase;
-	position: relative;
-	top: 10px;
-}
-
-.alert-box button {
-	float: right;
-}
-
-.warning {
-	background:#fff8c4 url('images/warning.png') no-repeat 10px 50%;
-	display: block;
-	position: fixed;
-	bottom: 0;
-	width: 100%;
-	left: 0;
-	margin: 0;
-	-ms-border-radius: 0;
-	border-radius: 0;
-}
-
 .greenBorder{    
 	border:3px solid #00FF00 !important;
 }
