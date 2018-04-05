@@ -312,13 +312,13 @@
 		$timeout(function() {
 			testNodeList[2].BatteryLevel=84;
 			$scope.updateBatteryLevel(testNodeList[2]);
-		},$scope.runData.simSpeedNumber*3);
 
-		$scope.runData.isRunning=false;
-		$scope.locks.GenerateButton=false;
-		$scope.locks.RunButton=true;
-		$scope.locks.DemoButtons=false;
-		$scope.locks.Inputs=false;
+			$scope.runData.isRunning=false;
+			$scope.locks.GenerateButton=false;
+			$scope.locks.RunButton=true;
+			$scope.locks.DemoButtons=false;
+			$scope.locks.Inputs=false;
+		},$scope.runData.simSpeedNumber*3);
 	}
 
 	$scope.addWarningNotification=function(warning) {
