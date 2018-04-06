@@ -179,3 +179,12 @@ html, body {
 	border-top-left-radius: 0px;
 	border-left: none;
 }
+
+.padding-little {
+	padding: 20px;
+}
+
+.border-bottom-black {
+	border: 2px solid #000000;
+	width: 600px;
+}

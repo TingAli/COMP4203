@@ -11,15 +11,15 @@
 		},
 		series: [{
 			data: [],
-			id: "DSR"
+			name: "DSR"
 		},
 		{
 			data: [],
-			id: "SA-DSR"
+			name: "SA-DSR"
 		},
 		{
 			data: [],
-			id: "MSA-DSR"
+			name: "MSA-DSR"
 		}],
 		title: {
 			text: "AEED"
@@ -34,6 +34,11 @@
 			title: {
 				text: "AEED Value"
 			}
+		},
+		average: {
+			dsr: 0,
+			sadsr: 0,
+			msadsr: 0
 		}
 	};
 
@@ -43,15 +48,15 @@
 		},
 		series: [{
 			data: [],
-			id: "DSR"
+			name: "DSR"
 		},
 		{
 			data: [],
-			id: "SA-DSR"
+			name: "SA-DSR"
 		},
 		{
 			data: [],
-			id: "MSA-DSR"
+			name: "MSA-DSR"
 		}],
 		title: {
 			text: "NRO"
@@ -66,6 +71,11 @@
 			title: {
 				text: "NRO Value"
 			}
+		},
+		average: {
+			dsr: 0,
+			sadsr: 0,
+			msadsr: 0
 		}
 	};
 
@@ -75,15 +85,15 @@
 		},
 		series: [{
 				data: [],
-				id: "DSR"
+				name: "DSR"
 			},
 			{
 				data: [],
-				id: "SA-DSR"
+				name: "SA-DSR"
 			},
 			{
 				data: [],
-				id: "MSA-DSR"
+				name: "MSA-DSR"
 			}],
 		title: {
 			text: "BDD"
@@ -98,6 +108,11 @@
 			title: {
 				text: "BDD Value"
 			}
+		},
+		average: {
+			dsr: 0,
+			sadsr: 0,
+			msadsr: 0
 		}
 	};
 
@@ -107,15 +122,15 @@
 		},
 		series: [{
 				data: [],
-				id: "DSR"
+				name: "DSR"
 			},
 			{
 				data: [],
-				id: "SA-DSR"
+				name: "SA-DSR"
 			},
 			{
 				data: [],
-				id: "MSA-DSR"
+				name: "MSA-DSR"
 			}],
 		title: {
 			text: "PDR"
@@ -130,6 +145,11 @@
 			title: {
 				text: "PDR Value"
 			}
+		},
+		average: {
+			dsr: 0,
+			sadsr: 0,
+			msadsr: 0
 		}
 	};
 
@@ -149,28 +169,38 @@
 				$scope.graphs=response.data;
 
 				$timeout(function() {
-					
-
 					for (var index = 0; index < $scope.graphs[0].XAxisExecutionsNumber.length; index++) {
 						$scope.chartAEEDConfig.xAxis.data.push($scope.graphs[0].XAxisExecutionsNumber[index]);
 						$scope.chartAEEDConfig.series[0].data.push($scope.graphs[0].YAxisValuesDsr[index]);
 						$scope.chartAEEDConfig.series[1].data.push($scope.graphs[0].YAxisValuesSadsr[index]);
 						$scope.chartAEEDConfig.series[2].data.push($scope.graphs[0].YAxisValuesMsadsr[index]);
+						$scope.chartAEEDConfig.average.dsr = $scope.graphs[0].AverageDsr;
+						$scope.chartAEEDConfig.average.sadsr = $scope.graphs[0].AverageSadsr;
+						$scope.chartAEEDConfig.average.msadsr = $scope.graphs[0].AverageMsadsr;
 
 						$scope.chartNROConfig.xAxis.data.push($scope.graphs[1].XAxisExecutionsNumber[index]);
 						$scope.chartNROConfig.series[0].data.push($scope.graphs[1].YAxisValuesDsr[index]);
 						$scope.chartNROConfig.series[1].data.push($scope.graphs[1].YAxisValuesSadsr[index]);
 						$scope.chartNROConfig.series[2].data.push($scope.graphs[1].YAxisValuesMsadsr[index]);
+						$scope.chartNROConfig.average.dsr = $scope.graphs[1].AverageDsr;
+						$scope.chartNROConfig.average.sadsr = $scope.graphs[1].AverageSadsr;
+						$scope.chartNROConfig.average.msadsr = $scope.graphs[1].AverageMsadsr;
 
 						$scope.chartBDDConfig.xAxis.data.push($scope.graphs[2].XAxisExecutionsNumber[index]);
 						$scope.chartBDDConfig.series[0].data.push($scope.graphs[2].YAxisValuesDsr[index]);
 						$scope.chartBDDConfig.series[1].data.push($scope.graphs[2].YAxisValuesSadsr[index]);
 						$scope.chartBDDConfig.series[2].data.push($scope.graphs[2].YAxisValuesMsadsr[index]);
+						$scope.chartBDDConfig.average.dsr = $scope.graphs[2].AverageDsr;
+						$scope.chartBDDConfig.average.sadsr = $scope.graphs[2].AverageSadsr;
+						$scope.chartBDDConfig.average.msadsr = $scope.graphs[2].AverageMsadsr;
 
 						$scope.chartPDRConfig.xAxis.data.push($scope.graphs[3].XAxisExecutionsNumber[index]);
 						$scope.chartPDRConfig.series[0].data.push($scope.graphs[3].YAxisValuesDsr[index]);
 						$scope.chartPDRConfig.series[1].data.push($scope.graphs[3].YAxisValuesSadsr[index]);
 						$scope.chartPDRConfig.series[2].data.push($scope.graphs[3].YAxisValuesMsadsr[index]);
+						$scope.chartPDRConfig.average.dsr = $scope.graphs[3].AverageDsr;
+						$scope.chartPDRConfig.average.sadsr = $scope.graphs[3].AverageSadsr;
+						$scope.chartPDRConfig.average.msadsr = $scope.graphs[3].AverageMsadsr;
 					}
 				},800);
 			});
@@ -363,25 +393,6 @@
 			Message: message
 		};
 		$scope.outputMessages.push(outputMessage);
-	}
-
-	$scope.runDemo=function(tabIndex) {
-		$scope.runData.isRunning=true;
-		$scope.locks.RunButton=true;
-		$scope.locks.DemoButtons=true;
-		$scope.locks.Inputs=true;
-
-		$scope.runData.nodeNumber=4;
-		$scope.runData.pureSelfishNodeNumber=0;
-		$scope.runData.partialSelfishNodeNumber=0;
-		$scope.runData.messageNumber=1;
-		$scope.runData.simSpeedNumber=2000;
-		$scope.runData.nodeRange=200;
-		$scope.runData.executionNumber=1;
-
-		context.demo(tabIndex)
-			.then(function() {
-			});
 	}
 
 	$scope.runTest=function(tabIndex) {

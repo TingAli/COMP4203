@@ -20,31 +20,6 @@ namespace COMP4203.Web.Controllers
             simulationEnvironment = new SimulationEnvironment();
         }
 
-        [HttpGet, Route("api/main/demo/{tabIndex}")]
-        public void RunDemo(int tabIndex)
-        {
-            SimulationEnvironment sim = new SimulationEnvironment();
-            // Add Test Nodes
-            sim.AddNode(new MobileNode(100, 100, 100, 200));
-            sim.AddNode(new MobileNode(200, 210, 100, 200));
-            sim.AddNode(new MobileNode(210, 200, 15, 200));
-            sim.AddNode(new MobileNode(298, 298, 15, 200));
-            sim.AddNode(new MobileNode(200, 100, 100, 200));
-            sim.AddNode(new MobileNode(150, 120, 100, 200));
-            // Add Test Message
-            sim.AddMessage(new Message(sim.GetNodes()[0], sim.GetNodes()[3]));
-            // Print Simulation Nodes
-            new ComponentController().PrintToOutputPane(OutputTag.TAG_NOTE, "Simulation Nodes:");
-            foreach (MobileNode node in sim.GetNodes())
-            {
-                node.Print();
-                node.PrintNodesWithinRange(sim);
-            }
-            new ComponentController().PopulateNodesOnCanvas(sim.GetNodes(), tabIndex);
-            //sim.SendMessageDSR(sim.GetMessages()[0], new SessionData(), 2000);
-            sim.SendMessageSADSR(sim.GetMessages()[0], new SessionData(0), 500);
-        }
-
         [HttpGet, Route("api/main/run/{nodeNumber}/{messageNumber}/{simSpeedNumber}/{nodeRange}/{pureSelfishNodeNumber}/{partialSelfishNodeNumber}/{executionNumber}/{tabIndex}")]
         public List<GraphData> RunTest(
 	        int nodeNumber,
@@ -154,6 +129,17 @@ namespace COMP4203.Web.Controllers
 		    graphDataList.Add(nroGraphData);
 		    graphDataList.Add(bddGraphData);
 		    graphDataList.Add(pdrGraphData);
+
+		    foreach (var graphData in graphDataList)
+		    {
+			    double averageDsr = Math.Round(graphData.YAxisValuesDsr.Average(), 2);
+			    double averageSadsr = Math.Round(graphData.YAxisValuesSadsr.Average(), 2);
+			    double averageMsadsr = Math.Round(graphData.YAxisValuesMsadsr.Average(), 2);
+
+			    graphData.AverageDsr = averageDsr;
+			    graphData.AverageSadsr = averageSadsr;
+			    graphData.AverageMsadsr = averageMsadsr;
+		    }
 
 		    return graphDataList;
 	    }

@@ -21,10 +21,6 @@ app.factory("dataService",function($http) {
 		},
 		reset: function () {
 			return $http.get("/api/main/reset");
-		},
-		demo: function(tabIndex) {
-			return $http.get("/api/main/demo/" + tabIndex,{
-			});
 		}
 	}
 });

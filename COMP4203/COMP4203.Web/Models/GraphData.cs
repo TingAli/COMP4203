@@ -13,6 +13,9 @@ namespace COMP4203.Web.Models
 		public List<double> YAxisValuesDsr { get; set; }
 		public List<double> YAxisValuesSadsr { get; set; }
 		public List<double> YAxisValuesMsadsr { get; set; }
+		public double AverageDsr { get; set; }
+		public double AverageSadsr { get; set; }
+		public double AverageMsadsr { get; set; }
 
 		public GraphData()
 		{
