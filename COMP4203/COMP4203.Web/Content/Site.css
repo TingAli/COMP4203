@@ -1,4 +1,6 @@
-﻿@media screen and (max-width: 600px) {
+﻿/* Styles for Web Application */
+
+@media screen and (max-width: 600px) {
 	body {
 		display: none;
 	}

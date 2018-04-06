@@ -1,5 +1,7 @@
-﻿var app=angular.module("app",["ngRoute","ui.bootstrap","highcharts-ng"]);
+﻿// app as the main module of the web application
+var app=angular.module("app",["ngRoute","ui.bootstrap","highcharts-ng"]);
 
+// app configuration such as routing
 app.config(function($routeProvider) {
 	$routeProvider.
 		when("/home",{
@@ -12,6 +14,7 @@ app.config(function($routeProvider) {
 		});
 });
 
+// Data service to allow HTTP Ajax calls
 app.factory("dataService",function($http) {
 	return {
         run: function (nodeNumber, messageNumber, simSpeedNumber, nodeRange,pureSelfishNodeNumber, partialSelfishNodeNumber, executionNumber, tabIndex) {
@@ -25,6 +28,7 @@ app.factory("dataService",function($http) {
 	}
 });
 
+// Custom filter directive to show list items in reverse
 app.filter("reverse", function() {
 	return function(items) {
 		return items.slice().reverse();
