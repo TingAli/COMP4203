@@ -105,7 +105,6 @@
 										<div class="btn-group" role="group">
 											<button type="button" class="high-priority-btn btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);"><span class="glyphicon glyphicon-play-circle"></span> RUN</button>
 											<button type="button" class="high-priority-btn btn btn-danger" ng-click="reset();"><span class="glyphicon glyphicon-stop"></span> RESET</button>
-											<button type="button" class="btn btn-warning" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
 											<button type="button" class="btn btn-success" ng-disabled="locks.DemoButtons" ng-click="runTest(@tabIndex);">TEST</button>
 										</div>
 									</div>
@@ -199,7 +198,6 @@
 										<div class="btn-group" role="group">
 											<button type="button" class="high-priority-btn btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);"><span class="glyphicon glyphicon-play-circle"></span> RUN</button>
 											<button type="button" class="high-priority-btn btn btn-danger" ng-click="reset();"><span class="glyphicon glyphicon-stop"></span> RESET</button>
-											<button type="button" class="btn btn-warning" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
 											<button type="button" class="btn btn-success" ng-disabled="locks.DemoButtons" ng-click="runTest(@tabIndex);">TEST</button>
 										</div>
 									</div>
@@ -293,7 +291,6 @@
 										<div class="btn-group" role="group">
 											<button type="button" class="high-priority-btn btn btn-primary" ng-disabled="locks.RunButton" ng-click="initiateRun(@tabIndex);"><span class="glyphicon glyphicon-play-circle"></span> RUN</button>
 											<button type="button" class="high-priority-btn btn btn-danger" ng-click="reset();"><span class="glyphicon glyphicon-stop"></span> RESET</button>
-											<button type="button" class="btn btn-warning" ng-disabled="locks.DemoButtons" ng-click="runDemo(@tabIndex);">DEMO</button>
 											<button type="button" class="btn btn-success" ng-disabled="locks.DemoButtons" ng-click="runTest(@tabIndex);">TEST</button>
 										</div>
 									</div>
@@ -313,8 +310,36 @@
 				<div>
 					<div class="panel panel-info">
 						<div class="panel-heading text-center">Graphs</div>
-						<div>
-							<highchart id="chart1" config="chartConfig"></highchart>
+						<div class="padding-little">
+							<highchart id="chart1" config="chartAEEDConfig"></highchart>
+							<h3>AEED Averages:</h3>
+							<h4><b>Average for DSR: </b>{{chartAEEDConfig.average.dsr}}</h4>
+							<h4><b>Average for SA-DSR: </b>{{chartAEEDConfig.average.sadsr}}</h4>
+							<h4><b>Average for MSA-DSR: </b>{{chartAEEDConfig.average.msadsr}}</h4>
+						</div>
+						<div class="border-bottom-black"></div>
+						<div class="padding-little">
+							<highchart id="chart2" config="chartNROConfig"></highchart>
+							<h3>NRO Averages:</h3>
+							<h4><b>Average for DSR: </b>{{chartNROConfig.average.dsr}}</h4>
+							<h4><b>Average for SA-DSR: </b>{{chartNROConfig.average.sadsr}}</h4>
+							<h4><b>Average for MSA-DSR: </b>{{chartNROConfig.average.msadsr}}</h4>
+						</div>
+						<div class="border-bottom-black"></div>
+						<div class="padding-little">
+							<highchart id="chart3" config="chartBDDConfig"></highchart>
+							<h3>BDD Averages:</h3>
+							<h4><b>Average for DSR: </b>{{chartBDDConfig.average.dsr}}</h4>
+							<h4><b>Average for SA-DSR: </b>{{chartBDDConfig.average.sadsr}}</h4>
+							<h4><b>Average for MSA-DSR: </b>{{chartBDDConfig.average.msadsr}}</h4>
+						</div>
+						<div class="border-bottom-black"></div>
+						<div class="padding-little">
+							<highchart id="chart4" config="chartPDRConfig"></highchart>
+							<h3>PDR Averages:</h3>
+							<h4><b>Average for DSR: </b>{{chartPDRConfig.average.dsr}}</h4>
+							<h4><b>Average for SA-DSR: </b>{{chartPDRConfig.average.sadsr}}</h4>
+							<h4><b>Average for MSA-DSR: </b>{{chartPDRConfig.average.msadsr}}</h4>
 						</div>
 					</div>
 				</div>
