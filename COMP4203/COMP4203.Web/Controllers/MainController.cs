@@ -97,7 +97,7 @@ namespace COMP4203.Web.Controllers
 					sessionDataList.Add(currentExecutionSessionDataList);
 		        }
 
-		        graphDataList = SessionDataListToGraphDataList(sessionDataList);
+		        graphDataList = SessionDataListToGraphDataList(sessionDataList, executionNumber);
 
 		        return graphDataList;
 	        }
@@ -112,17 +112,19 @@ namespace COMP4203.Web.Controllers
 	        }
         }
 
-	    public List<GraphData> SessionDataListToGraphDataList(List<List<SessionData>> sessionDataList)
+	    private List<GraphData> SessionDataListToGraphDataList(
+		    List<List<SessionData>> sessionDataList,
+		    int executionNumber)
 	    {
 			List<GraphData> graphDataList = new List<GraphData>();
-			GraphData aeedGraphData = new GraphData() {YAxisTitle = "AEED Value"};
-			GraphData nroGraphData = new GraphData() {YAxisTitle = "NRO Value"};
-		    GraphData bddGraphData = new GraphData() {YAxisTitle = "BDD Value"};
-			GraphData pdrGraphData = new GraphData() {YAxisTitle = "PDR Value"};
+			GraphData aeedGraphData = new GraphData() {YAxisTitle = "AEED Value", Executions = executionNumber, XAxisExecutionsNumber = Enumerable.Range(1, executionNumber).ToList()};
+			GraphData nroGraphData = new GraphData() {YAxisTitle = "NRO Value", Executions = executionNumber, XAxisExecutionsNumber = Enumerable.Range(1, executionNumber).ToList()};
+		    GraphData bddGraphData = new GraphData() {YAxisTitle = "BDD Value", Executions = executionNumber, XAxisExecutionsNumber = Enumerable.Range(1, executionNumber).ToList()};
+			GraphData pdrGraphData = new GraphData() {YAxisTitle = "PDR Value", Executions = executionNumber, XAxisExecutionsNumber = Enumerable.Range(1, executionNumber).ToList()};
 
-		    for (var executionNumber = 0; executionNumber < sessionDataList.Count; executionNumber++)
+		    for (var executionNum = 0; executionNum < sessionDataList.Count; executionNum++)
 		    {
-			    foreach (var sessionData in sessionDataList[executionNumber])
+			    foreach (var sessionData in sessionDataList[executionNum])
 			    {
 				    if (sessionData.tabIndex == 0)
 				    {

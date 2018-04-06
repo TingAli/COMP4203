@@ -5,45 +5,132 @@
 	$scope.canvasList=[];
 	$scope.graphs=[];
 
-	var series = 0;
-	$scope.addGraphSeries = function (graphData) {
-		$scope.chartConfig.series.push({
-			data: graphData,
-			id: "series_" + series++
-		});
-	}
-
-	//{
-	//	data: [10, 15, 12, 8, 7],
-	//		id: "DSR"
-	//}, {
-	//	data: [15, 25, 42, 5, 7],
-	//		id: "SA-DSR"
-	//},
-	//{
-	//	data: [5, 10, 2, 5, 4],
-	//		id: "MSA-DSR"
-	//}
-
-	$scope.chartConfig = {
+	$scope.chartAEEDConfig={
 		chart: {
 			type: "line"
 		},
-		series: [], 
+		series: [{
+			data: [],
+			id: "DSR"
+		},
+		{
+			data: [],
+			id: "SA-DSR"
+		},
+		{
+			data: [],
+			id: "MSA-DSR"
+		}],
 		title: {
 			text: "AEED"
 		},
-		xAxis: [{
-			data: [1, 2, 3, 4],
+		xAxis: {
+			data: [],
 			title: {
-				text: "Number Of Executions",
+				text: "Number Of Executions"
 			}
-		}],
-		yAxis: [{
+		},
+		yAxis: {
 			title: {
 				text: "AEED Value"
 			}
-		}]
+		}
+	};
+
+	$scope.chartNROConfig={
+		chart: {
+			type: "line"
+		},
+		series: [{
+			data: [],
+			id: "DSR"
+		},
+		{
+			data: [],
+			id: "SA-DSR"
+		},
+		{
+			data: [],
+			id: "MSA-DSR"
+		}],
+		title: {
+			text: "NRO"
+		},
+		xAxis: {
+			data: [],
+			title: {
+				text: "Number Of Executions"
+			}
+		},
+		yAxis: {
+			title: {
+				text: "NRO Value"
+			}
+		}
+	};
+
+	$scope.chartBDDConfig={
+		chart: {
+			type: "line"
+		},
+		series: [{
+				data: [],
+				id: "DSR"
+			},
+			{
+				data: [],
+				id: "SA-DSR"
+			},
+			{
+				data: [],
+				id: "MSA-DSR"
+			}],
+		title: {
+			text: "BDD"
+		},
+		xAxis: {
+			data: [],
+			title: {
+				text: "Number Of Executions"
+			}
+		},
+		yAxis: {
+			title: {
+				text: "BDD Value"
+			}
+		}
+	};
+
+	$scope.chartPDRConfig={
+		chart: {
+			type: "line"
+		},
+		series: [{
+				data: [],
+				id: "DSR"
+			},
+			{
+				data: [],
+				id: "SA-DSR"
+			},
+			{
+				data: [],
+				id: "MSA-DSR"
+			}],
+		title: {
+			text: "PDR"
+		},
+		xAxis: {
+			data: [],
+			title: {
+				text: "Number Of Executions"
+			}
+		},
+		yAxis: {
+			title: {
+				text: "PDR Value"
+			}
+		}
 	};
 
 	$scope.initiateRun=function(tabIndex) {
@@ -52,14 +139,40 @@
 		$scope.locks.DemoButtons=true;
 		$scope.locks.Inputs=true;
 
-		if (!$scope.runData.IsExecutionMode) {
-			$scope.runData.executionNumber = 1;
+		if(!$scope.runData.IsExecutionMode) {
+			$scope.runData.executionNumber=1;
 		}
 
 		context.run($scope.runData.nodeNumber,$scope.runData.messageNumber,$scope.runData.simSpeedNumber,$scope.runData.nodeRange,
 			$scope.runData.pureSelfishNodeNumber,$scope.runData.partialSelfishNodeNumber,$scope.runData.executionNumber,tabIndex)
 			.then(function(response) {
-				$scope.addGraphSeries(response.data[2].YAxisValuesDsr);
+				$scope.graphs=response.data;
+
+				$timeout(function() {
+					
+
+					for (var index = 0; index < $scope.graphs[0].XAxisExecutionsNumber.length; index++) {
+						$scope.chartAEEDConfig.xAxis.data.push($scope.graphs[0].XAxisExecutionsNumber[index]);
+						$scope.chartAEEDConfig.series[0].data.push($scope.graphs[0].YAxisValuesDsr[index]);
+						$scope.chartAEEDConfig.series[1].data.push($scope.graphs[0].YAxisValuesSadsr[index]);
+						$scope.chartAEEDConfig.series[2].data.push($scope.graphs[0].YAxisValuesMsadsr[index]);
+
+						$scope.chartNROConfig.xAxis.data.push($scope.graphs[1].XAxisExecutionsNumber[index]);
+						$scope.chartNROConfig.series[0].data.push($scope.graphs[1].YAxisValuesDsr[index]);
+						$scope.chartNROConfig.series[1].data.push($scope.graphs[1].YAxisValuesSadsr[index]);
+						$scope.chartNROConfig.series[2].data.push($scope.graphs[1].YAxisValuesMsadsr[index]);
+
+						$scope.chartBDDConfig.xAxis.data.push($scope.graphs[2].XAxisExecutionsNumber[index]);
+						$scope.chartBDDConfig.series[0].data.push($scope.graphs[2].YAxisValuesDsr[index]);
+						$scope.chartBDDConfig.series[1].data.push($scope.graphs[2].YAxisValuesSadsr[index]);
+						$scope.chartBDDConfig.series[2].data.push($scope.graphs[2].YAxisValuesMsadsr[index]);
+
+						$scope.chartPDRConfig.xAxis.data.push($scope.graphs[3].XAxisExecutionsNumber[index]);
+						$scope.chartPDRConfig.series[0].data.push($scope.graphs[3].YAxisValuesDsr[index]);
+						$scope.chartPDRConfig.series[1].data.push($scope.graphs[3].YAxisValuesSadsr[index]);
+						$scope.chartPDRConfig.series[2].data.push($scope.graphs[3].YAxisValuesMsadsr[index]);
+					}
+				},800);
 			});
 	}
 
@@ -231,7 +344,7 @@
 				$scope.runData.messageNumber=0;
 				$scope.runData.simSpeedNumber=0;
 				$scope.runData.nodeRange=200;
-				$scope.runData.executionNumber = 1;
+				$scope.runData.executionNumber=1;
 			});
 	}
 
@@ -264,7 +377,7 @@
 		$scope.runData.messageNumber=1;
 		$scope.runData.simSpeedNumber=2000;
 		$scope.runData.nodeRange=200;
-		$scope.runData.executionNumber = 1;
+		$scope.runData.executionNumber=1;
 
 		context.demo(tabIndex)
 			.then(function() {
@@ -373,7 +486,7 @@
 			$scope.runData.messageNumber=0;
 			$scope.runData.simSpeedNumber=0;
 			$scope.runData.nodeRange=200;
-			$scope.runData.executionNumber = 1;
+			$scope.runData.executionNumber=1;
 
 			for(var index=0;index<3;index++) {
 				$scope.initAndAddCanvas(index);
