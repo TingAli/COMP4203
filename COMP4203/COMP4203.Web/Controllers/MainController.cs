@@ -132,9 +132,9 @@ namespace COMP4203.Web.Controllers
 
 		    foreach (var graphData in graphDataList)
 		    {
-			    double averageDsr = Math.Round(graphData.YAxisValuesDsr.Average(), 2);
-			    double averageSadsr = Math.Round(graphData.YAxisValuesSadsr.Average(), 2);
-			    double averageMsadsr = Math.Round(graphData.YAxisValuesMsadsr.Average(), 2);
+			    double averageDsr = graphData.YAxisValuesDsr.Where(x => x != -1).Average();
+			    double averageSadsr = graphData.YAxisValuesSadsr.Where(x => x != -1).Average();
+			    double averageMsadsr = graphData.YAxisValuesMsadsr.Where(x => x != -1).Average();
 
 			    graphData.AverageDsr = averageDsr;
 			    graphData.AverageSadsr = averageSadsr;
